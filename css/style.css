@@ -162,7 +162,7 @@ section { position: relative; }
 /* ----------------------------------------------------------- hero */
 .hero {
   position: relative;
-  min-height: 92vh;
+  min-height: 82vh;
   display: flex;
   align-items: center;
   text-align: center;
@@ -319,6 +319,62 @@ section { position: relative; }
 .stat-cell__v { font-size: clamp(28px, 4vw, 38px); font-weight: 700; letter-spacing: -0.02em; margin-top: 8px; line-height: 1.1; }
 .stat-cell__meta { font-size: 12.5px; color: var(--ink-2); margin-top: 10px; }
 .stat-cell__bar { position: absolute; left: 0; top: 22px; bottom: 22px; width: 4px; border-radius: 0 4px 4px 0; }
+
+/* ----------------------------------------------------------- TODAY (command center) */
+#today .sec-title { font-size: clamp(28px, 4.6vw, 48px); }
+.verdict {
+  display: flex; flex-wrap: wrap; gap: 22px 30px;
+  justify-content: space-between; align-items: center;
+  background: var(--bg-dark); color: var(--on-dark);
+  border-radius: var(--radius-lg); padding: 28px 32px;
+  border-left: 6px solid var(--warn);
+}
+.verdict--go { border-left-color: var(--good); }
+.verdict--rest { border-left-color: var(--bad); }
+.verdict__main { display: flex; align-items: center; gap: 22px; }
+.verdict__code {
+  font-size: clamp(34px, 7vw, 56px); font-weight: 800; letter-spacing: -0.02em;
+  line-height: 1; color: var(--warn); white-space: nowrap;
+}
+.verdict--go .verdict__code { color: var(--good); }
+.verdict--rest .verdict__code { color: var(--bad); }
+.verdict__label { font-size: 12px; color: var(--on-dark-2); font-weight: 600; letter-spacing: 0.05em; }
+.verdict__reason { font-size: clamp(15px, 2.1vw, 18px); font-weight: 600; margin-top: 5px; max-width: 460px; line-height: 1.45; }
+.verdict__race { text-align: right; margin-left: auto; }
+.verdict__race-name { font-size: 13px; color: var(--accent-soft); font-weight: 600; }
+.verdict__race-days { font-size: 13px; color: var(--on-dark-2); margin-top: 2px; }
+.verdict__race-days b { font-size: 30px; color: #fff; font-weight: 800; letter-spacing: -0.02em; }
+.verdict__race-date { font-size: 11px; color: var(--on-dark-2); }
+
+.vitals { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 18px; }
+.vital { background: var(--bg); border: 1px solid var(--line); border-radius: 18px; padding: 18px 18px 16px; }
+.vital__top { display: flex; justify-content: space-between; align-items: center; }
+.vital__name { font-size: 13px; color: var(--ink-2); font-weight: 600; }
+.vital__dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+.vital__v { font-size: clamp(21px, 3vw, 27px); font-weight: 700; letter-spacing: -0.02em; margin-top: 12px; line-height: 1.1; }
+.vital__t { font-size: 11.5px; color: var(--ink-2); margin-top: 7px; }
+
+.blockers { margin-top: 18px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
+.blockers__label { font-size: 12px; font-weight: 700; color: var(--ink-2); }
+.alerts { display: flex; flex-wrap: wrap; gap: 8px; }
+.alert { font-size: 13px; font-weight: 600; padding: 7px 14px; border-radius: 980px; }
+.alert--lock, .alert--bad { background: rgba(255,69,58,0.09); color: var(--bad); border: 1px solid rgba(255,69,58,0.22); }
+
+.todaydo { margin-top: 26px; background: var(--bg-soft); border-radius: var(--radius); padding: 22px 26px; }
+.todaydo__head { font-size: 13px; font-weight: 700; color: var(--accent); letter-spacing: 0.03em; margin-bottom: 4px; }
+.todaydo__item { display: flex; gap: 14px; padding: 15px 0; border-top: 1px solid var(--line); }
+.todaydo__item:first-of-type { border-top: none; }
+.todaydo__bullet { flex: none; width: 10px; height: 10px; border-radius: 50%; background: var(--ink-2); margin-top: 8px; }
+.todaydo__item.is-key .todaydo__bullet { background: var(--accent); }
+.todaydo__text { font-size: clamp(16px, 2.1vw, 19px); font-weight: 600; letter-spacing: -0.01em; }
+.todaydo__item.is-key .todaydo__text { color: var(--accent); }
+.todaydo__detail { font-size: 13.5px; color: var(--ink-2); margin-top: 4px; line-height: 1.45; }
+
+@media (max-width: 640px) {
+  .vitals { grid-template-columns: repeat(2, 1fr); }
+  .verdict { padding: 24px; }
+  .verdict__race { text-align: left; margin-left: 0; }
+}
 
 /* ----------------------------------------------------------- generic card */
 .card {

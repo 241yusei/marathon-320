@@ -58,6 +58,74 @@
       </div>`;
   }
 
+  /* ====================================================== TODAY (command center) */
+  function daysToRace() {
+    const today = new Date();
+    const rd = new Date(D.race.date + "T00:00:00");
+    return Math.max(0, Math.ceil((rd - today) / 86400000));
+  }
+  function renderToday() {
+    const j = D.week.judgment;
+    const codeCls = { GO: "go", EASY: "easy", REST: "rest" }[j.code] || "easy";
+
+    // 判定カード ＋ カウントダウン
+    $("todayVerdict").innerHTML = `
+      <div class="verdict verdict--${codeCls}">
+        <div class="verdict__main">
+          <div class="verdict__code">${esc(j.code)}</div>
+          <div class="verdict__meta">
+            <div class="verdict__label">本日の指針</div>
+            <div class="verdict__reason">${esc(j.reason)}</div>
+          </div>
+        </div>
+        <div class="verdict__race">
+          <div class="verdict__race-name">${esc(D.race.name)}</div>
+          <div class="verdict__race-days"><b>${daysToRace()}</b> 日</div>
+          <div class="verdict__race-date">${esc(D.race.date)}</div>
+        </div>
+      </div>`;
+
+    // 主要バイタル（4枚）
+    const vit = [
+      { m: "HRV（月平均）", label: "HRV" },
+      { m: "睡眠（計測月平均）", label: "睡眠" },
+      { m: "安静時HR（月平均）", label: "安静時HR" },
+      { m: "体重", label: "体重" },
+    ];
+    $("todayVitals").innerHTML = `<div class="vitals">${vit.map((v) => {
+      const m = D.metrics.find((x) => x.name === v.m) || {};
+      return `
+        <div class="vital">
+          <div class="vital__top"><span class="vital__name">${esc(v.label)}</span><span class="vital__dot ${dotClass(m.state)}"></span></div>
+          <div class="vital__v">${esc(m.value || "—")}</div>
+          <div class="vital__t">目標 ${esc(m.target || "—")}</div>
+        </div>`;
+    }).join("")}</div>`;
+
+    // ブロッカー（次へ進むための関門）
+    const gatePills = D.gates.filter((g) => g.locked).map((g) => {
+      const prog = (g.progress != null && g.total != null) ? ` ${g.progress}/${g.total}${g.unit}` : "";
+      return `<span class="alert alert--lock">⛔ ${esc(g.name)}${esc(prog)}</span>`;
+    }).join("");
+    $("todayAlerts").innerHTML = `
+      <div class="blockers">
+        <span class="blockers__label">次に進むための関門</span>
+        <div class="alerts">${gatePills}</div>
+      </div>`;
+
+    // 今日やること（未完了の優先事項・上位2件）
+    const todos = D.week.priorities.filter((p) => !p.done).slice(0, 2);
+    $("todayDo").innerHTML = `
+      <div class="todaydo">
+        <div class="todaydo__head">今日やること</div>
+        ${todos.map((t) => `
+          <div class="todaydo__item ${t.emphasis ? "is-key" : ""}">
+            <span class="todaydo__bullet"></span>
+            <div><div class="todaydo__text">${esc(t.text)}</div><div class="todaydo__detail">${esc(t.detail)}</div></div>
+          </div>`).join("")}
+      </div>`;
+  }
+
   /* ====================================================== HIGHLIGHTS */
   function renderHighlights() {
     const rail = $("hlRail");
@@ -438,6 +506,7 @@
   function boot() {
     if (!D) { console.error("MARATHON_DATA missing"); return; }
     renderHero();
+    renderToday();
     renderHighlights();
     renderStatus();
     renderWeek();
@@ -457,4 +526,11 @@
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
   else boot();
+
+  /* ====================================================== PWA: service worker */
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("sw.js").catch((e) => console.warn("SW登録失敗:", e));
+    });
+  }
 })();

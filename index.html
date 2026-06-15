@@ -6,7 +6,18 @@
 <meta name="theme-color" content="#000000">
 <title>マラソン3:20切りプロジェクト｜藤井勇成</title>
 <meta name="description" content="藤井勇成のマラソン3:20切り・体重65kgプロジェクト。今週の目標、ランニング結果、データトレンド、計画を一元管理するダッシュボード。">
-<link rel="preconnect" href="https://fonts.googleapis.com">
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="3:20 Project">
+<meta name="application-name" content="3:20 Project">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="64x64" href="icons/favicon-64.png">
+
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -16,14 +27,14 @@
   <div class="nav__inner">
     <a class="nav__brand" href="#top"><span class="dot">●</span>Marathon&nbsp;Project</a>
     <div class="nav__links">
-      <a href="#status">現在地</a>
+      <a href="#today">今日</a>
       <a href="#week">今週</a>
       <a href="#runs">ランログ</a>
       <a href="#trend">トレンド</a>
       <a href="#gates">ゲート</a>
+      <a href="#status">現在地</a>
       <a href="#plan">計画</a>
       <a href="#fuel">栄養</a>
-      <a href="#science">研究</a>
       <a href="#spec">仕様</a>
     </div>
     <div class="nav__updated">最終更新 <b id="navUpdated">—</b></div>
@@ -43,24 +54,17 @@
   <div class="scroll-hint">SCROLL</div>
 </header>
 
-<!-- ===================================================== HIGHLIGHTS -->
-<section class="soft pad-sm" id="highlights">
-  <div class="wrap wrap--wide reveal">
-    <p class="eyebrow">ハイライト</p>
-    <h2 class="sec-title">いま、体が示している数字。</h2>
-  </div>
-  <div class="hl-rail reveal d1" id="hlRail" style="margin-top:34px"></div>
-</section>
-
-<!-- ===================================================== STATUS -->
-<section class="pad" id="status">
+<!-- ===================================================== TODAY (command center) -->
+<section class="pad-sm" id="today">
   <div class="wrap">
-    <div class="sec-head reveal">
-      <p class="eyebrow">現在地 / Status</p>
-      <h2 class="sec-title">最新状態の、<br>単一情報源。</h2>
-      <p class="sec-sub" id="statusSub"></p>
+    <div class="sec-head reveal" style="margin-bottom:26px">
+      <p class="eyebrow">今日の指針 / Today</p>
+      <h2 class="sec-title">今日は、<br>どう動くか。</h2>
     </div>
-    <div class="stat-grid reveal d1" id="statGrid"></div>
+    <div class="reveal d1" id="todayVerdict"></div>
+    <div class="reveal d1" id="todayVitals"></div>
+    <div class="reveal d2" id="todayAlerts"></div>
+    <div class="reveal d2" id="todayDo"></div>
   </div>
 </section>
 
@@ -125,6 +129,27 @@
       <p class="sec-sub">「急増 → 燃え尽き → 停止」を 2 回繰り返した。3 回目を防ぐため、条件を満たすまで次へ進めない関門を置く。</p>
     </div>
     <div class="grid-2 reveal d1" id="gatesGrid"></div>
+  </div>
+</section>
+
+<!-- ===================================================== HIGHLIGHTS -->
+<section class="soft pad-sm" id="highlights">
+  <div class="wrap wrap--wide reveal">
+    <p class="eyebrow">ハイライト</p>
+    <h2 class="sec-title">いま、体が示している数字。</h2>
+  </div>
+  <div class="hl-rail reveal d1" id="hlRail" style="margin-top:34px"></div>
+</section>
+
+<!-- ===================================================== STATUS -->
+<section class="pad" id="status">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <p class="eyebrow">現在地 / Status</p>
+      <h2 class="sec-title">最新状態の、<br>単一情報源。</h2>
+      <p class="sec-sub" id="statusSub"></p>
+    </div>
+    <div class="stat-grid reveal d1" id="statGrid"></div>
   </div>
 </section>
 
