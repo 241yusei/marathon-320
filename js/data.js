@@ -18,8 +18,8 @@ window.MARATHON_DATA = {
     lastUpdated: "2026-06-15",
     athlete: { name: "藤井勇成", birth: "1995-10-07", age: 30, sex: "男性", height: 174 },
     phase: "Phase 0: 再点火",
-    phaseWeek: "Week 2 / 4",
-    phaseGoal: "週3〜4回・週20〜30km・心拍150以下・隔日配置",
+    phaseWeek: "Week 3 / 4",
+    phaseGoal: "当面は週16〜18km・イージーのみ・心拍150以下・隔日配置（ACWR管理）",
   },
 
   /* --------------------------------------------------------------- hero */
@@ -46,52 +46,50 @@ window.MARATHON_DATA = {
   /* ------------------------------------------------------ ハイライト（6枚）*/
   /* Apple の Highlights カルーセル相当。最重要指標を 6 枚で見せる。       */
   highlights: [
-    { icon: "weight",   value: "73.0", unit: "kg",  label: "体重",          state: "warn", note: "目標 65kg（減量は未開始）",      anchor: "status" },
+    { icon: "weight",   value: "74.2", unit: "kg",  label: "体重",          state: "warn", note: "目標 65kg（減量は未開始＝正解）", anchor: "status" },
     { icon: "hrv",      value: "45.2", unit: "ms",  label: "HRV 月平均",    state: "bad",  note: "目標 55ms 以上・6ヶ月最低",       anchor: "trend"  },
     { icon: "heart",    value: "62.8", unit: "bpm", label: "安静時心拍",    state: "bad",  note: "目標 55bpm 以下・+10bpm",         anchor: "trend"  },
     { icon: "sleep",    value: "5.5",  unit: "h",   label: "睡眠",          state: "bad",  note: "目標 7〜9h・全問題の根本原因",    anchor: "week"   },
-    { icon: "run",      value: "13.1", unit: "km",  label: "週間走行距離",  state: "warn", note: "Phase 0: 20〜30km/週",            anchor: "plan"   },
+    { icon: "run",      value: "約19", unit: "km",  label: "週間走行距離",  state: "warn", note: "当面 16〜18km/週（ACWR管理）",     anchor: "plan"   },
     { icon: "trophy",   value: "3:30", unit: "",    label: "マラソン PB",   state: "none", note: "2025-10 実績（3:26〜3:30）/ 目標 3:19:59", anchor: "cta" },
   ],
 
   /* ------------------------------------------------ 現状サマリー（指標表）*/
   metrics: [
-    { name: "体重",            value: "73.0 kg",   date: "6/10",     target: "65.0 kg（減量は未開始）",  state: "warn" },
+    { name: "体重",            value: "74.2 kg",   date: "6/15",     target: "65.0 kg（減量は未開始）",  state: "warn" },
     { name: "HRV（月平均）",    value: "45.2 ms",   date: "2026-06",  target: "55 ms 以上",               state: "bad"  },
     { name: "HRV（直近）",      value: "39.7 ms",   date: "6/9",      target: "—",                        state: "bad"  },
     { name: "安静時HR（月平均）",value: "62.8 bpm",  date: "2026-06",  target: "55 bpm 以下",              state: "bad"  },
     { name: "睡眠（計測月平均）",value: "5.5 h",     date: "2026-04",  target: "7〜9 h",                   state: "bad"  },
-    { name: "週間走行距離",     value: "13.1 km",   date: "6月累計",  target: "Phase 0: 20〜30 km/週",     state: "warn" },
+    { name: "週間走行距離",     value: "約19 km",   date: "6月累計",  target: "当面 16〜18 km/週",         state: "warn" },
     { name: "マラソン PB",      value: "3:26〜3:30",date: "2025-10",  target: "3:19:59",                  state: "none" },
   ],
 
   /* ------------------------------------------------------- 今週の優先事項 */
   week: {
-    label: "今週の優先事項（6/14週）",
-    judgment: { code: "EASY", reason: "HRV・睡眠が回復ゲート未通過。強度を上げず量で積む週。" },
+    label: "今週の優先事項（6/15週）",
+    judgment: { code: "EASY", reason: "ストレッチのみで正解。HRV・睡眠が未改善のため今週も強度ゼロ・量は控えめ＋睡眠改善を最優先。" },
     priorities: [
-      { done: false, text: "23:30 スマホをリビングへ → 0:00 就寝", tag: "睡眠改革 Week 1", emphasis: true,
-        detail: "全指標の root cause。これが HRV・RHR・減量・走力すべての前提条件。" },
-      { done: true,  text: "6/14 朝練完了（5.92km）", tag: "完了", emphasis: false,
-        detail: "ただし Z3-5 が 51% で強度オーバー。次回は心拍を抑える。" },
-      { done: false, text: "残り今週: 火7km・木8km・土12km → 合計 33km", tag: "練習", emphasis: false,
-        detail: "ラン日は隔日配置。距離はレンジ内、強度を Z1〜Z2 に固定。" },
-      { done: false, text: "HR 145bpm を超えたら即ペースダウン", tag: "強度管理", emphasis: false,
-        detail: "ウォッチを毎ラップ確認。心拍が高ければ歩いて良い。" },
-      { done: false, text: "HRV < 45ms の日は即休養", tag: "ゲート判定", emphasis: false,
-        detail: "COACHING.md 日次判定ロジックに従う。" },
+      { done: false, text: "23:30 スマホをリビングへ → 0:00 就寝", tag: "睡眠改革（最優先）", emphasis: true,
+        detail: "全指標の root cause。7h×14日連続で減量開始ゲートが開く。HRV・RHR・走力すべての前提。" },
+      { done: false, text: "今週は強度ゼロ・イージーのみで 16〜18km（水5・木5・土7km）", tag: "今週の練習", emphasis: false,
+        detail: "前週14kmからの微増に留める（ACWR 0.8〜1.3）。旧33km目標は過大だったため是正。HR150上限・隔日配置。" },
+      { done: false, text: "体重74.2kgは想定内 — 減量はまだ始めない", tag: "減量はまだ", emphasis: false,
+        detail: "睡眠5h台での減量は筋肉損失+60%。睡眠ゲート通過まで食事制限しないのが正解。" },
+      { done: false, text: "毎朝 HRV・睡眠・RHR・体重を測って報告", tag: "計測・ゲート判定", emphasis: false,
+        detail: "HRV<45ms or 睡眠<5.5hの日は即休養。フレッシュな回復データが今は不足。" },
     ],
   },
 
   /* ------------------------------------------- 週間スケジュール（Phase 0）*/
   schedule: [
-    { day: "月", menu: "完全休養",            dist: "—",      zone: "—",                    rest: true  },
-    { day: "火", menu: "イージーラン",        dist: "5〜7km", zone: "Z1〜Z2 (HR 130〜145)", rest: false },
-    { day: "水", menu: "筋力トレ（軽め）",    dist: "—",      zone: "45〜60分",             rest: false },
-    { day: "木", menu: "イージーラン",        dist: "6〜8km", zone: "Z2 (HR 135〜150)",     rest: false },
-    { day: "金", menu: "完全休養",            dist: "—",      zone: "—",                    rest: true  },
-    { day: "土", menu: "ロング走（抑えめ）",  dist: "10〜14km",zone: "Z1〜Z2",              rest: false },
-    { day: "日", menu: "筋力トレ or 休養",    dist: "—",      zone: "—",                    rest: false },
+    { day: "月", menu: "ストレッチのみ（済）",  dist: "—",    zone: "リカバリー",            rest: true  },
+    { day: "火", menu: "完全休養",            dist: "—",      zone: "—",                    rest: true  },
+    { day: "水", menu: "イージーラン",        dist: "5km",    zone: "Z1〜Z2 (HR<145)",      rest: false },
+    { day: "木", menu: "イージーラン",        dist: "5km",    zone: "Z2 (HR<150)",          rest: false },
+    { day: "金", menu: "筋力トレ（軽め）",    dist: "—",      zone: "30〜45分",             rest: false },
+    { day: "土", menu: "イージーロング",      dist: "7km",    zone: "Z1〜Z2（抑えめ）",      rest: false },
+    { day: "日", menu: "完全休養",            dist: "—",      zone: "—",                    rest: true  },
   ],
 
   /* --------------------------------------------------------- 日次ログ */
@@ -102,6 +100,7 @@ window.MARATHON_DATA = {
     { date: "6/10", hrv: "—",  rhr: "—",  sleep: "—", weight: "73.0",run: "—",                judge: "—",    note: "Notion 記録より" },
     { date: "6/12", hrv: "—",  rhr: "—",  sleep: "—", weight: "—",   run: "—",                judge: "—",    note: "総合分析・コーチング体制構築" },
     { date: "6/14", hrv: "—",  rhr: "—",  sleep: "—", weight: "—",   run: "5.92km 朝練",      judge: "EASY", note: "Z3-5 が 51% で強度オーバー" },
+    { date: "6/15", hrv: "—",  rhr: "—",  sleep: "—", weight: "74.2",run: "ストレッチのみ",   judge: "休養", note: "月曜=完全休養で計画通り。体重は想定内（減量未開始）" },
   ],
 
   /* --------------------------------------------- 直近の走り（フォーム評価）*/
@@ -120,7 +119,7 @@ window.MARATHON_DATA = {
     series: {
       hrv:      { label: "HRV (ms)",   color: "var(--accent)",  data: [61.5, 58.6, 56.6, 52.3, 55.8, 48.6, 45.2], target: 55, targetLabel: "目標 55ms" },
       rhr:      { label: "安静時HR (bpm)", color: "#ff453a",    data: [52.1, 52.7, 51.2, 57.4, 58.3, 64.0, 62.8], target: 55, targetLabel: "目標 55bpm", invert: true },
-      distance: { label: "月間距離 (km)",  color: "#0a84ff",    data: [145.3, 173.3, 125.2, 44.1, 11.0, 19.0, 13.1] },
+      distance: { label: "月間距離 (km)",  color: "#0a84ff",    data: [145.3, 173.3, 125.2, 44.1, 11.0, 19.0, 19.0] },
     },
     note: "練習をほぼやめた 4〜6 月も HRV は下がり続けた → 原因は練習疲労ではなく睡眠・生活ストレス。",
   },
