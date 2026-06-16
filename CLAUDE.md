@@ -23,7 +23,9 @@
 - 優先事項・判定が変われば `week.priorities` / `week.judgment` を書き換え。
 - ゲート/フェーズ進捗があれば `gates[].progress` / `phases[].active` / `meta.phase` を更新。
 - **必ず `meta.lastUpdated` を更新**。
-- 変更は designated ブランチ（`claude/running-workout-analysis-zzgxcj`）に commit & push。
+- **公開方針（ユーザー確定 2026-06-16）**: 変更は **`main` ブランチに直接 commit & push** する。
+  GitHub Pages（https://241yusei.github.io/marathon-320/ ）は `main` から配信されるため、
+  pushすると数十秒〜数分でライブサイトに自動反映される。PRは作らない（明示依頼があれば別）。
 
 ### 3. 練習メニューの再考（7日分）— 必要に応じて
 データを見てメニュー調整が要ると判断したら、**今後7日分**のスケジュールを再設計する。
