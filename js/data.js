@@ -72,8 +72,8 @@ window.MARATHON_DATA = {
     priorities: [
       { done: false, text: "23:30 スマホをリビングへ → 0:00 就寝", tag: "睡眠改革（最優先）", emphasis: true,
         detail: "全指標の root cause。7h×14日連続で減量開始ゲートが開く。HRV・RHR・走力すべての前提。" },
-      { done: false, text: "今週は強度ゼロ・イージーのみで 16〜18km（水5・木5・土7km）", tag: "今週の練習", emphasis: false,
-        detail: "前週14kmからの微増に留める（ACWR 0.8〜1.3）。旧33km目標は過大だったため是正。HR150上限・隔日配置。" },
+      { done: false, text: "今週はイージーのみ 約16km（火4.54実施→水休→木5→土6）＋ケイデンス+5%意識", tag: "今週の練習", emphasis: false,
+        detail: "火に走ったため水を休養にして隔日配置を死守（ACWR 0.8〜1.3）。前週14kmからの微増。HR150上限。ケイデンス136→145目安で関節負荷を下げる。" },
       { done: false, text: "体重74.2kgは想定内 — 減量はまだ始めない", tag: "減量はまだ", emphasis: false,
         detail: "睡眠5h台での減量は筋肉損失+60%。睡眠ゲート通過まで食事制限しないのが正解。" },
       { done: false, text: "毎朝 HRV・睡眠・RHR・体重を測って報告", tag: "計測・ゲート判定", emphasis: false,
@@ -84,11 +84,11 @@ window.MARATHON_DATA = {
   /* ------------------------------------------- 週間スケジュール（Phase 0）*/
   schedule: [
     { day: "月", menu: "ストレッチのみ（済）",  dist: "—",    zone: "リカバリー",            rest: true  },
-    { day: "火", menu: "完全休養",            dist: "—",      zone: "—",                    rest: true  },
-    { day: "水", menu: "イージーラン",        dist: "5km",    zone: "Z1〜Z2 (HR<145)",      rest: false },
-    { day: "木", menu: "イージーラン",        dist: "5km",    zone: "Z2 (HR<150)",          rest: false },
-    { day: "金", menu: "筋力トレ（軽め）",    dist: "—",      zone: "30〜45分",             rest: false },
-    { day: "土", menu: "イージーロング",      dist: "7km",    zone: "Z1〜Z2（抑えめ）",      rest: false },
+    { day: "火", menu: "イージーラン（済）",   dist: "4.54km", zone: "Z1〜Z2 90.3%（◎）",    rest: false },
+    { day: "水", menu: "完全休養",            dist: "—",      zone: "— (火に走った分・隔日)", rest: true  },
+    { day: "木", menu: "イージーラン",        dist: "5km",    zone: "Z2 (HR<150)・ケイデンス+5%", rest: false },
+    { day: "金", menu: "筋力トレ（軽め）",    dist: "—",      zone: "下肢中心 30〜40分",     rest: false },
+    { day: "土", menu: "イージーロング",      dist: "6km",    zone: "Z1〜Z2（抑えめ）",      rest: false },
     { day: "日", menu: "完全休養",            dist: "—",      zone: "—",                    rest: true  },
   ],
 
