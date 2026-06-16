@@ -15,7 +15,7 @@ window.MARATHON_DATA = {
 
   /* ---------------------------------------------------------------- meta */
   meta: {
-    lastUpdated: "2026-06-15",
+    lastUpdated: "2026-06-16",
     athlete: { name: "藤井勇成", birth: "1995-10-07", age: 30, sex: "男性", height: 174 },
     phase: "Phase 0: 再点火",
     phaseWeek: "Week 3 / 4",
@@ -50,7 +50,7 @@ window.MARATHON_DATA = {
     { icon: "hrv",      value: "45.2", unit: "ms",  label: "HRV 月平均",    state: "bad",  note: "目標 55ms 以上・6ヶ月最低",       anchor: "trend"  },
     { icon: "heart",    value: "62.8", unit: "bpm", label: "安静時心拍",    state: "bad",  note: "目標 55bpm 以下・+10bpm",         anchor: "trend"  },
     { icon: "sleep",    value: "5.5",  unit: "h",   label: "睡眠",          state: "bad",  note: "目標 7〜9h・全問題の根本原因",    anchor: "week"   },
-    { icon: "run",      value: "約19", unit: "km",  label: "週間走行距離",  state: "warn", note: "当面 16〜18km/週（ACWR管理）",     anchor: "plan"   },
+    { icon: "run",      value: "約24", unit: "km",  label: "週間走行距離",  state: "warn", note: "当面 16〜18km/週（ACWR管理）",     anchor: "plan"   },
     { icon: "trophy",   value: "3:30", unit: "",    label: "マラソン PB",   state: "none", note: "2025-10 実績（3:26〜3:30）/ 目標 3:19:59", anchor: "cta" },
   ],
 
@@ -61,7 +61,7 @@ window.MARATHON_DATA = {
     { name: "HRV（直近）",      value: "39.7 ms",   date: "6/9",      target: "—",                        state: "bad"  },
     { name: "安静時HR（月平均）",value: "62.8 bpm",  date: "2026-06",  target: "55 bpm 以下",              state: "bad"  },
     { name: "睡眠（計測月平均）",value: "5.5 h",     date: "2026-04",  target: "7〜9 h",                   state: "bad"  },
-    { name: "週間走行距離",     value: "約19 km",   date: "6月累計",  target: "当面 16〜18 km/週",         state: "warn" },
+    { name: "週間走行距離",     value: "約24 km",   date: "6月累計",  target: "当面 16〜18 km/週",         state: "warn" },
     { name: "マラソン PB",      value: "3:26〜3:30",date: "2025-10",  target: "3:19:59",                  state: "none" },
   ],
 
@@ -101,6 +101,7 @@ window.MARATHON_DATA = {
     { date: "6/12", hrv: "—",  rhr: "—",  sleep: "—", weight: "—",   run: "—",                judge: "—",    note: "総合分析・コーチング体制構築" },
     { date: "6/14", hrv: "—",  rhr: "—",  sleep: "—", weight: "—",   run: "5.92km 朝練",      judge: "EASY", note: "Z3-5 が 51% で強度オーバー" },
     { date: "6/15", hrv: "—",  rhr: "—",  sleep: "—", weight: "74.2",run: "ストレッチのみ",   judge: "休養", note: "月曜=完全休養で計画通り。体重は想定内（減量未開始）" },
+    { date: "6/16", hrv: "—",  rhr: "—",  sleep: "—", weight: "—",   run: "4.54km @7'54\"/km", judge: "EASY", note: "Z1〜Z2が90.3%（Z2単独67%）・強度管理◎。6/14の51%→9.7%へ大改善。HR139/164。Lap3,5でペース乱れ" },
   ],
 
   /* --------------------------------------------- 直近の走り（フォーム評価）*/
@@ -110,6 +111,7 @@ window.MARATHON_DATA = {
     { date: "6/4",  dist: "5.0km", pace: "7'40\"/km", note: "Z1〜Z2",                     good: true  },
     { date: "6/8",  dist: "2.0km", pace: "8'04\"/km", note: "Z1",                         good: true  },
     { date: "6/9",  dist: "6.1km", pace: "9'02\"/km", note: "Z1（体が正直・これで正解）", good: true  },
+    { date: "6/16", dist: "4.54km", pace: "7'54\"/km", note: "Z2中心90.3%・強度管理◎（ケイデンス136は要改善）", good: true  },
   ],
 
   /* ------------------------------------------------ 6ヶ月トレンド（チャート）*/
@@ -119,7 +121,7 @@ window.MARATHON_DATA = {
     series: {
       hrv:      { label: "HRV (ms)",   color: "var(--accent)",  data: [61.5, 58.6, 56.6, 52.3, 55.8, 48.6, 45.2], target: 55, targetLabel: "目標 55ms" },
       rhr:      { label: "安静時HR (bpm)", color: "#ff453a",    data: [52.1, 52.7, 51.2, 57.4, 58.3, 64.0, 62.8], target: 55, targetLabel: "目標 55bpm", invert: true },
-      distance: { label: "月間距離 (km)",  color: "#0a84ff",    data: [145.3, 173.3, 125.2, 44.1, 11.0, 19.0, 19.0] },
+      distance: { label: "月間距離 (km)",  color: "#0a84ff",    data: [145.3, 173.3, 125.2, 44.1, 11.0, 19.0, 23.5] },
     },
     note: "練習をほぼやめた 4〜6 月も HRV は下がり続けた → 原因は練習疲労ではなく睡眠・生活ストレス。",
   },
