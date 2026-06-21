@@ -15,7 +15,7 @@ window.MARATHON_DATA = {
 
   /* ---------------------------------------------------------------- meta */
   meta: {
-    lastUpdated: "2026-06-20",
+    lastUpdated: "2026-06-21",
     athlete: { name: "藤井勇成", birth: "1995-10-07", age: 30, sex: "男性", height: 174 },
     phase: "Phase 0: 再点火",
     phaseWeek: "Week 4 / 4",
@@ -46,7 +46,7 @@ window.MARATHON_DATA = {
   /* ------------------------------------------------------ ハイライト（6枚）*/
   /* Apple の Highlights カルーセル相当。最重要指標を 6 枚で見せる。       */
   highlights: [
-    { icon: "weight",   value: "74.6", unit: "kg",  label: "体重",          state: "warn", note: "目標 65kg（減量は未開始＝正解）", anchor: "status" },
+    { icon: "weight",   value: "74.0", unit: "kg",  label: "体重",          state: "warn", note: "目標 65kg（減量は未開始＝正解）", anchor: "status" },
     { icon: "hrv",      value: "35",   unit: "ms",  label: "HRV 直近",      state: "bad",  note: "6/20・ゲート割れ(<45)→即休養",   anchor: "trend"  },
     { icon: "heart",    value: "59",   unit: "bpm", label: "安静時心拍",    state: "warn", note: "6/14-20週平均・改善傾向（目標55）", anchor: "trend"  },
     { icon: "sleep",    value: "5.5",  unit: "h",   label: "睡眠",          state: "bad",  note: "目標 7〜9h・全問題の根本原因",    anchor: "week"   },
@@ -56,8 +56,9 @@ window.MARATHON_DATA = {
 
   /* ------------------------------------------------ 現状サマリー（指標表）*/
   metrics: [
-    { name: "体重",            value: "74.6 kg",   date: "6/20",     target: "65.0 kg（減量は未開始）",  state: "warn" },
-    { name: "HRV（直近）",      value: "35 ms",     date: "6/20",     target: "55 ms 以上",               state: "bad"  },
+    { name: "体重",            value: "74.0 kg",   date: "6/21",     target: "65.0 kg（減量は未開始）",  state: "warn" },
+    { name: "VO2max（Watch）",  value: "45.6",      date: "6/21",     target: "52〜55（3:20相当）",       state: "warn" },
+    { name: "HRV（直近）",      value: "35 ms",     date: "6/20",     target: "55 ms 以上（要再測）",     state: "bad"  },
     { name: "HRV（月平均）",    value: "45.2 ms",   date: "2026-06",  target: "55 ms 以上",               state: "bad"  },
     { name: "安静時HR（週平均）",value: "59 bpm",    date: "6/14-20週",target: "55 bpm 以下",              state: "warn" },
     { name: "睡眠（計測月平均）",value: "5.5 h",     date: "2026-04",  target: "7〜9 h",                   state: "bad"  },
@@ -84,7 +85,7 @@ window.MARATHON_DATA = {
   /* ------------------------------------------- 週間スケジュール（Phase 0）*/
   schedule: [
     { day: "土", menu: "完全休養（HRV35→即休養）", dist: "—",  zone: "—",                    rest: true  },
-    { day: "日", menu: "完全休養 or 軽いウォーク",  dist: "—",  zone: "散歩程度",              rest: true  },
+    { day: "日", menu: "歩き＋ジョグ（済）",   dist: "6.33km", zone: "Z1〜Z2 73%（回復◎）",   rest: false },
     { day: "月", menu: "ストレッチ・休養",     dist: "—",      zone: "リカバリー",            rest: true  },
     { day: "火", menu: "HRV回復確認→超イージー", dist: "20〜30分", zone: "Z1 (HR<140)・戻ってなければ休養", rest: false },
     { day: "水", menu: "完全休養",            dist: "—",      zone: "—",                    rest: true  },
@@ -104,6 +105,7 @@ window.MARATHON_DATA = {
     { date: "6/16", hrv: "—",  rhr: "—",  sleep: "—", weight: "—",   run: "4.54km @7'54\"/km", judge: "EASY", note: "Z1〜Z2が90.3%（Z2単独67%）・強度管理◎。6/14の51%→9.7%へ大改善。HR139/164。Lap3,5でペース乱れ" },
     { date: "6/19", hrv: "—",  rhr: "—",  sleep: "—", weight: "74.6",run: "5.0km @8'24\"/km",  judge: "⚠強度過", note: "夜ラン。前半4ラップが6'15〜6'52でテンポ化→Z3-5=33%・イージー逸脱。後半は歩き。疲労時の強度オーバー注意。ケイデンス(走行ラップ143-152)" },
     { date: "6/20", hrv: "35", rhr: "59", sleep: "—", weight: "74.6",run: "—",                judge: "REST", note: "HRV35ms=ゲート割れ(<45)・6ヶ月最低圏→即休養。RHR週平均59は改善。回復最優先に切替" },
+    { date: "6/21", hrv: "—",  rhr: "—",  sleep: "—", weight: "74.0",run: "6.33km 歩+ジョグ",  judge: "EASY", note: "Z1-2が73%の理想的リカバリー。VO2max45.6初計測・HR回復39bpm改善。体重74.0。HRV未測のため強度はまだ上げない" },
   ],
 
   /* --------------------------------------------- 直近の走り（フォーム評価）*/
@@ -115,6 +117,7 @@ window.MARATHON_DATA = {
     { date: "6/9",  dist: "6.1km", pace: "9'02\"/km", note: "Z1（体が正直・これで正解）", good: true  },
     { date: "6/16", dist: "4.54km", pace: "7'54\"/km", note: "Z2中心90.3%・強度管理◎（ケイデンス136は要改善）", good: true  },
     { date: "6/19", dist: "5.0km", pace: "8'24\"/km", note: "前半テンポ化でZ3-5=33%・イージー逸脱。HRV低下中の強度過多", good: false },
+    { date: "6/21", dist: "6.33km", pace: "9'18\"/km", note: "歩き＋ジョグの理想的リカバリー。Z1-2 73%・HR136。賢明な判断", good: true  },
   ],
 
   /* ------------------------------------------------ 6ヶ月トレンド（チャート）*/
@@ -124,7 +127,7 @@ window.MARATHON_DATA = {
     series: {
       hrv:      { label: "HRV (ms)",   color: "var(--accent)",  data: [61.5, 58.6, 56.6, 52.3, 55.8, 48.6, 45.2], target: 55, targetLabel: "目標 55ms" },
       rhr:      { label: "安静時HR (bpm)", color: "#ff453a",    data: [52.1, 52.7, 51.2, 57.4, 58.3, 64.0, 62.8], target: 55, targetLabel: "目標 55bpm", invert: true },
-      distance: { label: "月間距離 (km)",  color: "#0a84ff",    data: [145.3, 173.3, 125.2, 44.1, 11.0, 19.0, 28.5] },
+      distance: { label: "月間距離 (km)",  color: "#0a84ff",    data: [145.3, 173.3, 125.2, 44.1, 11.0, 19.0, 34.8] },
     },
     note: "練習をほぼやめた 4〜6 月も HRV は下がり続けた → 原因は練習疲労ではなく睡眠・生活ストレス。",
   },
@@ -151,7 +154,7 @@ window.MARATHON_DATA = {
   /* -------------------------------------------- 3:20切りに必要なもの */
   requirements: [
     { metric: "BMI",            now: "24.4",        need: "≈21.5（65kg）",       basis: "回帰モデル（BMI係数 +2.498分/単位）" },
-    { metric: "VO2max",         now: "推定40〜43",   need: "52〜55 ml/kg/min",    basis: "予測モデル＋3:20相当値" },
+    { metric: "VO2max",         now: "45.6（6/21計測）", need: "52〜55 ml/kg/min",    basis: "Watch実測。3:20相当まで+7〜9" },
     { metric: "週間走行距離",    now: "5〜13 km",     need: "50〜70 km",           basis: "週間距離＋ペースで分散の77%を説明" },
     { metric: "durability",     now: "未測定",       need: "90分走後のLT速度維持", basis: "durability研究（2025）" },
   ],
