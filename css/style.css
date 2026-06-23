@@ -434,6 +434,7 @@ table.tbl th, table.tbl td { padding: 14px 16px; text-align: left; border-bottom
 table.tbl th { font-weight: 600; color: var(--ink-2); font-size: 12px; letter-spacing: 0.02em; background: var(--bg-soft); }
 .dark table.tbl th { background: rgba(255,255,255,0.04); color: var(--on-dark-2); }
 table.tbl tr:last-child td { border-bottom: none; }
+.tbl-foot { margin: 8px 2px 0; font-size: 11px; color: var(--ink-2); text-align: right; }
 table.tbl .num { font-variant-numeric: tabular-nums; font-weight: 600; }
 
 .tag {

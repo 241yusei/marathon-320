@@ -198,10 +198,12 @@
     return `<span class="tag ${map[key] || "tag-mute"}">${esc(code)}</span>`;
   };
   function renderRuns() {
+    const DAILY_SHOW = 8;
+    const dailyRecent = D.dailyLog.slice(-DAILY_SHOW).reverse();
     $("dailyTbl").innerHTML = `
       <table class="tbl">
         <thead><tr><th>日付</th><th>HRV</th><th>RHR</th><th>睡眠</th><th>体重</th><th>練習</th><th>判定</th><th>メモ</th></tr></thead>
-        <tbody>${D.dailyLog.map((d) => `
+        <tbody>${dailyRecent.map((d) => `
           <tr>
             <td class="num">${esc(d.date)}</td>
             <td class="num">${esc(d.hrv)}</td>
@@ -212,12 +214,14 @@
             <td>${judgeTag(d.judge)}</td>
             <td style="white-space:normal;color:var(--ink-2)">${esc(d.note)}</td>
           </tr>`).join("")}</tbody>
-      </table>`;
+      </table>
+      ${D.dailyLog.length > DAILY_SHOW ? `<p class="tbl-foot">直近 ${DAILY_SHOW} 日を新しい順で表示（全 ${D.dailyLog.length} 件）</p>` : ""}`;
 
+    const runsRecent = D.recentRuns.slice(-6).reverse();
     $("runsTbl").innerHTML = `
       <table class="tbl">
         <thead><tr><th>日付</th><th>距離</th><th>ペース</th><th>評価</th><th></th></tr></thead>
-        <tbody>${D.recentRuns.map((r) => `
+        <tbody>${runsRecent.map((r) => `
           <tr>
             <td class="num">${esc(r.date)}</td>
             <td class="num">${esc(r.dist)}</td>
