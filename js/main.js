@@ -310,7 +310,7 @@
     const s = D.trends.series[chartKey];
     const color = resolveColor(s.color);
     const axis = resolveColor("var(--on-dark-2)");
-    const months = D.trends.months;
+    const days = D.trends.days;
     const W = 920, H = 380, pad = { t: 30, r: 24, b: 44, l: 48 };
     const iw = W - pad.l - pad.r, ih = H - pad.t - pad.b;
     const data = s.data;
@@ -318,7 +318,7 @@
     if (s.target != null) { min = Math.min(min, s.target); max = Math.max(max, s.target); }
     const span = (max - min) || 1;
     min -= span * 0.12; max += span * 0.12;
-    const x = (i) => pad.l + (iw * i) / (months.length - 1);
+    const x = (i) => pad.l + (iw * i) / (days.length - 1);
     const y = (v) => pad.t + ih - (ih * (v - min)) / (max - min);
 
     // gridlines (4)
@@ -331,8 +331,8 @@
     }
     // x labels
     let xlab = "";
-    months.forEach((m, i) => {
-      xlab += `<text x="${x(i).toFixed(1)}" y="${H - 14}" fill="${axis}" font-size="12" text-anchor="middle">${esc(m)}</text>`;
+    days.forEach((d, i) => {
+      xlab += `<text x="${x(i).toFixed(1)}" y="${H - 14}" fill="${axis}" font-size="12" text-anchor="middle">${esc(d)}</text>`;
     });
     // target line
     let tgt = "";
@@ -352,7 +352,7 @@
 
     const gid = "g_" + chartKey;
     $("chartBox").innerHTML = `
-      <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(s.label)} 6ヶ月推移">
+      <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(s.label)} 7日間推移">
         <defs>
           <linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stop-color="${color}" stop-opacity="0.32"/>
