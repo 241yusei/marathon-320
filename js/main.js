@@ -188,6 +188,32 @@
             <td>${esc(s.zone)}</td>
           </tr>`).join("")}</tbody>
       </table>`;
+
+    renderNextWorkout();
+  }
+
+  /* ====================================================== NEXT WORKOUT (evidence) */
+  function renderNextWorkout() {
+    const el = $("nextWorkout");
+    if (!el || !D.nextWorkout) return;
+    const n = D.nextWorkout;
+    el.innerHTML = `
+      <p class="sec-sub" style="margin-bottom:22px">
+        <strong style="color:var(--accent-soft)">${esc(n.day)}</strong> — ${esc(n.menu)}
+      </p>
+      <div class="nw-points">${n.points.map((p) => `
+        <div class="todo">
+          <div class="todo__check">${ICONS.check}</div>
+          <div class="todo__body">
+            <div class="todo__text" style="font-size:16px">${esc(p.title)}</div>
+            <div class="todo__detail">${esc(p.detail)}</div>
+          </div>
+        </div>`).join("")}</div>
+      <div class="nw-evidence">${n.evidence.map((e) => `
+        <div class="evidence-item">
+          <span class="evidence-tag">${esc(e.tag)}</span>
+          <span class="evidence-text">${esc(e.text)}</span>
+        </div>`).join("")}</div>`;
   }
 
   /* ====================================================== RUNS */
@@ -230,6 +256,29 @@
             <td>${r.good ? '<span class="good-mark">✓ 適切</span>' : '<span class="bad-mark">! 速い</span>'}</td>
           </tr>`).join("")}</tbody>
       </table>`;
+
+    renderRunReview();
+  }
+
+  /* ====================================================== RUN REVIEW (良かった点/改善点) */
+  function renderRunReview() {
+    const el = $("runReview");
+    if (!el || !D.runReview) return;
+    const r = D.runReview;
+    el.innerHTML = `
+      <p class="sec-sub" style="margin-bottom:20px">
+        <strong style="color:var(--ink)">${esc(r.date)}</strong> — ${esc(r.summary)}
+      </p>
+      <div class="rr-grid">
+        <div class="rr-col rr-col--good">
+          <h4 class="rr-col__title good-mark">◎ 良かった点</h4>
+          <ul class="rr-list">${r.good.map((t) => `<li>${esc(t)}</li>`).join("")}</ul>
+        </div>
+        <div class="rr-col rr-col--bad">
+          <h4 class="rr-col__title bad-mark">△ 改善点</h4>
+          <ul class="rr-list">${r.bad.map((t) => `<li>${esc(t)}</li>`).join("")}</ul>
+        </div>
+      </div>`;
   }
 
   /* ====================================================== CHART (SVG) */
