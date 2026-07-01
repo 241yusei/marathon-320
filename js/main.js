@@ -226,21 +226,26 @@
   function renderRuns() {
     const DAILY_SHOW = 8;
     const dailyRecent = D.dailyLog.slice(-DAILY_SHOW).reverse();
+    const has = (v) => v && v !== "—";
     $("dailyTbl").innerHTML = `
-      <table class="tbl">
-        <thead><tr><th>日付</th><th>HRV</th><th>RHR</th><th>睡眠</th><th>体重</th><th>練習</th><th>判定</th><th>メモ</th></tr></thead>
-        <tbody>${dailyRecent.map((d) => `
-          <tr>
-            <td class="num">${esc(d.date)}</td>
-            <td class="num">${esc(d.hrv)}</td>
-            <td class="num">${esc(d.rhr)}</td>
-            <td class="num">${esc(d.sleep)}</td>
-            <td class="num">${esc(d.weight)}</td>
-            <td>${esc(d.run)}</td>
-            <td>${judgeTag(d.judge)}</td>
-            <td style="white-space:normal;color:var(--ink-2)">${esc(d.note)}</td>
-          </tr>`).join("")}</tbody>
-      </table>
+      <div class="dlog-list">${dailyRecent.map((d) => {
+        const meta = [
+          has(d.hrv)    ? `HRV ${esc(d.hrv)}ms`     : null,
+          has(d.rhr)    ? `RHR ${esc(d.rhr)}`       : null,
+          has(d.sleep)  ? `睡眠 ${esc(d.sleep)}h`   : null,
+          has(d.weight) ? `体重 ${esc(d.weight)}kg` : null,
+        ].filter(Boolean).join(" ・ ");
+        return `
+        <div class="dlog">
+          <div class="dlog__top">
+            <span class="dlog__date">${esc(d.date)}</span>
+            ${judgeTag(d.judge)}
+            ${has(d.run) ? `<span class="dlog__run">${esc(d.run)}</span>` : ""}
+          </div>
+          ${meta ? `<div class="dlog__meta">${meta}</div>` : ""}
+          <div class="dlog__note" title="${esc(d.note)}">${esc(d.note)}</div>
+        </div>`;
+      }).join("")}</div>
       ${D.dailyLog.length > DAILY_SHOW ? `<p class="tbl-foot">直近 ${DAILY_SHOW} 日を新しい順で表示（全 ${D.dailyLog.length} 件）</p>` : ""}`;
 
     const runsRecent = D.recentRuns.slice(-6).reverse();
