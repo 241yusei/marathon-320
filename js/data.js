@@ -20,6 +20,7 @@ window.MARATHON_DATA = {
     phase: "Phase 0: 再点火",
     phaseWeek: "Week 4 / 4",
     phaseGoal: "当面は週16〜18km・イージーのみ・心拍150以下・隔日配置（ACWR管理）",
+    targetWeight: 65.0,
   },
 
   /* --------------------------------------------------------------- hero */
@@ -29,8 +30,9 @@ window.MARATHON_DATA = {
     sub: "PB 3:26〜3:30 から、3:19:59 へ。体重 74 → 65kg へ。\nデータに従って、壊さずに積み上げる半年間。",
     bigStats: [
       { value: "3:19:59", label: "目標タイム", note: "現 PB 3:26〜3:30" },
-      { value: "−9", unit: "kg", label: "目標までの減量", note: "開始 74.0 → 65.0kg" },
+      { value: "−9", unit: "kg", label: "目標までの減量", note: "開始 74.0 → 65.0kg", dynamic: "weightGap" },
       { value: "4:44", unit: "/km", label: "目標レースペース", note: "サブ3:20 換算" },
+      { value: "0", unit: "", label: "睡眠 7h 連続", note: "目標 14日（減量ゲート）", dynamic: "sleepStreak" },
     ],
   },
 
@@ -46,23 +48,23 @@ window.MARATHON_DATA = {
   /* ------------------------------------------------------ ハイライト（6枚）*/
   /* Apple の Highlights カルーセル相当。最重要指標を 6 枚で見せる。       */
   highlights: [
-    { icon: "weight",   value: "76.0", unit: "kg",  label: "体重",          state: "warn", note: "6/30・変動範囲内（減量は未開始）", anchor: "status" },
-    { icon: "hrv",      value: "47",   unit: "ms",  label: "HRV 直近",      state: "warn", note: "6/30改善（6/28の25から回復傾向）", anchor: "trend"  },
+    { icon: "weight",   value: "76.0", unit: "kg",  label: "体重",          state: "none", note: "6/30・変動範囲内（減量は未開始）", anchor: "status" },
+    { icon: "hrv",      value: "47",   unit: "ms",  label: "HRV 直近",      state: "good", note: "6/30・6/28の25msから+22改善",      anchor: "trend"  },
     { icon: "heart",    value: "56",   unit: "bpm", label: "安静時心拍",    state: "warn", note: "6/25・やや上昇（目標55以下）",     anchor: "trend"  },
     { icon: "sleep",    value: "6.5",  unit: "h",   label: "睡眠",          state: "warn", note: "6/30も6.5h・7h未達が続く",         anchor: "week"   },
-    { icon: "run",      value: "約55", unit: "km",  label: "月間走行距離",  state: "warn", note: "6月累計・回復基調で漸増中",        anchor: "plan"   },
-    { icon: "trophy",   value: "3:30", unit: "",    label: "マラソン PB",   state: "none", note: "2025-10 実績（3:26〜3:30）/ 目標 3:19:59", anchor: "cta" },
+    { icon: "run",      value: "約55", unit: "km",  label: "月間走行距離",  state: "none", note: "6月累計・参考値（回復基調で漸増中）", anchor: "plan"   },
+    { icon: "trophy",   value: "3:26〜3:30", unit: "", label: "マラソン PB", state: "none", note: "2025-10 実績 / 目標 3:19:59",     anchor: "cta" },
   ],
 
   /* ------------------------------------------------ 現状サマリー（指標表）*/
   metrics: [
-    { name: "体重",            value: "76.0 kg",   date: "6/30",     target: "65.0 kg（減量は未開始）",  state: "warn" },
+    { name: "体重",            value: "76.0 kg",   date: "6/30",     target: "65.0 kg（減量は未開始）",  state: "none", delta: "▲ +1.8kg", deltaState: "none" },
     { name: "VO2max（Watch）",  value: "45.6",      date: "6/21",     target: "52〜55（3:20相当）",       state: "warn" },
-    { name: "HRV（直近）",      value: "47 ms",     date: "6/30",     target: "55 ms 以上",               state: "warn" },
+    { name: "HRV（直近）",      value: "47 ms",     date: "6/30",     target: "55 ms 以上",               state: "good", delta: "▲ +22ms", deltaState: "good" },
     { name: "HRV（7日平均）",   value: "約54 ms",   date: "6/29",     target: "50 ms 以上（減量ゲート）", state: "warn" },
-    { name: "安静時HR（直近）",  value: "56 bpm",    date: "6/25",     target: "55 bpm 以下",              state: "warn" },
-    { name: "睡眠（直近）",      value: "6.5 h",     date: "6/30",     target: "7〜9 h（最重要）",          state: "warn" },
-    { name: "月間走行距離",     value: "約55 km",   date: "6月累計",  target: "Phase0は週16〜18km",        state: "warn" },
+    { name: "安静時HR（直近）",  value: "56 bpm",    date: "6/25",     target: "55 bpm 以下",              state: "warn", delta: "▲ +4bpm", deltaState: "bad" },
+    { name: "睡眠（直近）",      value: "6.5 h",     date: "6/30",     target: "7〜9 h（最重要）",          state: "warn", delta: "▼ −0.5h", deltaState: "bad" },
+    { name: "月間走行距離",     value: "約55 km",   date: "6月累計",  target: "参考値（月間累計）",        state: "none" },
     { name: "マラソン PB",      value: "3:26〜3:30",date: "2025-10",  target: "3:19:59",                  state: "none" },
   ],
 
@@ -144,7 +146,7 @@ window.MARATHON_DATA = {
     { date: "6/21", hrv: "—",  rhr: "—",  sleep: "—", weight: "74.0",run: "6.33km 歩+ジョグ",  judge: "EASY", note: "Z1-2が73%の理想的リカバリー。VO2max45.6初計測・HR回復39bpm改善。体重74.0。HRV未測のため強度はまだ上げない" },
     { date: "6/22", hrv: "75", rhr: "52", sleep: "7.0",weight: "—",   run: "休養（コンディション計測）", judge: "復帰OK", note: "HRV日次約75・7日平均約55でゲート通過。RHR52は目標達成。睡眠約7h（就寝0:23）で改善。イージー再開判定。明日火から4-5km再開" },
     { date: "6/23", hrv: "—",  rhr: "—",  sleep: "6.5",weight: "74.2",run: "6.05km @8'21\"/km", judge: "EASY", note: "イージー再開◎。Z1-2が84.4%・平均HR133で強度管理良好。HR回復も103→100と優秀。max174は一瞬の surge。睡眠6.5hは7h未達で連続リセット。ケイデンス(走行ラップ135-143)" },
-    { date: "6/25", hrv: "36", rhr: "56", sleep: "—", weight: "—",   run: "—",                judge: "⚠注意", note: "HRV日次約36と再低下（6/23は約88）。変動大。強度は上げず様子見。RHR56" },
+    { date: "6/25", hrv: "36", rhr: "56", sleep: "—", weight: "—",   run: "—",                judge: "⚠注意", note: "HRV日次約36と再低下（6/22は75）。変動大。強度は上げず様子見。RHR56" },
     { date: "6/28", hrv: "25", rhr: "—",  sleep: "—", weight: "—",   run: "6.01km @7'50\"/km", judge: "EASY", note: "夜21:39ラン。序盤4ラップ6'17〜6'38とやや速い。HRV約25と低い日。HR/ゾーン未取得(CSVのみ)。夜ラン＋低HRVに注意" },
     { date: "6/29", hrv: "—",  rhr: "—",  sleep: "—", weight: "—",   run: "4.0km @8'58\"/km",  judge: "EASY", note: "夕方18:09ラン。歩き混じりで抑えめ。HR/ゾーン未取得。HRV変動大のため当面イージー厳守＋朝ランへ移行推奨" },
     { date: "6/30", hrv: "47", rhr: "—",  sleep: "6.5",weight: "76.0",run: "4.46km @7'54\"/km", judge: "EASY", note: "夜19:15ラン（予定は休養日だった）。Z1-2 78.8%・HR回復119→110良好。HRV47msに改善(前回25から)。Lap3,5でZ3域(146/152bpm)。体重76.0は変動範囲。3回連続の夜ラン・隔日崩れに注意" },
@@ -173,10 +175,14 @@ window.MARATHON_DATA = {
     series: {
       hrv:      { label: "HRV (ms)",     color: "var(--accent)", data: [35, 75, 75, 36, 25, 25, 47], target: 55, targetLabel: "目標 55ms" },
       rhr:      { label: "安静時HR (bpm)", color: "#ff453a",      data: [59, 52, 52, 56, 56, 56, 56], target: 55, targetLabel: "目標 55bpm", invert: true },
+      sleep:    { label: "睡眠 (h)",      color: "var(--good)",  data: [7.0, 7.0, 6.5, 6.5, 6.5, 6.5, 6.5], target: 7, targetLabel: "目標 7h" },
       distance: { label: "日別距離 (km)",  color: "#0a84ff",      data: [6.33, 0, 6.05, 0, 6.01, 4.0, 4.46] },
     },
-    note: "HRVが6/22の75msから6/28の25msへ急落 → 6/30に47msまで回復基調。未計測日は直近の実測値を横ばい表示。",
+    note: "HRVが6/22の75msから6/28の25msへ急落 → 6/30に47msまで回復基調。睡眠は7hの目標に一度も届いていない。未計測日は直近の実測値を横ばい表示。",
   },
+
+  /* ------------------------------------------------- 直近ランのゾーン遵守率 */
+  zoneCompliance: { pct: 78.8, target: 80, date: "6/30" },
 
   /* ---------------------------------------------------- ゲート（未開放）*/
   gates: [

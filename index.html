@@ -54,6 +54,20 @@
   <div class="scroll-hint">SCROLL</div>
 </header>
 
+<!-- ===================================================== STORY (なぜこの計画か) -->
+<section class="pad-sm" id="story">
+  <div class="wrap">
+    <div class="sec-head reveal" style="margin-bottom:0">
+      <p class="eyebrow">なぜ、この計画なのか</p>
+      <h2 class="sec-title">2度、燃え尽きた。<br>3度目は、仕組みで防ぐ。</h2>
+      <p class="sec-sub">「急増 → 燃え尽き → 停止」を2回繰り返した。同じ轍を踏まないために、条件を満たすまで先へ進めない仕組みを敷いた。ここまでの歩み：</p>
+    </div>
+    <div class="reveal d1" style="margin-top:40px">
+      <div class="tl" id="historyTl"></div>
+    </div>
+  </div>
+</section>
+
 <!-- ===================================================== TODAY (command center) -->
 <section class="pad-sm" id="today">
   <div class="wrap">
@@ -80,7 +94,7 @@
       <div id="weekTodos"></div>
     </div>
     <div class="reveal d2" style="margin-top:54px">
-      <h3 style="font-size:clamp(20px,3vw,26px);font-weight:700;margin-bottom:20px;letter-spacing:-0.01em">週間スケジュール（Phase 0）</h3>
+      <h3 id="scheduleHeading" style="font-size:clamp(20px,3vw,26px);font-weight:700;margin-bottom:20px;letter-spacing:-0.01em">週間スケジュール</h3>
       <div class="tbl-wrap" id="scheduleTbl"></div>
     </div>
     <div class="reveal d3" style="margin-top:54px">
@@ -96,10 +110,10 @@
     <div class="sec-head reveal">
       <p class="eyebrow">ランニング結果・フィードバック</p>
       <h2 class="sec-title">走った分だけ、<br>記録に残る。</h2>
-      <p class="sec-sub">朝の数値や練習をコーチ（Claude）に報告するたびに、<code>data.js</code> 経由でここに 1 行ずつ蓄積される。判定（GO / EASY / REST）とフィードバックは COACHING.md の日次判定ロジックに基づく。</p>
+      <p class="sec-sub">朝の数値と練習を報告するたび、コーチの所見とともにここに刻まれる。判定（GO / EASY / REST）は睡眠・HRVの状態に基づく。</p>
     </div>
     <div class="reveal d1">
-      <h3 style="font-size:18px;font-weight:700;margin-bottom:16px">日次ログ（2026年6月）</h3>
+      <h3 style="font-size:18px;font-weight:700;margin-bottom:16px">日次ログ</h3>
       <div class="tbl-wrap" id="dailyTbl"></div>
     </div>
     <div class="reveal d2" style="margin-top:48px">
@@ -134,7 +148,7 @@
     <div class="sec-head reveal">
       <p class="eyebrow">ゲート / 開放条件</p>
       <h2 class="sec-title">焦りを、<br>仕組みで止める。</h2>
-      <p class="sec-sub">「急増 → 燃え尽き → 停止」を 2 回繰り返した。3 回目を防ぐため、条件を満たすまで次へ進めない関門を置く。</p>
+      <p class="sec-sub">条件を満たすまで、次のフェーズには進めない。意志力に頼らず、仕組みで焦りを止める。</p>
     </div>
     <div class="grid-2 reveal d1" id="gatesGrid"></div>
   </div>
@@ -154,10 +168,15 @@
   <div class="wrap">
     <div class="sec-head reveal">
       <p class="eyebrow">現在地 / Status</p>
-      <h2 class="sec-title">最新状態の、<br>単一情報源。</h2>
+      <h2 class="sec-title">いま、<br>どこにいるか。</h2>
       <p class="sec-sub" id="statusSub"></p>
     </div>
-    <div class="stat-grid reveal d1" id="statGrid"></div>
+    <details class="disclosure">
+      <summary class="disclosure__summary"><span>全<span id="statCount"></span>指標の詳細を見る</span><span class="disclosure__chev"></span></summary>
+      <div class="disclosure__body">
+        <div class="stat-grid" id="statGrid"></div>
+      </div>
+    </details>
   </div>
 </section>
 
@@ -200,21 +219,26 @@
       <p class="eyebrow">栄養・心拍ゾーン</p>
       <h2 class="sec-title">速く走るための、<br>燃料と強度設計。</h2>
     </div>
-    <div class="grid-2" style="gap:40px;align-items:start">
-      <div class="reveal d1">
-        <h3 style="font-size:18px;font-weight:700;margin-bottom:6px">マクロ栄養素（74kg時 / 1日）</h3>
-        <p style="font-size:13px;color:var(--ink-2);margin-bottom:4px" id="calNote"></p>
-        <div class="macro-bar" id="macroBar"></div>
-        <div id="macroList"></div>
-        <h3 style="font-size:18px;font-weight:700;margin:30px 0 14px">サプリメント</h3>
-        <div class="chips" id="suppChips"></div>
+    <details class="disclosure">
+      <summary class="disclosure__summary"><span>栄養プランと心拍ゾーンの詳細を見る</span><span class="disclosure__chev"></span></summary>
+      <div class="disclosure__body">
+        <div class="grid-2" style="gap:40px;align-items:start">
+          <div>
+            <h3 style="font-size:18px;font-weight:700;margin-bottom:6px">マクロ栄養素（74kg時 / 1日）</h3>
+            <p style="font-size:13px;color:var(--ink-2);margin-bottom:4px" id="calNote"></p>
+            <div class="macro-bar" id="macroBar"></div>
+            <div id="macroList"></div>
+            <h3 style="font-size:18px;font-weight:700;margin:30px 0 14px">サプリメント</h3>
+            <div class="chips" id="suppChips"></div>
+          </div>
+          <div>
+            <h3 style="font-size:18px;font-weight:700;margin-bottom:14px">心拍ゾーン（最大HR 187bpm / Tanaka式）</h3>
+            <div id="zoneList"></div>
+            <p style="font-size:12.5px;color:var(--ink-2);margin-top:16px;line-height:1.5">80/20 ルール：Z1+Z2（150bpm 以下）を週の 80% 以上に保つ（Seiler, 2010）。</p>
+          </div>
+        </div>
       </div>
-      <div class="reveal d2">
-        <h3 style="font-size:18px;font-weight:700;margin-bottom:14px">心拍ゾーン（最大HR 187bpm / Tanaka式）</h3>
-        <div id="zoneList"></div>
-        <p style="font-size:12.5px;color:var(--ink-2);margin-top:16px;line-height:1.5">80/20 ルール：Z1+Z2（150bpm 以下）を週の 80% 以上に保つ（Seiler, 2010）。</p>
-      </div>
-    </div>
+    </details>
   </div>
 </section>
 
@@ -224,9 +248,14 @@
     <div class="sec-head reveal">
       <p class="eyebrow">最新研究の反映</p>
       <h2 class="sec-title">計画は、<br>エビデンスで更新する。</h2>
-      <p class="sec-sub">毎月 1 日に最新研究を調査し、計画との矛盾をチェック。出典は research/ に保存。</p>
+      <p class="sec-sub">毎月 1 日に最新研究を調査し、計画との矛盾をチェックする。</p>
     </div>
-    <div class="r-grid reveal d1" id="researchGrid"></div>
+    <details class="disclosure">
+      <summary class="disclosure__summary"><span>反映済みの研究一覧を見る</span><span class="disclosure__chev"></span></summary>
+      <div class="disclosure__body">
+        <div class="r-grid" id="researchGrid"></div>
+      </div>
+    </details>
   </div>
 </section>
 
@@ -246,10 +275,6 @@
         <h3><span class="dot-bad" style="width:12px;height:12px;border-radius:50%;display:inline-block"></span>弱み・リスク</h3>
         <ul id="rskList"></ul>
       </div>
-    </div>
-    <div class="reveal d2" style="margin-top:60px">
-      <h3 style="font-size:18px;font-weight:700;margin-bottom:8px">履歴ハイライト</h3>
-      <div class="tl" id="historyTl" style="margin-top:18px"></div>
     </div>
   </div>
 </section>
@@ -271,7 +296,12 @@
       <p class="eyebrow">技術仕様 / Tech Specs</p>
       <h2 class="sec-title">すべての数字を、<br>一枚に。</h2>
     </div>
-    <div class="spec-grid reveal d1" id="specGrid"></div>
+    <details class="disclosure">
+      <summary class="disclosure__summary"><span>全仕様データを見る</span><span class="disclosure__chev"></span></summary>
+      <div class="disclosure__body">
+        <div class="spec-grid" id="specGrid"></div>
+      </div>
+    </details>
   </div>
 </section>
 
@@ -279,13 +309,13 @@
 <footer class="footer">
   <div class="wrap wrap--wide">
     <div class="footer__src">
-      <b style="color:var(--ink)">マラソン3:20切りプロジェクト</b><br>
-      データソース: <code>marathon_plan/</code>（DASHBOARD.md・COACHING.md・logs/・research/）<br>
-      分析: Claude（コーチング体制 2026-06-12 構築）／Apple Health 18ヶ月分＋研究35本超
+      <b style="color:var(--ink)">マラソン3:19:59プロジェクト</b><br>
+      藤井勇成の挑戦記録。データは毎朝、報告するたびに更新される。<br>
+      分析: Claude（コーチング開始 2026-06-12）／Apple Health 18ヶ月分＋研究35本超
     </div>
     <div style="text-align:right">
-      このページは <code>site/js/data.js</code> を単一ソースに自動描画。<br>
-      データ更新 → 再読み込みで全体に反映。
+      このページは1つのデータから自動で描画されている。<br>
+      新しい記録が届くたび、数分でここに反映される。
     </div>
   </div>
 </footer>

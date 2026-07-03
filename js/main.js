@@ -30,6 +30,29 @@
   };
 
   /* ====================================================== HERO */
+  function animateCountUp(elm, targetStr, duration) {
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      elm.textContent = targetStr;
+      return;
+    }
+    const norm = String(targetStr).replace(/−/g, "-");
+    const m = norm.match(/-?\d+(\.\d+)?/);
+    if (!m) { elm.textContent = targetStr; return; }
+    const end = parseFloat(m[0]);
+    const decimals = (m[0].split(".")[1] || "").length;
+    const prefix = norm.slice(0, m.index).replace(/-/g, "−");
+    const suffix = norm.slice(m.index + m[0].length);
+    const t0 = performance.now();
+    const dur = duration || 1100;
+    function frame(now) {
+      const p = Math.min(1, (now - t0) / dur);
+      const eased = 1 - Math.pow(1 - p, 3);
+      elm.textContent = prefix + (end * eased).toFixed(decimals) + suffix;
+      if (p < 1) requestAnimationFrame(frame);
+      else elm.textContent = targetStr;
+    }
+    requestAnimationFrame(frame);
+  }
   function renderHero() {
     $("navUpdated").textContent = D.meta.lastUpdated;
     $("heroEyebrow").textContent = D.hero.eyebrow;
@@ -38,12 +61,33 @@
       .join("<br>");
     $("heroSub").textContent = D.hero.sub;
 
-    $("heroStats").innerHTML = D.hero.bigStats.map((s) => `
-      <div class="hstat">
-        <div class="hstat__v">${esc(s.value)}${s.unit ? `<span class="u">${esc(s.unit)}</span>` : ""}</div>
-        <div class="hstat__l">${esc(s.label)}</div>
-        <div class="hstat__n">${esc(s.note)}</div>
-      </div>`).join("");
+    $("heroStats").innerHTML = D.hero.bigStats.map((s) => {
+      let value = s.value, unit = s.unit, note = s.note;
+      if (s.dynamic === "weightGap") {
+        const wm = D.metrics.find((m) => m.name === "体重");
+        const cur = wm ? parseFloat(wm.value) : null;
+        const tgt = D.meta.targetWeight;
+        if (cur != null && tgt != null) {
+          value = `−${(Math.round((cur - tgt) * 10) / 10).toFixed(1)}`;
+          note = `現在 ${cur} → ${tgt}kg`;
+        }
+      } else if (s.dynamic === "sleepStreak") {
+        const gate = D.gates.find((g) => g.unit === "日" && g.total != null);
+        if (gate) {
+          value = String(gate.progress);
+          unit = `/${gate.total}日`;
+          note = "7h以上の連続日数（減量ゲート）";
+        }
+      }
+      const simple = /^[−-]?\d+(\.\d+)?$/.test(value);
+      return `
+        <div class="hstat ${s.dynamic === "sleepStreak" ? "hstat--today" : ""}">
+          <div class="hstat__v"><span class="hstat__num" data-final="${esc(value)}" data-animate="${simple ? 1 : 0}">${simple ? "0" : esc(value)}</span>${unit ? `<span class="u">${esc(unit)}</span>` : ""}</div>
+          <div class="hstat__l">${esc(s.label)}</div>
+          <div class="hstat__n">${esc(note)}</div>
+        </div>`;
+    }).join("");
+    $("heroStats").querySelectorAll('.hstat__num[data-animate="1"]').forEach((elm) => animateCountUp(elm, elm.dataset.final));
 
     // countdown to race (browser-side date math)
     const race = D.race;
@@ -64,17 +108,29 @@
     const rd = new Date(D.race.date + "T00:00:00");
     return Math.max(0, Math.ceil((rd - today) / 86400000));
   }
+  // データが「今日」より古い場合、指針ラベルを日付付きに変え、カードを減光する。
+  function updateFreshness() {
+    const updated = new Date(D.meta.lastUpdated + "T00:00:00");
+    const todayMid = new Date();
+    todayMid.setHours(0, 0, 0, 0);
+    const stale = todayMid > updated;
+    const label = stale
+      ? `${updated.getMonth() + 1}/${updated.getDate()} 時点の指針`
+      : "本日の指針";
+    return { stale, label };
+  }
   function renderToday() {
     const j = D.week.judgment;
     const codeCls = { GO: "go", EASY: "easy", REST: "rest" }[j.code] || "easy";
+    const fresh = updateFreshness();
 
     // 判定カード ＋ カウントダウン
     $("todayVerdict").innerHTML = `
-      <div class="verdict verdict--${codeCls}">
+      <div class="verdict verdict--${codeCls} ${fresh.stale ? "verdict--stale" : ""}">
         <div class="verdict__main">
           <div class="verdict__code">${esc(j.code)}</div>
           <div class="verdict__meta">
-            <div class="verdict__label">本日の指針</div>
+            <div class="verdict__label">${esc(fresh.label)}</div>
             <div class="verdict__reason">${esc(j.reason)}</div>
           </div>
         </div>
@@ -87,9 +143,9 @@
 
     // 主要バイタル（4枚）
     const vit = [
-      { m: "HRV（月平均）", label: "HRV" },
-      { m: "睡眠（計測月平均）", label: "睡眠" },
-      { m: "安静時HR（月平均）", label: "安静時HR" },
+      { m: "HRV（直近）", label: "HRV" },
+      { m: "睡眠（直近）", label: "睡眠" },
+      { m: "安静時HR（直近）", label: "安静時HR" },
       { m: "体重", label: "体重" },
     ];
     $("todayVitals").innerHTML = `<div class="vitals">${vit.map((v) => {
@@ -97,7 +153,7 @@
       return `
         <div class="vital">
           <div class="vital__top"><span class="vital__name">${esc(v.label)}</span><span class="vital__dot ${dotClass(m.state)}"></span></div>
-          <div class="vital__v">${esc(m.value || "—")}</div>
+          <div class="vital__v">${esc(m.value || "—")}${m.delta ? `<span class="delta delta--${m.deltaState || "none"}">${esc(m.delta)}</span>` : ""}</div>
           <div class="vital__t">目標 ${esc(m.target || "—")}</div>
         </div>`;
     }).join("")}</div>`;
@@ -149,22 +205,26 @@
   function renderStatus() {
     $("statusSub").textContent =
       `${D.meta.phase}（${D.meta.phaseWeek}） — ${D.meta.phaseGoal}`;
+    const countEl = $("statCount");
+    if (countEl) countEl.textContent = D.metrics.length;
     $("statGrid").innerHTML = D.metrics.map((m) => `
       <div class="stat-cell">
         <div class="stat-cell__bar" style="background:${stateColor(m.state)}"></div>
         <div class="stat-cell__name">${esc(m.name)}</div>
-        <div class="stat-cell__v">${esc(m.value)}</div>
+        <div class="stat-cell__v">${esc(m.value)}${m.delta ? `<span class="delta delta--${m.deltaState || "none"}">${esc(m.delta)}</span>` : ""}</div>
         <div class="stat-cell__meta">目標 ${esc(m.target)}　·　${esc(m.date)}</div>
       </div>`).join("");
   }
 
   /* ====================================================== WEEK */
+  const WEEKDAY_JA = ["日", "月", "火", "水", "木", "金", "土"];
   function renderWeek() {
     $("weekTitle").textContent = D.week.label;
     const j = D.week.judgment;
+    const fresh = updateFreshness();
     $("weekJudge").innerHTML = `
       <div class="judge-pill">
-        <span class="code">本日の指針 · ${esc(j.code)}</span>
+        <span class="code">${esc(fresh.label)} · ${esc(j.code)}</span>
         <span class="reason">${esc(j.reason)}</span>
       </div>`;
     $("weekTodos").innerHTML = D.week.priorities.map((p) => `
@@ -177,17 +237,19 @@
         </div>
       </div>`).join("");
 
+    const scheduleHeading = $("scheduleHeading");
+    if (scheduleHeading) scheduleHeading.textContent = `週間スケジュール（${D.meta.phase.split(":")[0].trim()}）`;
+    const todayWD = WEEKDAY_JA[new Date().getDay()];
+    const hasVal = (v) => v && v !== "—";
     $("scheduleTbl").innerHTML = `
-      <table class="tbl">
-        <thead><tr><th>曜日</th><th>メニュー</th><th>距離</th><th>強度</th></tr></thead>
-        <tbody>${D.schedule.map((s) => `
-          <tr style="${s.rest ? "opacity:.5" : ""}">
-            <td class="num">${esc(s.day)}</td>
-            <td>${esc(s.menu)}</td>
-            <td class="num">${esc(s.dist)}</td>
-            <td>${esc(s.zone)}</td>
-          </tr>`).join("")}</tbody>
-      </table>`;
+      <div class="sched-list">${D.schedule.map((s) => `
+        <div class="sched-row ${s.rest ? "is-rest" : ""} ${s.day === todayWD ? "is-today" : ""}">
+          <div class="sched-day">${esc(s.day)}${s.day === todayWD ? '<span class="sched-today-tag">今日</span>' : ""}</div>
+          <div class="sched-body">
+            <div class="sched-menu">${esc(s.menu)}</div>
+            <div class="sched-meta">${hasVal(s.dist) ? `${esc(s.dist)} ・ ` : ""}${esc(s.zone)}</div>
+          </div>
+        </div>`).join("")}</div>`;
 
     renderNextWorkout();
   }
@@ -270,11 +332,19 @@
     const el = $("runReview");
     if (!el || !D.runReview) return;
     const r = D.runReview;
+    const z = D.zoneCompliance;
     el.innerHTML = `
-      <p class="sec-sub" style="margin-bottom:20px">
-        <strong style="color:var(--ink)">${esc(r.date)}</strong> — ${esc(r.summary)}
-      </p>
-      <div class="rr-grid">
+      <div class="rr-head">
+        <p class="sec-sub" style="margin:0">
+          <strong style="color:var(--ink)">${esc(r.date)}</strong> — ${esc(r.summary)}
+        </p>
+        ${z ? `
+        <div class="zring-wrap">
+          <div class="zring" style="--pct:${z.pct}"><div class="zring__ring"><div class="zring__val">${z.pct}<span>%</span></div></div></div>
+          <div class="zring__label">Z1-2比率 ・ 目標${z.target}%</div>
+        </div>` : ""}
+      </div>
+      <div class="rr-grid" style="margin-top:20px">
         <div class="rr-col rr-col--good">
           <h4 class="rr-col__title good-mark">◎ 良かった点</h4>
           <ul class="rr-list">${r.good.map((t) => `<li>${esc(t)}</li>`).join("")}</ul>
@@ -350,9 +420,18 @@
     const pts = data.map((v, i) => [x(i), y(v)]);
     const linePath = pts.map((p, i) => `${i ? "L" : "M"}${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(" ");
     const areaPath = `${linePath} L${pad.l + iw} ${pad.t + ih} L${pad.l} ${pad.t + ih} Z`;
-    const dots = pts.map((p, i) =>
-      `<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="4.5" fill="#000" stroke="${color}" stroke-width="2.5"/>
-       <text x="${p[0].toFixed(1)}" y="${(p[1] - 14).toFixed(1)}" fill="#fff" font-size="12.5" font-weight="700" text-anchor="middle">${data[i]}</text>`
+    // 常時ラベルは最初/最後/最小/最大のみ。他はタップ/ホバーで表示（数字の圧迫感を減らす）。
+    // 横ばい補完で同値が並ぶ場合は「最初にその値になった点」だけを鍵点にする。
+    const minVal = Math.min(...data), maxVal = Math.max(...data);
+    const keyIdx = new Set([0, data.length - 1, data.indexOf(minVal), data.indexOf(maxVal)]);
+    const unitSuffix = chartKey === "distance" ? "km" : (chartKey === "rhr" ? "bpm" : (chartKey === "sleep" ? "h" : "ms"));
+    const points = pts.map((p, i) => `
+      <g class="pt ${keyIdx.has(i) ? "is-key" : ""}">
+        <title>${esc(days[i])} ・ ${data[i]}${unitSuffix}</title>
+        <circle class="pt-hit" cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="14" fill="transparent"/>
+        <circle class="pt-dot" cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="4.5" fill="#000" stroke="${color}" stroke-width="2.5"/>
+        <text class="pt-label" x="${p[0].toFixed(1)}" y="${(p[1] - 14).toFixed(1)}" fill="#fff" font-size="12.5" font-weight="700" text-anchor="middle">${data[i]}</text>
+      </g>`
     ).join("");
 
     const gid = "g_" + chartKey;
@@ -367,8 +446,11 @@
         ${grid}${tgt}
         <path d="${areaPath}" fill="url(#${gid})"/>
         <path d="${linePath}" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="chart-line"/>
-        ${dots}${xlab}
+        ${points}${xlab}
       </svg>`;
+    $("chartBox").querySelectorAll(".pt").forEach((g) => {
+      g.addEventListener("click", () => g.classList.toggle("show-label"));
+    });
     // animate stroke
     const line = $("chartBox").querySelector(".chart-line");
     if (line) {
@@ -386,20 +468,34 @@
   /* ====================================================== GATES */
   function renderGates() {
     $("gatesGrid").innerHTML = D.gates.map((g) => {
+      const achieved = g.progress != null && g.total != null && g.progress >= g.total;
       let prog = "";
       if (g.progress != null && g.total != null) {
-        const pct = Math.min(100, (g.progress / g.total) * 100);
-        prog = `
-          <div class="gate__progress">
-            <div class="progress-track"><div class="progress-fill" data-w="${pct}" style="width:0"></div></div>
-            <div class="progress-label">進捗 ${g.progress} / ${g.total} ${esc(g.unit)}</div>
-          </div>`;
+        if (g.unit === "日" && g.total <= 21) {
+          // 14日など短い日数ゲートはドットグリッドで「埋めていく」実感を出す
+          const dots = Array.from({ length: g.total }, (_, i) =>
+            `<span class="gate-dot ${i < g.progress ? "is-on" : ""}" style="--i:${i}"></span>`
+          ).join("");
+          prog = `
+            <div class="gate__progress">
+              <div class="dot-grid">${dots}</div>
+              <div class="progress-label">${g.progress} / ${g.total} ${esc(g.unit)}</div>
+            </div>`;
+        } else {
+          const pct = Math.min(100, (g.progress / g.total) * 100);
+          prog = `
+            <div class="gate__progress">
+              <div class="progress-track"><div class="progress-fill" data-w="${pct}" style="width:0"></div></div>
+              <div class="progress-label">進捗 ${g.progress} / ${g.total} ${esc(g.unit)}</div>
+            </div>`;
+        }
       }
       return `
-        <div class="gate">
+        <div class="gate ${achieved ? "gate--unlocked" : ""}">
           <div class="gate__head">
-            <span class="gate__lock">${ICONS.lock}</span>
+            <span class="gate__lock">${achieved ? ICONS.check : ICONS.lock}</span>
             <span class="gate__name">${esc(g.name)}</span>
+            ${achieved ? '<span class="gate__unlocked-tag">開放！</span>' : ""}
           </div>
           ${g.conditions.map((c) => `<div class="gate__cond">${esc(c)}</div>`).join("")}
           ${prog}
@@ -510,9 +606,9 @@
       { title: "生理 / Physiology", rows: [
         ["最大心拍数", "187 bpm（Tanaka式）"],
         ["VO2max", `${req("VO2max").now || "—"} → 必要 ${req("VO2max").need || "—"}`],
-        ["HRV（月平均）", `${metric("HRV（月平均）").value || "—"} → 目標 ${metric("HRV（月平均）").target || "—"}`],
-        ["安静時HR", `${metric("安静時HR（月平均）").value || "—"} → 目標 ${metric("安静時HR（月平均）").target || "—"}`],
-        ["睡眠", `${metric("睡眠（計測月平均）").value || "—"} → 目標 ${metric("睡眠（計測月平均）").target || "—"}`],
+        ["HRV（直近）", `${metric("HRV（直近）").value || "—"} → 目標 ${metric("HRV（直近）").target || "—"}`],
+        ["安静時HR", `${metric("安静時HR（直近）").value || "—"} → 目標 ${metric("安静時HR（直近）").target || "—"}`],
+        ["睡眠", `${metric("睡眠（直近）").value || "—"} → 目標 ${metric("睡眠（直近）").target || "—"}`],
       ]},
       { title: "運用 / Operation", rows: [
         ["現在フェーズ", `${D.meta.phase}（${D.meta.phaseWeek}）`],

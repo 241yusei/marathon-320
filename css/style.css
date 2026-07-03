@@ -213,6 +213,8 @@ section { position: relative; }
 .hstat__v .u { font-size: 0.4em; font-weight: 600; margin-left: 2px; -webkit-text-fill-color: var(--accent-soft); }
 .hstat__l { font-size: 14px; color: var(--on-dark); margin-top: 10px; font-weight: 600; }
 .hstat__n { font-size: 12px; color: var(--on-dark-2); margin-top: 2px; }
+.hstat--today .hstat__l { color: var(--accent-soft); }
+.hstat--today .hstat__v { background: linear-gradient(180deg, #fff 0%, #9dffb0 130%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
 
 /* countdown chip */
 .countdown {
@@ -287,7 +289,7 @@ section { position: relative; }
 .hl-card__v .u { font-size: 0.42em; font-weight: 600; color: var(--on-dark-2); margin-left: 3px; }
 .hl-card__l { font-size: 15px; font-weight: 600; margin-top: 4px; }
 .hl-card__n { font-size: 12.5px; color: var(--on-dark-2); margin-top: 10px; line-height: 1.4; }
-.hl-card__more { font-size: 12px; font-weight: 600; color: var(--accent-soft); margin-top: 14px; opacity: 0; transform: translateY(4px); transition: opacity .3s, transform .3s; }
+.hl-card__more { font-size: 12px; font-weight: 600; color: var(--accent-soft); margin-top: 14px; opacity: .62; transform: translateY(4px); transition: opacity .3s, transform .3s; }
 .hl-card__more span { display: inline-block; transition: transform .3s; }
 .hl-card:hover .hl-card__more { opacity: 1; transform: none; }
 .hl-card:hover .hl-card__more span { transform: translateY(2px); }
@@ -316,7 +318,7 @@ section { position: relative; }
   position: relative;
 }
 .stat-cell__name { font-size: 14px; color: var(--ink-2); font-weight: 500; }
-.stat-cell__v { font-size: clamp(28px, 4vw, 38px); font-weight: 700; letter-spacing: -0.02em; margin-top: 8px; line-height: 1.1; }
+.stat-cell__v { font-size: clamp(28px, 4vw, 38px); font-weight: 700; letter-spacing: -0.02em; margin-top: 8px; line-height: 1.1; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
 .stat-cell__meta { font-size: 12.5px; color: var(--ink-2); margin-top: 10px; }
 .stat-cell__bar { position: absolute; left: 0; top: 22px; bottom: 22px; width: 4px; border-radius: 0 4px 4px 0; }
 
@@ -329,8 +331,14 @@ section { position: relative; }
   border-radius: var(--radius-lg); padding: 28px 32px;
   border-left: 6px solid var(--warn);
 }
-.verdict--go { border-left-color: var(--good); }
+.verdict--go { border-left-color: var(--good); animation: verdictGlow 3s ease-in-out infinite; }
 .verdict--rest { border-left-color: var(--bad); }
+.verdict--stale { opacity: 0.72; }
+@keyframes verdictGlow {
+  0%, 100% { box-shadow: 0 0 0 1px rgba(47,208,88,.22), 0 0 28px -8px rgba(47,208,88,.4); }
+  50%      { box-shadow: 0 0 0 1px rgba(47,208,88,.34), 0 0 46px -6px rgba(47,208,88,.6); }
+}
+@media (prefers-reduced-motion: reduce) { .verdict--go { animation: none; } }
 .verdict__main { display: flex; align-items: center; gap: 22px; }
 .verdict__code {
   font-size: clamp(34px, 7vw, 56px); font-weight: 800; letter-spacing: -0.02em;
@@ -351,8 +359,14 @@ section { position: relative; }
 .vital__top { display: flex; justify-content: space-between; align-items: center; }
 .vital__name { font-size: 13px; color: var(--ink-2); font-weight: 600; }
 .vital__dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
-.vital__v { font-size: clamp(21px, 3vw, 27px); font-weight: 700; letter-spacing: -0.02em; margin-top: 12px; line-height: 1.1; }
+.vital__v { font-size: clamp(21px, 3vw, 27px); font-weight: 700; letter-spacing: -0.02em; margin-top: 12px; line-height: 1.1; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
 .vital__t { font-size: 11.5px; color: var(--ink-2); margin-top: 7px; }
+
+/* delta badge (前回比の変化) */
+.delta { display: inline-block; font-size: 11.5px; font-weight: 700; padding: 2px 8px; border-radius: 980px; letter-spacing: 0; white-space: nowrap; vertical-align: middle; }
+.delta--good { background: rgba(47,208,88,0.14); color: var(--good); }
+.delta--bad  { background: rgba(255,69,58,0.12); color: var(--bad); }
+.delta--none { background: rgba(110,110,115,0.14); color: var(--ink-2); }
 
 .blockers { margin-top: 18px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
 .blockers__label { font-size: 12px; font-weight: 700; color: var(--ink-2); }
@@ -387,6 +401,29 @@ section { position: relative; }
 
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
 .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+
+/* ----------------------------------------------------------- disclosure (毎日見る層／たまに見る層の分離) */
+.disclosure { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.dark .disclosure { border-color: rgba(255,255,255,0.12); }
+.disclosure__summary {
+  cursor: pointer; list-style: none;
+  padding: 20px 24px;
+  font-size: 15px; font-weight: 600; color: var(--ink-2);
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  -webkit-tap-highlight-color: transparent;
+}
+.dark .disclosure__summary { color: var(--on-dark-2); }
+.disclosure__summary::-webkit-details-marker { display: none; }
+.disclosure__summary span#statCount { font-weight: 700; color: var(--accent); padding: 0 2px; }
+.disclosure__chev { flex: none; width: 20px; height: 20px; position: relative; }
+.disclosure__chev::before, .disclosure__chev::after {
+  content: ""; position: absolute; top: 50%; left: 50%; background: currentColor;
+  transform: translate(-50%, -50%);
+}
+.disclosure__chev::before { width: 12px; height: 2px; }
+.disclosure__chev::after { width: 2px; height: 12px; transition: transform .25s var(--ease); }
+.disclosure[open] .disclosure__chev::after { transform: translate(-50%, -50%) rotate(90deg); opacity: 0; }
+.disclosure__body { padding: 0 24px 26px; }
 
 /* ----------------------------------------------------------- week priorities */
 .judge-pill {
@@ -441,6 +478,19 @@ section { position: relative; }
 .evidence-text { font-size: 13px; color: var(--on-dark-2); line-height: 1.6; }
 
 /* ----------------------------------------------------------- run review */
+.rr-head { display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+.zring-wrap { display: flex; flex-direction: column; align-items: center; gap: 8px; flex: none; }
+.zring { position: relative; width: 88px; height: 88px; }
+.zring__ring {
+  width: 100%; height: 100%; border-radius: 50%;
+  background: conic-gradient(var(--accent) calc(var(--pct) * 1%), var(--bg-soft) 0);
+  display: flex; align-items: center; justify-content: center; position: relative;
+}
+.zring__ring::before { content: ""; position: absolute; inset: 9px; background: var(--bg); border-radius: 50%; }
+.dark .zring__ring::before { background: var(--bg-dark-soft); }
+.zring__val { position: relative; z-index: 1; font-size: 16px; font-weight: 800; }
+.zring__val span { font-size: 10px; font-weight: 600; color: var(--ink-2); }
+.zring__label { font-size: 11px; color: var(--ink-2); text-align: center; line-height: 1.4; white-space: nowrap; }
 .rr-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
 .rr-col__title { font-size: 14px; font-weight: 700; margin-bottom: 12px; }
 .rr-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
@@ -465,6 +515,30 @@ section { position: relative; }
 .dlog__note {
   font-size: 12.5px; color: var(--ink-2); margin-top: 4px; line-height: 1.5;
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+
+/* ----------------------------------------------------------- schedule (day cards, WEEK section=dark) */
+.sched-list { display: flex; flex-direction: column; }
+.sched-row {
+  display: flex; gap: 18px; align-items: flex-start;
+  padding: 16px 4px; border-top: 1px solid rgba(255,255,255,0.1);
+  transition: background .25s, border-radius .25s;
+}
+.sched-row:first-child { border-top: none; }
+.sched-row.is-rest { opacity: .5; }
+.sched-day { flex: none; width: 42px; font-weight: 700; font-size: 14px; padding-top: 1px; display: flex; flex-direction: column; align-items: flex-start; gap: 5px; }
+.sched-body { flex: 1; }
+.sched-menu { font-size: 15px; font-weight: 600; }
+.sched-meta { font-size: 12.5px; color: var(--on-dark-2); margin-top: 3px; }
+.sched-row.is-today {
+  opacity: 1; margin: 0 -16px; padding: 16px;
+  border-radius: 14px; border-top-color: transparent;
+  background: rgba(255,106,43,0.1);
+}
+.sched-row.is-today .sched-day { color: var(--accent-soft); }
+.sched-today-tag {
+  display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: .05em; white-space: nowrap;
+  color: #000; background: var(--accent-soft); padding: 2px 7px; border-radius: 980px;
 }
 
 /* ----------------------------------------------------------- tables */
@@ -507,6 +581,13 @@ table.tbl .num { font-variant-numeric: tabular-nums; font-weight: 600; }
 .chart-note { font-size: 13.5px; color: var(--ink-2); margin-top: 20px; line-height: 1.5; }
 .dark .chart-note { color: var(--on-dark-2); }
 
+/* 点ラベル: 最初/最後/最小/最大のみ常時表示、他はタップ/ホバーで表示 */
+.pt-label { opacity: 0; transition: opacity .2s; pointer-events: none; }
+.pt.is-key .pt-label, .pt.show-label .pt-label, .pt:hover .pt-label { opacity: 1; }
+.pt-hit { cursor: pointer; }
+.pt-dot { transition: r .15s; }
+.pt:hover .pt-dot { r: 6; }
+
 /* ----------------------------------------------------------- gates */
 .gate {
   border: 1px solid var(--line);
@@ -514,6 +595,7 @@ table.tbl .num { font-variant-numeric: tabular-nums; font-weight: 600; }
   padding: 28px 30px;
   background: var(--bg);
   position: relative;
+  transition: border-color .3s, box-shadow .3s;
 }
 .gate__head { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
 .gate__lock { color: var(--ink-2); }
@@ -525,6 +607,28 @@ table.tbl .num { font-variant-numeric: tabular-nums; font-weight: 600; }
 .progress-track { height: 8px; border-radius: 8px; background: var(--bg-soft); overflow: hidden; }
 .progress-fill { height: 100%; border-radius: 8px; background: linear-gradient(90deg, var(--accent), var(--accent-soft)); transition: width 1.2s var(--ease); }
 .progress-label { font-size: 12px; color: var(--ink-2); margin-top: 8px; font-weight: 600; }
+
+/* 睡眠ゲートなど短い日数は「埋めていく」ドットグリッドで可視化 */
+.dot-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+.gate-dot {
+  width: 17px; height: 17px; border-radius: 6px;
+  background: var(--bg-soft); border: 1px solid var(--line);
+  transform: scale(0); opacity: 0;
+  transition: transform .4s var(--ease), opacity .4s var(--ease), background .3s;
+  transition-delay: calc(var(--i, 0) * 35ms);
+}
+.dark .gate-dot { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.14); }
+.reveal.in .gate-dot { transform: scale(1); opacity: 1; }
+.gate-dot.is-on { background: linear-gradient(135deg, var(--accent), var(--accent-soft)); border-color: transparent; }
+@media (prefers-reduced-motion: reduce) { .gate-dot { transition-delay: 0s; } }
+
+/* ゲート開放時の祝福表現 */
+.gate--unlocked { border-color: rgba(47,208,88,.4); box-shadow: 0 0 0 1px rgba(47,208,88,.15), 0 14px 40px -20px rgba(47,208,88,.55); }
+.gate--unlocked .gate__lock { color: var(--good); }
+.gate__unlocked-tag {
+  margin-left: auto; font-size: 11px; font-weight: 800; color: #000;
+  background: var(--good); padding: 3px 10px; border-radius: 980px; white-space: nowrap;
+}
 
 /* ----------------------------------------------------------- phases timeline */
 .phase-rail { display: flex; flex-direction: column; gap: 0; }
