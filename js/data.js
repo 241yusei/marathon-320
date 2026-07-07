@@ -15,7 +15,7 @@ window.MARATHON_DATA = {
 
   /* ---------------------------------------------------------------- meta */
   meta: {
-    lastUpdated: "2026-07-07",
+    lastUpdated: "2026-07-08",
     athlete: { name: "藤井勇成", birth: "1995-10-07", age: 30, sex: "男性", height: 174 },
     phase: "Phase 0: 再点火",
     phaseWeek: "Week 4 / 4（延長中）",
@@ -49,7 +49,7 @@ window.MARATHON_DATA = {
   /* Apple の Highlights カルーセル相当。最重要指標を 6 枚で見せる。       */
   highlights: [
     { icon: "weight",   value: "76.0", unit: "kg",  label: "体重",          state: "none", note: "6/30時点・変動範囲内（減量は未開始）", anchor: "status" },
-    { icon: "hrv",      value: "14",   unit: "ms",  label: "HRV 直近",      state: "warn", note: "7/7・本人は体調正常と回答。朝の再測定待ち", anchor: "trend"  },
+    { icon: "hrv",      value: "39",   unit: "ms",  label: "HRV 直近",      state: "warn", note: "7/8朝・14msから回復（運動時の一時値と確認）", anchor: "trend"  },
     { icon: "heart",    value: "57",   unit: "bpm", label: "安静時心拍",    state: "warn", note: "7/5・目標55以下にやや未達",         anchor: "trend"  },
     { icon: "sleep",    value: "6.5",  unit: "h",   label: "睡眠",          state: "warn", note: "6/30以降1週間未報告（要再開）",     anchor: "week"   },
     { icon: "run",      value: "約6",  unit: "km",  label: "月間走行距離",  state: "none", note: "7月累計・参考値（週前半は完全休養）", anchor: "plan"   },
@@ -60,8 +60,8 @@ window.MARATHON_DATA = {
   metrics: [
     { name: "体重",            value: "76.0 kg",   date: "6/30",     target: "65.0 kg（減量は未開始）",  state: "none", delta: "▲ +1.8kg", deltaState: "none" },
     { name: "VO2max（Watch）",  value: "45.6",      date: "6/21",     target: "52〜55（3:20相当）",       state: "warn" },
-    { name: "HRV（直近）",      value: "14 ms",     date: "7/7",      target: "55 ms 以上（要朝の再測定）", state: "warn", delta: "▼ −33ms", deltaState: "bad" },
-    { name: "HRV（7日平均）",   value: "約42 ms",   date: "7/7",      target: "50 ms 以上（減量ゲート）", state: "warn", delta: "▼ −12ms", deltaState: "bad" },
+    { name: "HRV（直近）",      value: "39 ms",     date: "7/8",      target: "55 ms 以上（朝の安静時）", state: "warn", delta: "▲ +25ms", deltaState: "good" },
+    { name: "HRV（7日平均）",   value: "約44 ms",   date: "7/8",      target: "50 ms 以上（減量ゲート）", state: "warn", delta: "▲ +2ms", deltaState: "none" },
     { name: "安静時HR（直近）",  value: "57 bpm",    date: "7/5",      target: "55 bpm 以下",              state: "warn", delta: "▲ +1bpm", deltaState: "none" },
     { name: "睡眠（直近）",      value: "6.5 h",     date: "6/30",     target: "7〜9 h（最重要）",          state: "warn" },
     { name: "月間走行距離",     value: "約6 km",    date: "7月累計",  target: "参考値（月間累計）",        state: "none" },
@@ -70,24 +70,24 @@ window.MARATHON_DATA = {
 
   /* ------------------------------------------------------- 今週の優先事項 */
   week: {
-    label: "今週の優先事項（7/7〜・HRVは要再確認、体調は正常）",
-    judgment: { code: "REST", reason: "本人確認により7/7のランは体調不良ではなく、店に立ち寄りながらの気楽なジョグ（Lap4,5の異常な長さは寄り道で、中断ではない）。体調も「めっちゃ普通」とのことで一安心。ただしHRV14msは測定タイミング（運動中/直後の可能性）次第で解釈が変わるため、朝の安静時HRVで再確認するまでは念のため休養を継続する。" },
+    label: "今週の優先事項（7/8〜・回復確認できたので慎重に再開）",
+    judgment: { code: "EASY", reason: "7/8朝の安静時HRVが39ms（前日14msから+25改善）で、7/7の14msは運動時の一時的な値だったとほぼ裏付けられた。7日平均も約44msまで回復。目標の45msにわずかに届いていないため通常メニューには戻さず、計画通り超イージー2〜3km（HR135以下）から慎重に再開する。" },
     priorities: [
       { done: true, text: "7/7のラン中に何があったか確認 → 体調は正常、店に立ち寄りながらの気楽なジョグと判明", tag: "事実確認（完了）", emphasis: false,
         detail: "Lap4,5の異常な長さは休憩・中断ではなく寄り道によるもの。体調不良のサインではなかった。ラン自体の判断は問題なし。" },
-      { done: false, text: "明日の朝、起床後すぐの安静時HRVをもう一度測って教えてほしい", tag: "HRV再確認（最優先）", emphasis: true,
-        detail: "7/7の14msが運動中・直後の測定なら、交感神経優位による一時的な低下で心配不要な可能性が高い。朝の安静時の値で判断を確定する。" },
-      { done: false, text: "睡眠データの報告を再開する（6/30以降1週間分が空白）", tag: "計測の空白を埋める", emphasis: true,
-        detail: "6/30を最後に睡眠時間の報告がない。HRVの解釈にも睡眠状況が関わるため、直近の睡眠時間（体感でも可）を教えてほしい。" },
-      { done: false, text: "朝のHRV7日平均が45ms以上に戻るまで、ランは念のため見送る", tag: "HRVゲート", emphasis: false,
-        detail: "現在の7日平均は約42msだが7/7の1点に引っ張られている面もある。朝の再測定値を見て、必要なら数値を訂正し判断し直す。" },
+      { done: true, text: "朝の安静時HRVを再測定 → 39msで大幅改善を確認", tag: "HRV再確認（完了）", emphasis: false,
+        detail: "14ms→39msへ回復。運動時の一時的な値だった可能性が高いという仮説が裏付けられた。7日平均も約44msまで回復。" },
+      { done: false, text: "超イージー2〜3km・HR135以下で慎重に再開する", tag: "再開（最優先）", emphasis: true,
+        detail: "45msにはわずかに届いていないため、通常のイージーではなく最も抑えた強度から。違和感があれば即中止。" },
+      { done: false, text: "睡眠データの報告を再開する（6/30以降1週間分が空白）", tag: "計測の空白を埋める", emphasis: false,
+        detail: "6/30を最後に睡眠時間の報告がない。直近の睡眠時間（体感でも可）を教えてほしい。" },
     ],
   },
 
   /* ------------------------------------------- 週間スケジュール（Phase 0）*/
   schedule: [
-    { day: "火", menu: "完全休養（朝のHRV再測定待ち）", dist: "—", zone: "体調は正常・HRVのみ確認中", rest: true  },
-    { day: "水", menu: "HRV回復確認 → 良ければ超イージー", dist: "0〜3km", zone: "HR<135・回復していれば",  rest: false },
+    { day: "火", menu: "完全休養（済・HRV14→39確認）", dist: "—", zone: "体調正常・回復基調を確認",     rest: true  },
+    { day: "水", menu: "超イージーGO（HRV39ms確認済み）", dist: "2〜3km", zone: "HR<135・会話ペース",  rest: false },
     { day: "木", menu: "イージー（回復基調なら）",   dist: "3〜4km", zone: "HR<145・会話ペース",       rest: false },
     { day: "金", menu: "筋トレ軽め（下肢）",         dist: "—",  zone: "30分・自重〜軽負荷",          rest: false },
     { day: "土", menu: "回復していれば超イージー",   dist: "2〜3km", zone: "HR<135・完全に会話できる強度", rest: false },
@@ -98,16 +98,16 @@ window.MARATHON_DATA = {
   /* ------------------------------------------------- 次回メニューの根拠 */
   /* データを受け取るたびに更新。「次にやる練習」のポイントとエビデンスを表示。 */
   nextWorkout: {
-    day: "明日朝、安静時HRVを再測定 → 数値次第で判断",
-    menu: "完全休養（朝のHRV確認まで）",
+    day: "水 7/8",
+    menu: "超イージー 2〜3km",
     points: [
-      { title: "まず朝の安静時HRVを測ってフラグを確定する", detail: "7/7の14msが運動中/直後の測定だった場合、交感神経優位による一時的な低下で心配不要な可能性が高い。起床後すぐの値で判断し直す。" },
-      { title: "朝のHRV7日平均が45ms以上に戻れば、超イージーから再開してよい", detail: "体調は正常と確認済み。HRVの再測定値次第では、想定より早く軽いジョグを再開できる可能性がある。" },
-      { title: "再開時は超イージー（HR135以下）・2〜3kmから様子見で", detail: "1週間ほぼ運動していないため、戻す時は距離を絞って身体の反応を見ながら。" },
+      { title: "HR135以下・完全に会話できる強度で", detail: "HRVは回復基調(39ms)だが45msの目標にはまだ届いていない。通常のイージーより一段抑えた強度で身体の反応を見る。" },
+      { title: "違和感や疲労感が出たら即中止", detail: "1週間ほぼ運動していない状態からの再開。距離より「異常なく終えられたか」を優先する。" },
+      { title: "1回で判断せず、次のHRVも継続して確認する", detail: "39msは単発の値。数日かけて7日平均が45ms以上に安定するかを見ながら、通常メニューへ戻すペースを決める。" },
     ],
     evidence: [
-      { tag: "測定タイミング", text: "HRVは運動中・直後は交感神経優位で一時的に大きく低下するのが正常な生理反応。安静時（起床後）の値でないと基準比較に使えない（HRV測定の標準プロトコル）" },
-      { tag: "HRVゲート法", text: "朝の安静時HRVが個人のベースラインを下回る日は高強度を控えるのが悪化回避に有効（Plews et al. 2013, Sports Med）" },
+      { tag: "測定タイミング", text: "HRVは運動中・直後は交感神経優位で一時的に大きく低下するのが正常な生理反応。安静時（起床後）の値が基準比較に使える（HRV測定の標準プロトコル）" },
+      { tag: "HRVゲート法", text: "朝の安静時HRVが個人のベースラインに近づいたら軽い活動から再開するのが基本的な考え方（Plews et al. 2013, Sports Med）" },
       { tag: "80/20", text: "低強度中心の原則は変わらず。再開後も焦らず超イージーから積み上げる（Seiler 2010, Int J Sports Physiol Perform）" },
     ],
   },
@@ -153,6 +153,7 @@ window.MARATHON_DATA = {
     { date: "7/4",  hrv: "62", rhr: "60", sleep: "—", weight: "—",   run: "—",                judge: "未実施", note: "HRV日次平均約62（一見好転）・RHR60はやや高め。予定のロング6kmは未実施。走らずHRVだけ動いている点は要観察" },
     { date: "7/5",  hrv: "48", rhr: "57", sleep: "—", weight: "—",   run: "—",                judge: "REST", note: "HRV日次平均約48・RHR57。1週間近く完全休養が継続中" },
     { date: "7/7",  hrv: "14", rhr: "—",  sleep: "—", weight: "—",   run: "6.01km 約1時間49分", judge: "REST", note: "本人確認：体調は正常、店に立ち寄りながらの気楽なジョグ（Lap4,5の長さは寄り道）。HRV14msは測定タイミング次第の可能性あり、朝の安静時再測定待ち。睡眠は6/30以降1週間未報告" },
+    { date: "7/8",  hrv: "39", rhr: "—",  sleep: "—", weight: "—",   run: "—",                judge: "EASY", note: "朝の安静時HRV39ms（前日14msから+25改善）。7/7の低値は運動時の一時的な値だったとほぼ裏付け。7日平均も約44msまで回復。超イージー2-3km・HR135以下でなら再開可" },
   ],
 
   /* --------------------------------------------- 直近の走り（フォーム評価）*/
@@ -175,14 +176,14 @@ window.MARATHON_DATA = {
   /* ------------------------------------------------ 7日間トレンド（チャート）*/
   /* 直近7回の日次ログを表示。HRV・RHRは未計測日を直近の実測値で補完（横ばい表示）、距離は実走行距離（休養日は0）。 */
   trends: {
-    days: ["6/29", "6/30", "7/1", "7/2", "7/4", "7/5", "7/7"],
+    days: ["6/30", "7/1", "7/2", "7/4", "7/5", "7/7", "7/8"],
     series: {
-      hrv:      { label: "HRV (ms)",     color: "var(--accent)", data: [25, 47, 47, 49, 62, 48, 14], target: 55, targetLabel: "目標 55ms" },
-      rhr:      { label: "安静時HR (bpm)", color: "#ff453a",      data: [56, 56, 59, 58, 60, 57, 57], target: 55, targetLabel: "目標 55bpm", invert: true },
+      hrv:      { label: "HRV (ms)",     color: "var(--accent)", data: [47, 47, 49, 62, 48, 14, 39], target: 55, targetLabel: "目標 55ms" },
+      rhr:      { label: "安静時HR (bpm)", color: "#ff453a",      data: [56, 59, 58, 60, 57, 57, 57], target: 55, targetLabel: "目標 55bpm", invert: true },
       sleep:    { label: "睡眠 (h)",      color: "var(--good)",  data: [6.5, 6.5, 6.5, 6.5, 6.5, 6.5, 6.5], target: 7, targetLabel: "目標 7h" },
-      distance: { label: "日別距離 (km)",  color: "#0a84ff",      data: [4.0, 4.46, 0, 0, 0, 0, 6.01] },
+      distance: { label: "日別距離 (km)",  color: "#0a84ff",      data: [4.46, 0, 0, 0, 0, 6.01, 0] },
     },
-    note: "7/1〜7/5はラン無しの完全休養だったにもかかわらずHRVが7/7に14msへ急落＝練習負荷以外の要因（体調・睡眠・ストレス等）を要確認。睡眠は6/30を最後に1週間未報告のため横ばい表示。",
+    note: "7/7のHRV14msは翌朝7/8に39msまで回復し、運動時の一時的な値だったとほぼ裏付けられた。7日平均は約44msまで回復も45msの目標にわずかに届かず。睡眠は6/30を最後に1週間未報告のため横ばい表示。",
   },
 
   /* ------------------------------------------------- 直近ランのゾーン遵守率 */
@@ -191,8 +192,8 @@ window.MARATHON_DATA = {
   /* ---------------------------------------------------- ゲート（未開放）*/
   gates: [
     { name: "減量開始ゲート", locked: true, progress: 0, total: 14, unit: "日",
-      conditions: ["睡眠 7h 以上が 14 日連続（1週間未報告・未達）", "HRV 7日平均が 50ms 以上（約42ms・7/7の急落で後退）"],
-      why: "7/7にHRVが14msまで急落し7日平均も50を割り込んだ（体調自体は正常と確認済み・測定タイミングを朝で再確認中）。今は減量ゲートより先に、朝のHRVで数値を確定させ、睡眠報告を再開することが最優先。睡眠5.5h下の減量は筋肉損失+60%（Nedeltcheva RCT）。" },
+      conditions: ["睡眠 7h 以上が 14 日連続（1週間未報告・未達）", "HRV 7日平均が 50ms 以上（約44msまで回復・僅かに未達）"],
+      why: "7/7のHRV14msは7/8朝の39msでほぼ運動時の一時値と判明、7日平均も約44msまで回復した。あと一息で50msのゲートに届く。今は睡眠報告の再開と、超イージーからの慎重な再開が最優先。睡眠5.5h下の減量は筋肉損失+60%（Nedeltcheva RCT）。" },
     { name: "Phase 1 移行ゲート", locked: true, progress: null, total: null, unit: "",
       conditions: ["週4回 × 2週連続", "週 30km 到達", "🔴判定が週1回以下"],
       why: "「急増→燃え尽き→停止」の再演防止。基盤が固まる前に量を増やさない。" },
