@@ -15,7 +15,7 @@ window.MARATHON_DATA = {
 
   /* ---------------------------------------------------------------- meta */
   meta: {
-    lastUpdated: "2026-07-08",
+    lastUpdated: "2026-07-09",
     athlete: { name: "藤井勇成", birth: "1995-10-07", age: 30, sex: "男性", height: 174 },
     phase: "Phase 0: 再点火",
     phaseWeek: "Week 4 / 4（延長中）",
@@ -49,9 +49,9 @@ window.MARATHON_DATA = {
   /* Apple の Highlights カルーセル相当。最重要指標を 6 枚で見せる。       */
   highlights: [
     { icon: "weight",   value: "74.5", unit: "kg",  label: "体重",          state: "none", note: "7/8・変動範囲内（減量は未開始）",   anchor: "status" },
-    { icon: "hrv",      value: "39",   unit: "ms",  label: "HRV 直近",      state: "warn", note: "7/8朝・14msから回復（運動時の一時値と確認）", anchor: "trend"  },
-    { icon: "heart",    value: "57",   unit: "bpm", label: "安静時心拍",    state: "warn", note: "7/5・目標55以下にやや未達",         anchor: "trend"  },
-    { icon: "sleep",    value: "8",    unit: "h",   label: "睡眠",          state: "good", note: "7/8・6日連続で7h以上を達成中",       anchor: "week"   },
+    { icon: "hrv",      value: "88",   unit: "ms",  label: "HRV 直近",      state: "good", note: "7/9・目標55msを大幅に上回る好数値",   anchor: "trend"  },
+    { icon: "heart",    value: "55",   unit: "bpm", label: "安静時心拍",    state: "good", note: "7/9・目標55以下を達成、週内最低",     anchor: "trend"  },
+    { icon: "sleep",    value: "7+",   unit: "h",   label: "睡眠",          state: "good", note: "7/9・7日連続で7h以上を達成中",       anchor: "week"   },
     { icon: "run",      value: "約15", unit: "km",  label: "月間走行距離",  state: "none", note: "7月累計・参考値（7/8に8.49km）",     anchor: "plan"   },
     { icon: "trophy",   value: "3:26〜3:30", unit: "", label: "マラソン PB", state: "none", note: "2025-10 実績 / 目標 3:19:59",     anchor: "cta" },
   ],
@@ -60,27 +60,27 @@ window.MARATHON_DATA = {
   metrics: [
     { name: "体重",            value: "74.5 kg",   date: "7/8",      target: "65.0 kg（減量は未開始）",  state: "none", delta: "▼ −1.5kg", deltaState: "none" },
     { name: "VO2max（Watch）",  value: "45.6",      date: "6/21",     target: "52〜55（3:20相当）",       state: "warn" },
-    { name: "HRV（直近）",      value: "39 ms",     date: "7/8",      target: "55 ms 以上（朝の安静時）", state: "warn", delta: "▲ +25ms", deltaState: "good" },
-    { name: "HRV（7日平均）",   value: "約44 ms",   date: "7/8",      target: "50 ms 以上（減量ゲート）", state: "warn", delta: "▲ +2ms", deltaState: "none" },
-    { name: "安静時HR（直近）",  value: "57 bpm",    date: "7/5",      target: "55 bpm 以下",              state: "warn", delta: "▲ +1bpm", deltaState: "none" },
-    { name: "睡眠（直近）",      value: "8.0 h",     date: "7/8",      target: "7〜9 h（最重要）",          state: "good", delta: "▲ +1.5h", deltaState: "good" },
+    { name: "HRV（直近）",      value: "88 ms",     date: "7/9",      target: "55 ms 以上（朝の安静時）", state: "good", delta: "▲ +49ms", deltaState: "good" },
+    { name: "HRV（7日平均）",   value: "約50 ms",   date: "7/9",      target: "50 ms 以上（減量ゲート）", state: "good", delta: "▲ +6ms", deltaState: "good" },
+    { name: "安静時HR（直近）",  value: "55 bpm",    date: "7/9",      target: "55 bpm 以下",              state: "good", delta: "▼ −2bpm", deltaState: "good" },
+    { name: "睡眠（直近）",      value: "7.25 h",    date: "7/9",      target: "7〜9 h（最重要）",          state: "good", delta: "▼ −0.75h", deltaState: "none" },
     { name: "月間走行距離",     value: "約15 km",   date: "7月累計",  target: "参考値（月間累計）",        state: "none" },
     { name: "マラソン PB",      value: "3:26〜3:30",date: "2025-10",  target: "3:19:59",                  state: "none" },
   ],
 
   /* ------------------------------------------------------- 今週の優先事項 */
   week: {
-    label: "今週の優先事項（7/8〜・距離超過を1回で止める）",
-    judgment: { code: "REST", reason: "7/8は睡眠8h・体重74.5kgと好条件だったが、想定していた超イージー2〜3kmに対し実際は8.49km・74分と大幅に超過した。HRVが14msまで落ちた直後、1週間近くほぼ運動していない状態からの急な距離増は、過去2回の「急増→燃え尽き」パターンに酷似する。木は必ず完全休養にし、次のランは2〜3kmからやり直す。" },
+    label: "今週の優先事項（7/9〜・好数値でも距離規律を守る）",
+    judgment: { code: "REST", reason: "木曜は予定通り完全休養を実行できた。HRV88ms（7日平均約50ms）・RHR55bpm・睡眠7日連続7h+と、全指標がこの数週間で最も良い状態。ただし今週すでに「好調だから」と距離を大幅に超過した経緯があるため、数値が良くても土曜のランは2〜3kmの計画通りに抑える。好調な時こそ規律を守れるかが今回の本題。" },
     priorities: [
-      { done: false, text: "今日(木)は完全休養 — 昨日8.49km走った分の回復を最優先", tag: "距離超過の是正（最優先）", emphasis: true,
-        detail: "想定の2〜3kmに対し実際は8.49km。良いコンディションでも「その日の勢い」で距離を伸ばさない、が今回の教訓。" },
+      { done: false, text: "土曜のランは好調でも2〜3kmに抑える（7/8の反省を活かす）", tag: "距離規律（最優先）", emphasis: true,
+        detail: "HRV88ms・RHR55bpmは非常に良い数値であるほど「もっと走れる」と感じやすい。まさにその感覚が7/8の距離超過を生んだ。計画の距離を守れるかが今回のテスト。" },
       { done: false, text: "脚の張り・だるさ・翌日以降の疲労感を教えてほしい", tag: "経過観察", emphasis: true,
-        detail: "Lap8,9でHRがZ3域(146-148bpm)に入っていた。オーバーユースのサインが遅れて出ないか2〜3日は注意する。" },
-      { done: false, text: "睡眠7h以上の連続記録を継続する（現在6日目・目標14日）", tag: "睡眠改革（好調）", emphasis: false,
-        detail: "7/3から6日連続で7h以上を達成中。あと8日続けば減量ゲートの睡眠条件が開く。この調子を距離のことで崩さないように。" },
-      { done: true, text: "朝の安静時HRVを再測定・睡眠データの報告を再開 → いずれも良好", tag: "計測の空白を解消（完了）", emphasis: false,
-        detail: "HRV14ms→39msへ回復。睡眠は7/3から6日連続で7h以上（7/2のみ6h）。両方とも好転を確認できた。" },
+        detail: "7/8はLap8,9でHRがZ3域(146-148bpm)に入っていた。オーバーユースのサインが遅れて出ないか、まだ確認できていない。" },
+      { done: false, text: "睡眠7h以上の連続記録を継続する（現在7日目・14日の折り返し）", tag: "睡眠改革（絶好調）", emphasis: false,
+        detail: "7/3から7日連続で7h以上を達成中。あと7日続けば減量ゲートの睡眠条件が開く。HRVもこれに連動して好転している。" },
+      { done: true, text: "朝の安静時HRV・RHR・睡眠を再確認 → 全指標が好転", tag: "計測（完了）", emphasis: false,
+        detail: "HRV88ms・7日平均約50ms・RHR55bpm・睡眠7h15分。この数週間で最も良いコンディション。" },
     ],
   },
 
@@ -88,9 +88,9 @@ window.MARATHON_DATA = {
   schedule: [
     { day: "火", menu: "完全休養（済・HRV14→39確認）", dist: "—", zone: "体調正常・回復基調を確認",     rest: true  },
     { day: "水", menu: "済・想定超の8.49km（距離超過に注意）", dist: "8.49km", zone: "Z1-2 78%・HR平均135", rest: false },
-    { day: "木", menu: "完全休養（前日の距離超過を受けて）", dist: "—", zone: "ACWR配慮・連日を避ける",   rest: true  },
+    { day: "木", menu: "済・完全休養（HRV88ms・RHR55達成）", dist: "—", zone: "全指標良好",             rest: true  },
     { day: "金", menu: "筋トレ軽め（下肢）",         dist: "—",  zone: "30分・自重〜軽負荷",          rest: false },
-    { day: "土", menu: "回復していれば超イージー",   dist: "2〜3km", zone: "HR<135・完全に会話できる強度", rest: false },
+    { day: "土", menu: "超イージー厳守（2〜3kmで止める）", dist: "2〜3km", zone: "HR<135・好調でも距離は伸ばさない", rest: false },
     { day: "日", menu: "完全休養",                    dist: "—",  zone: "—",                       rest: true  },
     { day: "月", menu: "体調・HRV次第で判断",         dist: "—",  zone: "無理せず様子見",           rest: true  },
   ],
@@ -98,17 +98,17 @@ window.MARATHON_DATA = {
   /* ------------------------------------------------- 次回メニューの根拠 */
   /* データを受け取るたびに更新。「次にやる練習」のポイントとエビデンスを表示。 */
   nextWorkout: {
-    day: "木 7/9は完全休養",
-    menu: "完全休養（前日8.49kmを走ったため）",
+    day: "土 7/11",
+    menu: "超イージー 2〜3km（厳守）",
     points: [
-      { title: "想定2〜3kmに対し実際8.49km走ったので、翌日は必ず休む", detail: "1週間近くほぼ運動していない状態から、いきなり74分・8.49kmに増やした。ここで連日走ると「急増→燃え尽き」の再演リスクが高い。" },
-      { title: "脚の張り・だるさが翌日以降どう出るか観察する", detail: "Lap8,9でHRがZ3域(146-148bpm)に入っていた。オーバーユースのサインが遅れて出ないか2〜3日は注意する。" },
-      { title: "次にランを再開するときは、必ず2〜3kmから", detail: "今回の8.49kmは「たまたま調子が良かった」結果であって、これを新しい基準にしない。次も超イージーの距離感からやり直す。" },
+      { title: "HRV88ms・RHR55bpmは絶好調のサインだが、距離は2〜3kmで止める", detail: "「好調だから走れる」という感覚が7/8の8.49km超過を生んだ。数値が良い日ほど、計画した距離を守れるかが試される。" },
+      { title: "スタート前に距離の上限をあらかじめ決めておく", detail: "その場の気分で伸ばさないよう、走る前に「2〜3kmで終える」と決めてから出発する。ルートも短めに設定しておくと安全。" },
+      { title: "脚の張り・だるさが残っていないか確認してから走る", detail: "7/8の疲労が抜けきっているかを最初の1kmで確認し、違和感があれば距離をさらに削るか中止する。" },
     ],
     evidence: [
-      { tag: "ACWR", text: "急性:慢性負荷比を0.8〜1.3の範囲に保つと傷害リスクが最小化する。前週がほぼゼロ負荷だった直後の大幅増はこの比を急上昇させる（Gabbett 2016, Br J Sports Med）" },
-      { tag: "回復間隔", text: "普段より強度・量が高いセッションの翌日は完全休養か超軽負荷にするのが一般的な回復推奨（Bishop et al. 2008, Sports Med）" },
-      { tag: "急増→燃え尽きパターン", text: "本人が過去2回経験した「急増→燃え尽き→停止」は、まさに今回のような『調子が良いからと距離を急に伸ばす』ことから始まっている" },
+      { tag: "ACWR", text: "急性:慢性負荷比を0.8〜1.3の範囲に保つと傷害リスクが最小化する。好調時の距離急増もこの比を乱す要因になる（Gabbett 2016, Br J Sports Med）" },
+      { tag: "好調バイアス", text: "コンディション指標（HRV等）が良い日は主観的な体感も良くなりやすく、計画を超えて負荷を増やしたくなる心理的バイアスが働きやすい" },
+      { tag: "急増→燃え尽きパターン", text: "過去2回の「急増→燃え尽き→停止」は、いずれも『調子が良いから』が引き金になっている。同じ轍を踏まないことが今回の核心" },
     ],
   },
 
@@ -156,6 +156,7 @@ window.MARATHON_DATA = {
     { date: "7/6",  hrv: "—",  rhr: "—",  sleep: "7.0",weight: "—",   run: "—",                judge: "REST", note: "睡眠7h+（本人申告）で連続4日目" },
     { date: "7/7",  hrv: "14", rhr: "—",  sleep: "7.0",weight: "—",   run: "6.01km 約1時間49分", judge: "REST", note: "本人確認：体調は正常、店に立ち寄りながらの気楽なジョグ（Lap4,5の長さは寄り道）。HRV14msは測定タイミング次第の可能性あり。睡眠7h+（本人申告）で連続5日目" },
     { date: "7/8",  hrv: "39", rhr: "—",  sleep: "8.0",weight: "74.5",run: "8.49km @8'44\"/km", judge: "⚠距離超過", note: "朝HRV39ms（前日14msから改善）・睡眠8h・体重74.5kgと好条件。ただし想定は超イージー2-3kmだったのに実際は8.49km・74分に。Z1-2 78%・HR回復129→121は良好だが、HRV回復直後の再開日としては距離超過。連日を避け木は完全休養に" },
+    { date: "7/9",  hrv: "88", rhr: "55", sleep: "7.25",weight: "—",  run: "—",                judge: "REST", note: "予定通り完全休養を実行。HRV88ms（9-10時）と好数値、7日平均も約50msで目標ライン到達。RHR55bpmは週内最低で目標達成。睡眠7h15分で7日連続7h+（14日の折り返し）。全指標が好転" },
   ],
 
   /* --------------------------------------------- 直近の走り（フォーム評価）*/
@@ -179,14 +180,14 @@ window.MARATHON_DATA = {
   /* ------------------------------------------------ 7日間トレンド（チャート）*/
   /* 直近7回の日次ログを表示。HRV・RHRは未計測日を直近の実測値で補完（横ばい表示）、距離は実走行距離（休養日は0）。 */
   trends: {
-    days: ["7/2", "7/3", "7/4", "7/5", "7/6", "7/7", "7/8"],
+    days: ["7/3", "7/4", "7/5", "7/6", "7/7", "7/8", "7/9"],
     series: {
-      hrv:      { label: "HRV (ms)",     color: "var(--accent)", data: [49, 49, 62, 48, 48, 14, 39], target: 55, targetLabel: "目標 55ms" },
-      rhr:      { label: "安静時HR (bpm)", color: "#ff453a",      data: [58, 58, 60, 57, 57, 57, 57], target: 55, targetLabel: "目標 55bpm", invert: true },
-      sleep:    { label: "睡眠 (h)",      color: "var(--good)",  data: [6.0, 7.0, 7.0, 7.0, 7.0, 7.0, 8.0], target: 7, targetLabel: "目標 7h" },
-      distance: { label: "日別距離 (km)",  color: "#0a84ff",      data: [0, 0, 0, 0, 0, 6.01, 8.49] },
+      hrv:      { label: "HRV (ms)",     color: "var(--accent)", data: [49, 62, 48, 48, 14, 39, 88], target: 55, targetLabel: "目標 55ms" },
+      rhr:      { label: "安静時HR (bpm)", color: "#ff453a",      data: [58, 60, 57, 57, 57, 57, 55], target: 55, targetLabel: "目標 55bpm", invert: true },
+      sleep:    { label: "睡眠 (h)",      color: "var(--good)",  data: [7.0, 7.0, 7.0, 7.0, 7.0, 8.0, 7.25], target: 7, targetLabel: "目標 7h" },
+      distance: { label: "日別距離 (km)",  color: "#0a84ff",      data: [0, 0, 0, 0, 6.01, 8.49, 0] },
     },
-    note: "7/2に6hで一度途切れたが、7/3から6日連続で睡眠7h以上を達成中。HRVも7/7の一時的な14msから7/8に39msへ回復。ただし7/8は「超イージー2-3km」の想定に対し実際は8.49kmと距離が大きく超過した点に注意。",
+    note: "7/7の一時的な14msから7/9には88msまで大きく回復し、7日平均も約50msと目標ラインに到達。安静時HRも55bpmで目標達成。睡眠は7/3から7日連続で7h以上を継続中（14日の折り返し地点）。",
   },
 
   /* ------------------------------------------------- 直近ランのゾーン遵守率 */
@@ -194,9 +195,9 @@ window.MARATHON_DATA = {
 
   /* ---------------------------------------------------- ゲート（未開放）*/
   gates: [
-    { name: "減量開始ゲート", locked: true, progress: 6, total: 14, unit: "日",
-      conditions: ["睡眠 7h 以上が 14 日連続（7/3〜7/8で6日連続！好調）", "HRV 7日平均が 50ms 以上（約44msまで回復・僅かに未達）"],
-      why: "7/2に6hで一度途切れたが、7/3から6日連続で7h以上を達成中。あと8日続けば減量ゲートの睡眠条件が満たされる。HRVも7/8朝の39msで7/7の一時的な低下から回復基調（7日平均約44ms）。この2つは連動している可能性が高く、睡眠の安定がHRVの安定にもつながっている。睡眠5.5h下の減量は筋肉損失+60%（Nedeltcheva RCT）。" },
+    { name: "減量開始ゲート", locked: true, progress: 7, total: 14, unit: "日",
+      conditions: ["睡眠 7h 以上が 14 日連続（7/3〜7/9で7日連続！半分到達）", "HRV 7日平均が 50ms 以上（約50msで到達ライン）"],
+      why: "睡眠は7/3から7日連続で7h以上を達成し、14日の折り返し地点に到達。HRVも7/9に88msという好数値を記録し、7日平均が約50msと目標ラインに乗った。安静時HRも55bpmで目標達成。2つの条件がどちらも良い方向に動いているが、油断せず睡眠の連続をあと7日積み上げることが最優先。睡眠5.5h下の減量は筋肉損失+60%（Nedeltcheva RCT）。" },
     { name: "Phase 1 移行ゲート", locked: true, progress: null, total: null, unit: "",
       conditions: ["週4回 × 2週連続", "週 30km 到達", "🔴判定が週1回以下"],
       why: "「急増→燃え尽き→停止」の再演防止。基盤が固まる前に量を増やさない。" },
