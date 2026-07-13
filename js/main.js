@@ -504,6 +504,81 @@
     }).join("");
   }
 
+  /* ====================================================== ODDS / 目標達成可能性 */
+  // prob(0-100) → 状態色。50+=射程内(good), 30-49=五分(warn), <30=挑戦的(bad)
+  const probState = (p) => (p >= 50 ? "good" : p >= 30 ? "warn" : "bad");
+  const probBand = (p) => (p >= 50 ? "射程内" : p >= 30 ? "五分" : "挑戦的");
+  function renderProjection() {
+    const P = D.projection;
+    if (!P) return;
+    $("oddsHeadline").textContent = P.headline;
+    $("oddsMethod").textContent = P.method;
+
+    // 総合準備度＝Σ(score×weight)/Σ(weight)。データと描画のズレを防ぐためJS側で算出。
+    const wSum = P.factors.reduce((a, f) => a + f.weight, 0) || 1;
+    const readiness = Math.round(P.factors.reduce((a, f) => a + f.score * f.weight, 0) / wSum);
+
+    // 準備度リングゲージ
+    const R = 52, C = 2 * Math.PI * R;
+    const off = C * (1 - readiness / 100);
+    const rColor = readiness >= 50 ? "var(--good)" : readiness >= 30 ? "var(--warn)" : "var(--bad)";
+    $("oddsGauge").innerHTML = `
+      <div class="gauge-ring">
+        <svg viewBox="0 0 130 130" aria-label="総合準備度 ${readiness}%">
+          <circle cx="65" cy="65" r="${R}" fill="none" stroke="var(--line)" stroke-width="11"/>
+          <circle cx="65" cy="65" r="${R}" fill="none" stroke="${rColor}" stroke-width="11" stroke-linecap="round"
+            stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${C.toFixed(1)}" data-off="${off.toFixed(1)}"
+            transform="rotate(-90 65 65)" class="gauge-arc"/>
+        </svg>
+        <div class="gauge-center"><span class="gauge-num">${readiness}<span class="gauge-pct">%</span></span></div>
+      </div>
+      <div class="gauge-cap">${esc(P.readinessLabel)}</div>`;
+
+    // シナリオ別の確率カード
+    $("oddsScenarios").innerHTML = P.scenarios.map((s) => {
+      const st = probState(s.prob);
+      return `
+        <div class="scn scn--${st}">
+          <div class="scn__head">
+            <div class="scn__goal">${esc(s.goal)}</div>
+            <div class="scn__band scn__band--${st}">${esc(probBand(s.prob))}</div>
+          </div>
+          <div class="scn__when">${esc(s.when)}</div>
+          <div class="scn__bar"><div class="scn__fill" data-w="${s.prob}" style="width:0;background:${stateColor(st)}"></div>
+            <span class="scn__pct">${s.prob}%</span></div>
+          <div class="scn__note">${esc(s.note)}</div>
+        </div>`;
+    }).join("");
+
+    // ファクター内訳（重み付きバー）
+    $("oddsFactors").innerHTML = `<div class="fac-list">${P.factors.map((f) => {
+      const st = f.score >= 60 ? "good" : f.score >= 35 ? "warn" : "bad";
+      return `
+        <div class="fac">
+          <div class="fac__top">
+            <span class="fac__name">${esc(f.name)}</span>
+            <span class="fac__weight">重み ${f.weight}%</span>
+            <span class="fac__score fac__score--${st}">${f.score}%</span>
+          </div>
+          <div class="fac__bar"><div class="fac__fill" data-w="${f.score}" style="width:0;background:${stateColor(st)}"></div></div>
+          <div class="fac__meta"><span class="fac__now">現在 ${esc(f.now)}</span><span class="fac__need">必要 ${esc(f.need)}</span></div>
+          <div class="fac__note">${esc(f.note)}</div>
+        </div>`;
+    }).join("")}</div>`;
+
+    // 数字を動かすスイング要因
+    $("oddsSwing").innerHTML = P.swing.map((s) => `
+      <div class="swing-item"><span class="swing-dot"></span><span>${esc(s)}</span></div>`).join("");
+
+    $("oddsFoot").textContent = `再計算: ${P.updated}　·　${P.updatePolicy}`;
+
+    // reveal 内で幅アニメを発火（gates と同じ仕組み。IntersectionObserver 側でも拾う）
+    requestAnimationFrame(() => {
+      const g = $("oddsGauge").querySelector(".gauge-arc");
+      if (g) requestAnimationFrame(() => { g.style.strokeDashoffset = g.dataset.off; });
+    });
+  }
+
   /* ====================================================== PHASES */
   function renderPhases() {
     $("phaseRail").innerHTML = D.phases.map((p) => `
@@ -633,8 +708,9 @@
       entries.forEach((e) => {
         if (e.isIntersecting) {
           e.target.classList.add("in");
-          // fire progress bars when gates reveal
-          e.target.querySelectorAll(".progress-fill[data-w]").forEach((p) => { p.style.width = p.dataset.w + "%"; });
+          // fire progress bars when gates / projection reveal
+          e.target.querySelectorAll(".progress-fill[data-w], .scn__fill[data-w], .fac__fill[data-w]")
+            .forEach((p) => { p.style.width = p.dataset.w + "%"; });
           io.unobserve(e.target);
         }
       });
@@ -668,6 +744,7 @@
     renderChartTabs();
     drawChart();
     renderGates();
+    renderProjection();
     renderPhases();
     renderReq();
     renderFuel();
