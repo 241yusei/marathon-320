@@ -4,7 +4,8 @@
 ヘルスケア・ダッシュボード（静的サイト）。サイトの中身はすべて `js/data.js`（単一データソース）から描画される。
 
 詳しい運用方針は `README.md`、サブスリー攻略の科学的根拠は `docs/sub3-research.md`、
-トレーニング負荷・HRV判断・練習メニュー設計の根拠は `docs/training-protocol.md`（2026-07-10作成）を参照。
+トレーニング負荷・HRV判断・練習メニュー設計の根拠は `docs/training-protocol.md`（2026-07-10作成）、
+自転車クロストレーニングの科学的根拠は `docs/bike-cross-training-research.md`（2026-07-21作成）を参照。
 
 ---
 
