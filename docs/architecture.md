@@ -285,11 +285,17 @@ js/
 | Step | 内容 | 検証 |
 |---|---|---|
 | **M0** | `_boot.js` + `config.js` + `core/util.js` 追加。`data.js` 無変更。`sw.js` を `m320-v4` へ | 見た目が1pxも変わらない |
-| **M1** | `_legacy-adapter.js` 追加。`MARATHON_DATA` を `HEALTH_OS.data.*` に読み取り専用射影 | `running.sessions.length===23` 等をコンソール確認 |
+| **M1** | `_legacy-adapter.js` 追加。`MARATHON_DATA` を `HEALTH_OS.data.*` に読み取り専用射影 | `recovery.daily.length===41` / `running.sessions.length===24` <sup>※</sup> / 元データ非破壊 / スクショmd5一致 |
 | **M2** | `main.js` を `render/*.js` + `app.js` に機械的分解。**ロジック無変更**。レジストリ＋try/catch 導入 | 全セクションが従来通り（スクショ比較） |
 | **M3** | 柱ごとに正方向移行（running→recovery→body）。移行済みはアダプタを**逆方向**に切替 | 移行柱が新データで描画 |
 | **M4** | 新柱（strength/mobility/labs）を追加。既存に触れない | 新セクションが出る |
 | **M5** | アダプタと `js/data.js` を削除 | `grep -r MARATHON_DATA` が0件 |
+
+<sup>※</sup> 設計時は `recentRuns` の件数から 23 と見積もっていたが、実装時に数え直して **24** が正しいと判明した。
+`dailyLog` の `run` 欄が「—」以外なのは 26 件、うち 4 件（6/15「ストレッチのみ」・6/22「休養（コンディション計測）」・
+7/18「記録なし(週最長6km予定は未実施とみられる)」・7/29「（本日・イージー4〜5km予定）」）は走行実績ではないため
+実施ランは 22 件。`recentRuns` 23 件との和集合は、`recentRuns` にのみある 5/26・5/30 が加わって 24 件になる
+（`dailyLog` にのみあるのは 6/14）。
 
 ### A-4. 描画層の再編 — レジストリパターン
 
