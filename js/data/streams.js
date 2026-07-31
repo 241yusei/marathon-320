@@ -47,7 +47,7 @@
         cadence: "daily", graceDays: 2, required: true,
         blocks: ["judgment.intensity", "goals.gates.weightloss", "recovery.baseline"],
         ask: "起床直後の安静時HRVを、測定した時刻とあわせて教えてください",
-        note: "測定窓（起床時か日中か）が記録されていない値は、同条件でないため比較に使えません",
+        note: "6〜7月の実測168件を測定時刻で層別した結果: 睡眠中(00-08時)70.4ms／午前57.8／午後49.5／夕夜56.4。窓によって20ms以上違い、同じ日の中のレンジも中央値46.7msある。7月は84件すべてが日中測定で起床時の値がゼロ。測定窓を固定しない限り、単発値への閾値判定は成立しない",
         resolve: (D) => lastDateOf(D.recovery && D.recovery.daily, (r) => r.hrv && r.hrv.ms),
       },
       {
@@ -61,7 +61,8 @@
         id: "recovery.sleep", label: "睡眠時間", pillar: "recovery",
         cadence: "daily", graceDays: 2, required: true,
         blocks: ["goals.gates.weightloss"],
-        ask: "昨夜の睡眠時間を教えてください",
+        ask: "夜、ウォッチを着けたまま寝てください（充電は入浴時などに回す）。減量ゲートの前提である睡眠が、実測では7月ゼロ夜・6月3夜しか記録されていません",
+        note: "自己申告の7〜8hと、ウォッチが記録した夜の数は別物。2026-07-16に開けた減量ゲート（7h×14日連続）は、客観的な裏付けが一度も無いまま判定していた。以後は実測で追跡する",
         resolve: (D) => lastDateOf(D.recovery && D.recovery.daily, (r) => r.sleep && r.sleep.hours),
       },
       {
