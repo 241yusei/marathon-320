@@ -27,6 +27,7 @@
   <div class="nav__inner">
     <a class="nav__brand" href="#top"><span class="dot">●</span>Marathon&nbsp;Project</a>
     <div class="nav__links">
+      <a href="#data">データ</a>
       <a href="#today">今日</a>
       <a href="#week">今週</a>
       <a href="#runs">ランログ</a>
@@ -54,6 +55,22 @@
   </div>
   <div class="scroll-hint">SCROLL</div>
 </header>
+
+<!-- ===================================================== DATA HEALTH (欠測の検知) -->
+<div id="dataHealthBanner"></div>
+
+<section class="soft pad-sm" id="data">
+  <div class="wrap">
+    <div class="sec-head reveal" style="margin-bottom:22px">
+      <p class="eyebrow">データ状態 / Data health</p>
+      <h2 class="sec-title">無いデータで、<br>語らない。</h2>
+      <p class="sec-sub">欠測しているデータに依存する結論は、コーチが気をつけるのではなく仕組みで保留する。何が足りていて、そのせいで何が言えないかをここに常時表示する。</p>
+    </div>
+    <div class="dh-head reveal d1" id="dataHealthHead"></div>
+    <div class="dh-list reveal d1" id="dataHealthList"></div>
+    <p class="dh-foot" id="dataHealthFoot"></p>
+  </div>
+</section>
 
 <!-- ===================================================== STORY (なぜこの計画か) -->
 <section class="pad-sm" id="story">
@@ -352,8 +369,11 @@
 <script src="js/core/util.js"></script>
 <script src="js/data.js"></script>
 <script src="js/data/_legacy-adapter.js"></script>
+<script src="js/data/streams.js"></script>
+<script src="js/core/compute-datahealth.js"></script>
 <script src="js/render/_registry.js"></script>
 <script src="js/main.js"></script>
+<script src="js/render/datahealth.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>
