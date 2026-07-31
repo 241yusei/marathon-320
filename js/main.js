@@ -733,35 +733,44 @@
   }
 
   /* ====================================================== BOOT */
-  function boot() {
-    if (!D) { console.error("MARATHON_DATA missing"); return; }
-    renderHero();
-    renderToday();
-    renderHighlights();
-    renderStatus();
-    renderWeek();
-    renderRuns();
-    renderChartTabs();
-    drawChart();
-    renderGates();
-    renderProjection();
-    renderPhases();
-    renderReq();
-    renderFuel();
-    renderScience();
-    renderReview();
-    renderCTA();
-    renderSpec();
-    initReveal();
-    initParallax();
+  /* ====================================================== レジストリ登録
+   *  以前はここに boot() があり、19個の render を try/catch 無しで逐次呼んでいた。
+   *  1つが例外を投げるとページ全体が白紙になるため、実行は js/app.js に移し、
+   *  ここでは「何を・どの順で・どの柱として」実行するかの登録だけを行う。
+   *
+   *  ・order は旧 boot() の呼び出し順をそのまま再現している（描画順は不変）
+   *  ・pillar は公開フラグ compute.visible() の単位
+   *  ・mount は失敗時にエラー表示を差し込む先。演出系（reveal/parallax）は null
+   *  ・関数本体は1行も変更していない
+   *
+   *  docs/architecture.md A-4 を参照。
+   * ================================================================== */
+  const R = window.HEALTH_OS && window.HEALTH_OS.render;
+  if (!R || typeof R.register !== "function") {
+    console.error("[main] HEALTH_OS.render.register が見つかりません（_registry.js の読み込み順を確認）");
+    return;
   }
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
-  else boot();
+  if (!D) { console.error("MARATHON_DATA missing"); return; }
 
-  /* ====================================================== PWA: service worker */
-  if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-      navigator.serviceWorker.register("sw.js").catch((e) => console.warn("SW登録失敗:", e));
-    });
-  }
+  const reg = (id, order, pillar, mount, fn) => R.register({ id, order, pillar, mount, fn });
+
+  reg("hero",        10, null,        "#top",        renderHero);
+  reg("today",       20, "cross",     "#today",      renderToday);
+  reg("highlights",  30, "cross",     "#highlights", renderHighlights);
+  reg("status",      40, "cross",     "#status",     renderStatus);
+  reg("week",        50, "cross",     "#week",       renderWeek);        // 内部で renderNextWorkout を呼ぶ
+  reg("runs",        60, "running",   "#runs",       renderRuns);        // 内部で renderRunReview を呼ぶ
+  reg("chart-tabs",  70, "recovery",  "#trend",      renderChartTabs);
+  reg("chart",       80, "recovery",  "#trend",      drawChart);
+  reg("gates",       90, "goals",     "#gates",      renderGates);
+  reg("projection", 100, "goals",     "#odds",       renderProjection);
+  reg("phases",     110, "goals",     "#plan",       renderPhases);
+  reg("requirements",120,"goals",     "#req",        renderReq);
+  reg("fuel",       130, "body",      "#fuel",       renderFuel);
+  reg("science",    140, null,        "#science",    renderScience);
+  reg("review",     150, null,        "#review",     renderReview);      // #story のタイムラインも描く
+  reg("cta",        160, null,        "#cta",        renderCTA);
+  reg("spec",       170, null,        "#spec",       renderSpec);
+  reg("reveal",     900, null,        null,          initReveal);
+  reg("parallax",   910, null,        null,          initParallax);
 })();
