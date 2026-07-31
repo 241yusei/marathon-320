@@ -320,6 +320,19 @@
     if (pc != null) s.avgPaceSecPerKm = pc;
     s.formNote = isBlank(r.note) ? null : String(r.note);
     s.good = (typeof r.good === "boolean") ? r.good : null;
+    /* ★実測心拍（2026-07-31にApple Healthのexport.xmlから抽出して判明）。
+     * それまで hr.avg は常に null で、欠測検知が strength/zones の判断を封じていた。
+     * 値がある回だけ埋める。無い回は null のまま＝引き続き検知対象。 */
+    if (typeof r.hrAvg === "number") {
+      s.hr.avg = r.hrAvg;
+      s.hr.source = "apple-health:WorkoutStatistics";
+      if (typeof r.hrMax === "number") s.hr.max = r.hrMax;
+      s.quality.hr = "measured";
+    }
+    if (typeof r.z12 === "number") {
+      s.zones = { method: "hr-measured", z12pct: r.z12 };
+      s.quality.zones = "measured";
+    }
   });
 
   var runningSessions = order
