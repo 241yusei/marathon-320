@@ -333,16 +333,26 @@
     if (!el || !D.runReview) return;
     const r = D.runReview;
     const z = D.zoneCompliance;
+    /* ★ゾーン遵守率は心拍が要る。心拍が欠測している間は確定値を出さない。
+     * これを「コーチが気をつける」に任せた結果、心拍が22日欠測したまま
+     * 88%という数字をサイトに出し続けていた。compute が封じる。
+     * docs/architecture.md C-3 */
+    const C = window.HEALTH_OS && window.HEALTH_OS.compute;
+    const zBlocked = C && typeof C.isBlocked === "function" && C.isBlocked("running.zones.compliance");
     el.innerHTML = `
       <div class="rr-head">
         <p class="sec-sub" style="margin:0">
           <strong style="color:var(--ink)">${esc(r.date)}</strong> — ${esc(r.summary)}
         </p>
-        ${z ? `
+        ${!z ? "" : zBlocked ? `
+        <div class="zring-wrap zring-wrap--blocked">
+          <div class="zring zring--blocked"><div class="zring__ring"><div class="zring__val">—</div></div></div>
+          <div class="zring__label">Z1-2比率<br><b>判断保留</b><br>心拍が欠測中</div>
+        </div>` : `
         <div class="zring-wrap">
           <div class="zring" style="--pct:${z.pct}"><div class="zring__ring"><div class="zring__val">${z.pct}<span>%</span></div></div></div>
           <div class="zring__label">Z1-2比率 ・ 目標${z.target}%</div>
-        </div>` : ""}
+        </div>`}
       </div>
       <div class="rr-grid" style="margin-top:20px">
         <div class="rr-col rr-col--good">

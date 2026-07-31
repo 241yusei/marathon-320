@@ -5,7 +5,7 @@
  *  ・CSS / JS / アイコンは stale-while-revalidate（高速＋裏で更新）
  *  デプロイで内容を変えたら CACHE のバージョンを上げる。
  * ========================================================================= */
-const CACHE = "m320-v6";
+const CACHE = "m320-v7";
 const CORE = [
   "./",
   "./index.html",
@@ -15,8 +15,11 @@ const CORE = [
   "./js/core/util.js",
   "./js/data.js",
   "./js/data/_legacy-adapter.js",
+  "./js/data/streams.js",
+  "./js/core/compute-datahealth.js",
   "./js/render/_registry.js",
   "./js/main.js",
+  "./js/render/datahealth.js",
   "./js/app.js",
   "./manifest.webmanifest",
   "./icons/icon-192.png",

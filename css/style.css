@@ -889,3 +889,61 @@ table.tbl .num { font-variant-numeric: tabular-nums; font-weight: 600; }
   font-weight: 600;
   line-height: 1.6;
 }
+
+/* =========================================================== DATA HEALTH */
+.dh-banner {
+  position: sticky; top: 52px; z-index: 90;
+  padding: 11px 22px;
+  background: rgba(255, 69, 58, 0.94);
+  color: #fff; font-size: 13px; line-height: 1.55;
+  text-align: center;
+}
+.dh-banner b { font-weight: 700; }
+.dh-banner a { text-decoration: underline; margin-left: 6px; }
+
+.dh-head { display: flex; align-items: center; gap: 24px; margin-bottom: 26px; flex-wrap: wrap; }
+.dh-score {
+  flex: none; text-align: center; padding: 16px 22px;
+  border-radius: var(--radius); background: var(--bg); border: 1px solid var(--line);
+}
+.dh-score__num { font-size: 40px; font-weight: 800; letter-spacing: -0.02em; line-height: 1; }
+.dh-score__num span { font-size: 18px; font-weight: 700; color: var(--ink-2); }
+.dh-score__lbl { font-size: 11.5px; color: var(--ink-2); margin-top: 6px; }
+.dh-score--good .dh-score__num { color: var(--good); }
+.dh-score--warn .dh-score__num { color: #b58a00; }
+.dh-score--bad  .dh-score__num { color: var(--bad); }
+.dh-head__note { font-size: 14.5px; line-height: 1.65; color: var(--ink-2); margin: 0; flex: 1; min-width: 240px; }
+.dh-head__note strong { color: var(--bad); font-weight: 700; }
+
+.dh-list { display: flex; flex-direction: column; gap: 2px; }
+.dh-row { display: flex; gap: 14px; padding: 15px 0; border-top: 1px solid var(--line); }
+.dh-row:first-child { border-top: none; }
+.dh-row--ok { opacity: .62; }
+.dh-row.is-blocking { background: rgba(255, 69, 58, 0.045); border-radius: 12px; padding-left: 12px; padding-right: 12px; }
+.dh-row__icon { flex: none; font-size: 15px; line-height: 1.5; }
+.dh-row__body { flex: 1; min-width: 0; }
+.dh-row__top { display: flex; align-items: baseline; gap: 9px; flex-wrap: wrap; }
+.dh-row__label { font-size: 15px; font-weight: 700; }
+.dh-row__cadence { font-size: 11px; color: var(--ink-2); border: 1px solid var(--line); border-radius: 999px; padding: 1px 8px; }
+.dh-row__opt { font-size: 11px; color: var(--ink-2); }
+.dh-row__meta { font-size: 12.5px; color: var(--ink-2); margin-top: 3px; }
+.dh-row__blocks { font-size: 12px; margin-top: 7px; line-height: 1.9; }
+.dh-row__blocks-lbl { color: var(--bad); font-weight: 700; margin-right: 5px; }
+.dh-row__blocks code {
+  font-size: 11px; background: rgba(255, 69, 58, 0.1); color: var(--bad);
+  padding: 2px 7px; border-radius: 5px;
+}
+.dh-row__ask { font-size: 13px; margin-top: 8px; line-height: 1.6; color: var(--ink); }
+.dh-row__note { font-size: 12px; margin-top: 5px; line-height: 1.6; color: var(--ink-2); }
+.dh-foot { margin-top: 22px; font-size: 12px; color: var(--ink-2); text-align: right; }
+
+/* ゾーン遵守率が判断保留のときの表示 */
+.zring--blocked .zring__ring { background: var(--line) !important; }
+.zring--blocked .zring__val { color: var(--ink-2); font-size: 20px; }
+.zring-wrap--blocked .zring__label { color: var(--bad); line-height: 1.5; }
+.zring-wrap--blocked .zring__label b { font-weight: 700; }
+
+@media (max-width: 640px) {
+  .dh-head { gap: 16px; }
+  .dh-banner { position: static; }
+}
