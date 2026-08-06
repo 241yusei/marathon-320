@@ -3,11 +3,13 @@
  *  --------------------------------------------------------------------------
  *  「何を・どこに効かせ・なぜランナーに要るのか・どう見て学ぶか」を1箇所に持つ。
  *
- *  解説リンクの設計方針:
- *    個別動画のIDを直接埋め込むと、動画が非公開・削除された時点で404になる。
- *    そこで **チャンネル内検索URL** を生成する。これは動画が入れ替わっても
- *    壊れず、常にそのチャンネルの最新の解説に当たる。
- *      https://www.youtube.com/@handle/search?query=<種目名>
+ *  解説リンクの設計方針（2026-08-06 改訂）:
+ *    1) 種目ごとに YouTube へ1タップで飛ぶ（videoUrl）。これが主線。
+ *       videoId があれば動画へ直行、無ければその種目に絞った検索結果へ。
+ *    2) 発信者を指定して探したいとき用に、チャンネル内検索も残す（links）。
+ *
+ *    個別動画IDを埋めると、その動画が非公開・削除された時点で404になる。
+ *    そのため videoId は「確認できたものだけ」入れる方針にしてある。
  *
  *  発信者（ユーザー指定・2026-08-06 に実在を確認）:
  *    今古賀翔【トレーニング科学】 https://www.youtube.com/c/ShoFitnessch
@@ -85,6 +87,38 @@
       url: c.search(queries[c.id] || queries.default),
       hint: c.strength,
     }));
+  }
+
+  /* ------------------------------------------------- 種目ごとのYouTube */
+  /* ★videoId を持たせられる構造にしてある。ただし現時点では全て null。
+   *  理由: この実行環境から YouTube を取得できず（403）、検索結果からも
+   *  「その動画が誰の投稿か」を確認できなかった。確認できない動画IDを
+   *  「今古賀翔さんの解説」として埋めるのは、検索リンクより悪い。
+   *  URL を教えてもらえれば videoId に入れるだけで直リンクに切り替わる。
+   *
+   *  videoId が無い間は、その種目に絞った YouTube 検索結果ページへ飛ぶ。
+   *  チャンネルを経由しないので「種目ごとに1タップでYouTube」は成立する。 */
+  const QUERY_SUFFIX = {
+    squat: "フォーム 解説", hinge: "フォーム 解説", lunge: "やり方 フォーム",
+    calf: "やり方 効かせ方", push: "フォーム 解説", pull: "フォーム 解説",
+    core: "やり方 正しいフォーム", plyo: "やり方 ランニング",
+    mobility: "やり方 ストレッチ",
+  };
+
+  /* 「懸垂（チンニング）」「足関節背屈モビリティ（膝壁タッチ）」のような
+   * 括弧書きは検索語として邪魔になるので落とす */
+  const cleanName = (n) => String(n).replace(/[（(].*?[）)]/g, "").trim();
+
+  function videoQuery(ex) {
+    return ex.videoQuery || `${cleanName(ex.name)} ${QUERY_SUFFIX[ex.pattern] || "やり方"}`;
+  }
+
+  function videoUrl(ex) {
+    if (!ex) return null;
+    if (ex.videoId) return `https://www.youtube.com/watch?v=${ex.videoId}`;
+    /* 空白は + に。YouTube の検索URLの慣用形（%20 でも動くが + が正規） */
+    const q = encodeURIComponent(videoQuery(ex)).replace(/%20/g, "+");
+    return `https://www.youtube.com/results?search_query=${q}`;
   }
 
   /* --------------------------------------------------------------- 種目 */
@@ -199,6 +233,7 @@
         "耐えられる範囲まで倒れ、手をついて戻る",
         "重要な走練習の48時間前には行わない",
       ],
+      videoQuery: "ノルディックハムストリングス やり方 ハムストリング 肉離れ 予防",
       injuryPrevention: true,
       links: links({ default: "ノルディックハムストリングス", anno: "ノルディックハムストリングカール 肉離れ 予防" }),
     },
@@ -231,6 +266,7 @@
       runner: "★軽視されがちだが最重要。膝を曲げるとヒラメ筋が主役になる。ランニング中に最大の力を発生するのはヒラメ筋で、接地時に体重の6〜8倍がかかる（Dorn 2012, §5-2）。シンスプリント・アキレス腱障害の予防に直結",
       scheme: { sets: 3, reps: "12〜15", rir: 2, restSec: 75, tempo: "下ろす3秒" },
       cues: ["膝を90度に曲げて座る（この角度でヒラメ筋が主役になる）", "立位カーフの「ついで」にしない。独立した種目として扱う", "高回数で効く数少ない部位"],
+      videoQuery: "シーテッドカーフレイズ ヒラメ筋 やり方",
       injuryPrevention: true,
       links: links({ default: "シーテッドカーフレイズ ヒラメ筋", anno: "ヒラメ筋 ランニング" }),
     },
@@ -275,6 +311,7 @@
       runner: "背中の引く力は姿勢保持に効く。体重比の種目なので減量が進むほど伸びる（モチベーション面でも良い指標）",
       scheme: { sets: 3, reps: "5〜10", rir: 2, restSec: 150 },
       cues: ["肩をすくめず、まず肩甲骨を下げてから引く", "顎ではなく鎖骨をバーに近づける意識", "できなければアシストマシンかラットプルダウンで代替"],
+      videoQuery: "懸垂 チンニング フォーム 解説",
       injuryPrevention: false,
       links: links({ default: "懸垂 チンニング フォーム" }),
     },
@@ -295,6 +332,7 @@
       runner: "水平方向の引き。猫背姿勢の是正に効き、長時間走での上体の潰れを防ぐ",
       scheme: { sets: 3, reps: "8〜10", rir: 2, restSec: 120 },
       cues: ["上体は45度前後。立ってこない", "腹に向かって引く", "腰が丸まるなら重量を落とすかチェストサポートロウへ"],
+      videoQuery: "ベントオーバーロー フォーム 解説",
       injuryPrevention: false,
       links: links({ default: "ベントオーバーロー" }),
     },
@@ -359,6 +397,7 @@
       runner: "足首の剛性と接地時間の短縮。RE改善のプライオ枠（§2-1）。接地回数で管理する",
       scheme: { sets: 3, reps: "20回", rir: null, restSec: 60 },
       cues: ["膝はほぼ固定して足首だけで弾む", "接地時間を最短に。音を立てない", "週の総接地回数は60〜100回に留める"],
+      videoQuery: "ポゴジャンプ プライオメトリクス ランナー",
       injuryPrevention: false,
       links: links({ default: "ポゴジャンプ プライオメトリクス" }),
     },
@@ -381,6 +420,7 @@
       runner: "★可動域の最優先項目。背屈が足りないと接地衝撃と膝への負担が増える。目標は壁から10cm離して膝がタッチできること（§7-2）",
       scheme: { sets: 2, reps: "10回/側", rir: null, restSec: 0 },
       cues: ["踵を床から浮かせない", "膝は爪先の方向へまっすぐ", "月1回、壁からの距離をcmで記録する"],
+      videoQuery: "足首 背屈 可動域 改善 ランニング",
       injuryPrevention: true, home: true,
       links: links({ default: "足首 背屈 モビリティ ランニング" }),
     },
@@ -391,6 +431,7 @@
       runner: "股関節伸展の制限は骨盤前傾とストライド制限を招く。デスクワークで最も硬くなる部位",
       scheme: { sets: 2, reps: "60秒/側", rir: null, restSec: 0 },
       cues: ["★静的ストレッチは走る前にやらない。運動後か入浴後に（Behm 2016, §7-1）", "骨盤を後傾させないと腸腰筋に入らない", "腰を反らせて誤魔化さない"],
+      videoQuery: "腸腰筋 ストレッチ やり方",
       injuryPrevention: true, home: true,
       links: links({ default: "腸腰筋 ストレッチ" }),
     },
@@ -401,6 +442,7 @@
       runner: "胸椎が回らないと腰と骨盤が代償する。腕振りの効率と腰痛予防",
       scheme: { sets: 2, reps: "8回/側", rir: null, restSec: 0 },
       cues: ["腰ではなく肋骨から回す", "呼吸を止めない"],
+      videoQuery: "胸椎 回旋 モビリティ やり方",
       injuryPrevention: true, home: true,
       links: links({ default: "胸椎 回旋 モビリティ" }),
     },
@@ -411,6 +453,7 @@
       runner: "★走る前はこれ。静的ストレッチは直後の筋力・パワーを落とす（Behm 2016）。レッグスイング・ヒップサークル・ウォーキングランジで5分",
       scheme: { sets: 1, reps: "5分", rir: null, restSec: 0 },
       cues: ["前後・左右のレッグスイング各10回", "ウォーキングランジ10歩", "ヒップサークル各10回", "止めない。動かし続ける"],
+      videoQuery: "ランニング前 動的ストレッチ ウォームアップ",
       injuryPrevention: true, home: true,
       links: links({ default: "ランニング 前 動的ストレッチ ウォームアップ" }),
     },
@@ -424,6 +467,9 @@
     exercises: EXERCISES,
     exerciseById: (id) => byId[id] || null,
     exercisesByPattern: (p) => EXERCISES.filter((e) => e.pattern === p),
+    videoUrl, videoQuery,
+    /* videoId が入っているか（表示の出し分け用） */
+    hasPinnedVideo: (ex) => !!(ex && ex.videoId),
   });
 
 })();

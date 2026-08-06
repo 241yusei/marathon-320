@@ -370,6 +370,20 @@ body[data-view="train"] .dark + section[id] { border-top: none; }
 .ex__cues ul { margin: 12px 0 0; padding-left: 18px; }
 .ex__cues li { font-size: 13px; line-height: 1.8; color: var(--ink-2); margin-bottom: 4px; }
 
+/* 種目ごとのYouTubeボタン。チャンネルを経由せず1タップで飛ぶ主線 */
+.ytb {
+  display: inline-flex; align-items: center; gap: 7px;
+  min-height: 36px; padding: 0 12px; margin-top: 8px;
+  border: 1px solid var(--line-2); border-radius: var(--radius);
+  font-size: 12.5px; font-weight: 600; color: var(--ink);
+  transition: border-color .15s, background .15s;
+}
+.ytb:hover { border-color: #cc0000; background: rgba(204, 0, 0, .05); }
+.ytb__i { width: 20px; height: 20px; color: #cc0000; flex-shrink: 0; }
+.ytb--sm { min-height: 32px; padding: 0 9px; font-size: 11.5px; margin-top: 6px; }
+.ytb--sm .ytb__i { width: 17px; height: 17px; }
+.lib__ex .ytb { margin: 2px 0 10px; }
+
 .ex__links { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 14px 0 4px; }
 .ex__links-lbl { font-size: 10px; letter-spacing: .12em; color: var(--ink-3); text-transform: uppercase; }
 .cref {

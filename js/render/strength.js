@@ -53,10 +53,27 @@
            `今日は上肢の B / D に替えることを勧めます。`;
   }
 
-  /* ------------------------------------------------------ 解説リンク */
+  /* ---------------------------------------------- 種目ごとのYouTube */
+  /* 主線。チャンネルを経由せず、その種目のYouTubeへ1タップで飛ぶ。 */
+  function ytButton(ex, compact) {
+    const D = HOS.data;
+    const url = D.videoUrl(ex);
+    const pinned = D.hasPinnedVideo(ex);
+    return `<a class="ytb ${compact ? "ytb--sm" : ""}" href="${esc(url)}"
+      target="_blank" rel="noopener noreferrer"
+      title="${esc(pinned ? ex.name + " の解説動画" : D.videoQuery(ex) + " をYouTubeで検索")}">
+      <svg class="ytb__i" viewBox="0 0 24 24" aria-hidden="true">
+        <path fill="currentColor" d="M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4A2.5 2.5 0 0 0 2.4 7.2C2 8.8 2 12 2 12s0 3.2.4 4.8a2.5 2.5 0 0 0 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8c.4-1.6.4-4.8.4-4.8s0-3.2-.4-4.8Z"/>
+        <path fill="#fff" d="M10 15V9l5.2 3L10 15Z"/>
+      </svg>
+      <span>${compact ? "YouTube" : "やり方をYouTubeで見る"}</span>
+    </a>`;
+  }
+
+  /* ------------------------------------------------ 発信者を指定して探す */
   function linksHTML(ex) {
     return `<div class="ex__links">
-      <span class="ex__links-lbl">解説</span>
+      <span class="ex__links-lbl">発信者を指定して探す</span>
       ${ex.links.map((l) => `
         <a class="cref cref--${l.medium}" href="${esc(l.url)}" target="_blank" rel="noopener noreferrer">
           <span class="cref__name">${esc(l.name)}</span>
@@ -141,6 +158,7 @@
             ${ex.injuryPrevention ? '<span class="tag tag--prev">傷害予防</span>' : ""}
             ${item.role === "main" ? '<span class="tag tag--main">主種目</span>' : ""}
           </h4>
+          ${ytButton(ex, true)}
           <p class="ex__pre">${esc(item.sets)}セット × ${esc(p.reps)} ／ 目標 RIR ${esc(targetRir)}
             <span class="muted">（あと${esc(targetRir)}回上げられる重さで止める）</span></p>
           ${p.overridden ? `<p class="ex__override">${esc(p.blockName)}ブロック中のため、
@@ -165,7 +183,7 @@
            ジムでこの画面を開く目的はセットの記録であり、入力欄が
            解説文の下に押し下げられてはいけない。読みたい人は開ける。 -->
       <details class="ex__cues">
-        <summary>やり方と根拠 ${ex.muscles.primary.length ? `・対象: ${esc(ex.muscles.primary.join("・"))}` : ""}</summary>
+        <summary>フォームの要点と根拠 ${ex.muscles.primary.length ? `・対象: ${esc(ex.muscles.primary.join("・"))}` : ""}</summary>
         <p class="ex__runner">${esc(ex.runner)}</p>
         <ul>${ex.cues.map((c) => `<li>${esc(c)}</li>`).join("")}</ul>
         ${linksHTML(ex)}
@@ -520,6 +538,7 @@
                 <span class="lib__m">${esc((e.muscles.primary || []).join("・"))}</span>
                 ${e.injuryPrevention ? '<span class="tag tag--prev">傷害予防</span>' : ""}
               </summary>
+              ${ytButton(e)}
               <p class="lib__runner">${esc(e.runner)}</p>
               <p class="lib__scheme">既定の処方: ${e.scheme.sets}セット × ${esc(e.scheme.reps)}
                 ${e.scheme.rir != null ? ` ／ RIR ${e.scheme.rir}` : ""}
