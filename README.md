@@ -1,8 +1,22 @@
-# マラソン3:20切りプロジェクト — Webダッシュボード
+# Health OS — 藤井勇成の統合トレーニング管理
 
-藤井勇成のマラソン挑戦（サブスリー最終目標／当面 3:19:59）を、Apple（iPhone 製品ページ）の
-設計言語で 1 枚に集約したヘルスケア・ダッシュボードサイト。**今週の目標・計画／ランニング結果・
-フィードバック／目標達成に必要な情報**を蓄積し、データが来るたびに更新していく。
+マラソン挑戦（サブスリー最終目標／当面 3:19:59）を軸に、**ランニング・筋力トレーニング・
+体調・睡眠・体組成**をまとめて管理する。読むだけのダッシュボードではなく、
+筋トレをその場で入力し、ランと合算した疲労を見るところまでを1枚で行う。
+
+判断はすべてエビデンスに紐づく。処方の根拠は `docs/` 配下の研究ノートに書き、
+UI 側からも参照できるようにしてある。
+
+## 6つの柱
+
+| 柱 | 何を扱うか | 入力元 |
+|---|---|---|
+| running | 距離・ペース・心拍・ゾーン | Google Drive「320」の月別CSV（Apple Health） |
+| strength | 種目・重量・回数・RIR | **アプリ内で直接入力**（端末内保存＋書き出し） |
+| recovery | HRV・安静時心拍・睡眠・主観コンディション | Drive ＋ アプリ内チェックイン |
+| body | 体重・体脂肪率・除脂肪量 | Drive ＋ アプリ内チェックイン |
+| labs | 血液・健康診断 | 未取得（半年に1回） |
+| mobility | 可動域スクリーニング | 未取得（月1回） |
 
 ## 開き方
 
@@ -17,12 +31,39 @@ python3 -m http.server 8931
 ## 構成
 
 ```
-index.html        ← セクション骨格（中身は JS が描画）
-css/style.css     ← Apple 風スタイル（ダーク/ライト交互・大見出し・スクロール連動）
-js/data.js        ← ★単一データソース（ここだけ編集すれば全体が更新される）
-js/main.js        ← data.js を読み込み各セクションを描画・チャート・アニメ
-sw.js             ← PWA用サービスワーカー（オフライン対応・キャッシュ管理）
+index.html                      ← セクション骨格（中身は JS が描画）
+css/style.css                   ← 全体スタイル（ダーク/ライト交互・大見出し）
+css/app.css                     ← 入力を伴う画面のスタイル（Takram 寄りの設計言語）
+
+js/data.js                      ← ★単一データソース（ランと体調の事実）
+js/data/_boot.js                ← HEALTH_OS 名前空間の初期化
+js/data/config.js               ← スキーマ版・公開フラグ・選手情報
+js/data/_legacy-adapter.js      ← data.js → HEALTH_OS.data への射影（読み取り専用）
+js/data/strength-catalog.js     ← 種目カタログ（対象筋・解説リンク・フォームキュー）
+js/data/strength-program.js     ← 週4回スプリット・ブロック・ピリオダイゼーション
+js/data/streams.js              ← データ在庫台帳（何が欠けたら何を言えなくなるか）
+
+js/core/util.js                 ← 共通ヘルパ
+js/core/store.js                ← ★localStorage 永続化＋JSON/CSV 書き出し
+js/core/compute-datahealth.js   ← 欠測の検知と結論の封鎖
+js/core/compute-strength.js     ← e1RM（RIR換算）・ボリューム・週間セット数
+js/core/compute-load.js         ← ★session-RPE でランと筋トレを合算・単調性・ACWR
+
+js/render/_registry.js          ← 描画レジストリ（障害の局所化）
+js/render/datahealth.js         ← #data
+js/render/strength.js           ← #train / #library
+js/render/load.js               ← #checkin / #load / #vault
+js/main.js                      ← 既存セクションの描画
+js/app.js                       ← ブート（try/catch で1つの失敗を他に波及させない）
+
+sw.js                           ← PWA用サービスワーカー
 ```
+
+> **JSファイルを追加したら `sw.js` の `CORE[]` と `CACHE` のバージョンを必ず更新すること。**
+> 忘れるとオフライン時に新ファイルだけ取得できず白紙になる（`docs/sw-cache-runbook.md`）。
+>
+> **ES Modules は使えない。** `file://` で開くと `type="module"` が CORS で落ちるため、
+> クラシックスクリプト＋`window.HEALTH_OS` 名前空間で構成している。
 
 ## ★ 更新のしかた（蓄積とアップデート）
 
@@ -40,11 +81,24 @@ sw.js             ← PWA用サービスワーカー（オフライン対応・�
 | 最新研究 | `research` に1件追加 |
 | 何か更新したら | **必ず `meta.lastUpdated` を更新**（ナビ右上・本日の指針の鮮度表示に使われる） |
 
+### 筋トレのデータはどこに入るか
+
+筋トレは `data.js` ではなく **ブラウザの localStorage** に入る（サーバーが無いため）。
+
+- 入力 → 即 localStorage に保存
+- `#vault` セクションの「JSONを書き出す」で持ち出す
+- 書き出したファイルを Drive の「320」に置く → コーチ側が取り込んで恒久化・週次分析
+
+**端末をまたいで同期しない**のがこの方式の限界。だから未書き出しのセッションが
+溜まると `#vault` が催促する。
+
 > コーチング運用の詳細ルール（データ受領時にNotion・Googleカレンダーへどう連携するか等）は
-> `CLAUDE.md` を参照。サブスリー攻略の科学的根拠は `docs/sub3-research.md`、
-> トレーニング負荷・HRV判断の根拠は `docs/training-protocol.md`、
-> 自転車クロストレーニングの根拠は `docs/bike-cross-training-research.md`、
-> トレッドミルHIITの根拠は `docs/treadmill-hiit-research.md` を参照。
+> `CLAUDE.md` を参照。科学的根拠は
+> `docs/sub3-research.md`（サブスリー攻略）、
+> `docs/training-protocol.md`（負荷・HRV判断）、
+> **`docs/strength-research.md`（筋力トレーニング — 走効率・干渉効果・用量・疲労管理）**、
+> `docs/bike-cross-training-research.md`、
+> `docs/treadmill-hiit-research.md` を参照。
 
 ## セクション一覧
 

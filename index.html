@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#000000">
-<title>マラソン3:20切りプロジェクト｜藤井勇成</title>
-<meta name="description" content="藤井勇成のマラソン3:20切り・体重65kgプロジェクト。今週の目標、ランニング結果、データトレンド、計画を一元管理するダッシュボード。">
+<title>Health OS｜藤井勇成 — ラン・筋トレ・体調の統合管理</title>
+<meta name="description" content="藤井勇成のマラソン3:20切りプロジェクト。ランニング・筋力トレーニング・体調・睡眠・体組成をエビデンスに基づいて一元管理するダッシュボード。">
 
 <!-- PWA -->
 <link rel="manifest" href="manifest.webmanifest">
@@ -19,25 +19,28 @@
 <link rel="icon" type="image/png" sizes="64x64" href="icons/favicon-64.png">
 
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/app.css">
 </head>
 <body>
 
 <!-- ===================================================== NAV -->
 <nav class="nav">
   <div class="nav__inner">
-    <a class="nav__brand" href="#top"><span class="dot">●</span>Marathon&nbsp;Project</a>
+    <a class="nav__brand" href="#top"><span class="dot">●</span>Health&nbsp;OS</a>
     <div class="nav__links">
-      <a href="#data">データ</a>
+      <a href="#data">データ状態</a>
+      <a href="#checkin">今朝</a>
       <a href="#today">今日</a>
+      <a href="#train">筋トレ</a>
+      <a href="#load">疲労</a>
       <a href="#week">今週</a>
-      <a href="#runs">ランログ</a>
+      <a href="#runs">ラン</a>
       <a href="#trend">トレンド</a>
+      <a href="#library">種目</a>
       <a href="#gates">ゲート</a>
-      <a href="#status">現在地</a>
       <a href="#odds">達成可能性</a>
-      <a href="#plan">計画</a>
       <a href="#fuel">栄養</a>
-      <a href="#spec">仕様</a>
+      <a href="#vault">データ</a>
     </div>
     <div class="nav__updated">最終更新 <b id="navUpdated">—</b></div>
   </div>
@@ -86,6 +89,18 @@
   </div>
 </section>
 
+<!-- ===================================================== CHECK-IN (朝の主観) -->
+<section class="pad-sm" id="checkin">
+  <div class="wrap">
+    <div class="sec-head reveal" style="margin-bottom:22px">
+      <p class="eyebrow">今朝のコンディション / Check-in</p>
+      <h2 class="sec-title">データより、<br>まず体感を。</h2>
+      <p class="sec-sub">HRVも心拍も、本人の「今日はだるい」を上書きする根拠にはならない。主観は客観データと同等以上に扱う。</p>
+    </div>
+    <div class="reveal d1" id="checkinBody"></div>
+  </div>
+</section>
+
 <!-- ===================================================== TODAY (command center) -->
 <section class="pad-sm" id="today">
   <div class="wrap">
@@ -101,6 +116,32 @@
 </section>
 
 <!-- ===================================================== WEEK -->
+<!-- ===================================================== STRENGTH (筋トレ) -->
+<section class="soft pad" id="train">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <p class="eyebrow">筋力トレーニング / Strength</p>
+      <h2 class="sec-title">重い物を、<br>速く走るために。</h2>
+      <p class="sec-sub">高重量・低回数の筋トレはランニングエコノミーを2〜8%改善する。筋肉が増えるからではなく、腱の剛性と神経系の効率が上がるため。だから「10回で効かせる」メニューではこの効果は出ない。<a href="docs/strength-research.md" class="inline-ref">根拠 →</a></p>
+    </div>
+    <div class="reveal d1" id="trainHead"></div>
+    <div class="reveal d1" id="trainBody"></div>
+    <div class="reveal d2" id="trainProgress"></div>
+  </div>
+</section>
+
+<!-- ===================================================== LOAD (疲労と負荷) -->
+<section class="dark pad" id="load">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <p class="eyebrow">疲労と負荷 / Training load</p>
+      <h2 class="sec-title">ランと筋トレを、<br>ひとつの物差しで。</h2>
+      <p class="sec-sub">距離とkgは足せない。心拍とレップも足せない。両方に同じ形で使える指標はセッションRPE×時間だけ。この単位でだけ、体にかけた負荷の総量が見える。</p>
+    </div>
+    <div class="reveal d1" id="loadBody"></div>
+  </div>
+</section>
+
 <section class="dark pad" id="week">
   <div class="wrap">
     <div class="sec-head reveal">
@@ -161,6 +202,19 @@
 </section>
 
 <!-- ===================================================== GATES -->
+<!-- ===================================================== LIBRARY (種目) -->
+<section class="pad" id="library">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <p class="eyebrow">種目ライブラリ / Exercise library</p>
+      <h2 class="sec-title">やり方は、<br>その場で確かめる。</h2>
+      <p class="sec-sub">各種目から、指定の発信者のチャンネル内検索に直接飛べる。動画IDを埋め込むと削除でリンクが切れるため、検索URLにして常に最新の解説へ当たるようにしている。</p>
+    </div>
+    <div class="reveal d1 coaches" id="libraryCoaches"></div>
+    <div class="reveal d1" id="libraryBody"></div>
+  </div>
+</section>
+
 <section class="soft pad" id="gates">
   <div class="wrap">
     <div class="sec-head reveal">
@@ -348,6 +402,17 @@
   </div>
 </section>
 
+<!-- ===================================================== VAULT (データの持ち出し) -->
+<section class="soft pad" id="vault">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <p class="eyebrow">記録データ / Your data</p>
+      <h2 class="sec-title">入力は端末の中に。<br>だから、書き出す。</h2>
+    </div>
+    <div class="reveal d1" id="vaultBody"></div>
+  </div>
+</section>
+
 <!-- ===================================================== FOOTER -->
 <footer class="footer">
   <div class="wrap wrap--wide">
@@ -369,11 +434,18 @@
 <script src="js/core/util.js"></script>
 <script src="js/data.js"></script>
 <script src="js/data/_legacy-adapter.js"></script>
+<script src="js/data/strength-catalog.js"></script>
+<script src="js/data/strength-program.js"></script>
 <script src="js/data/streams.js"></script>
+<script src="js/core/store.js"></script>
 <script src="js/core/compute-datahealth.js"></script>
+<script src="js/core/compute-strength.js"></script>
+<script src="js/core/compute-load.js"></script>
 <script src="js/render/_registry.js"></script>
 <script src="js/main.js"></script>
 <script src="js/render/datahealth.js"></script>
+<script src="js/render/strength.js"></script>
+<script src="js/render/load.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>
