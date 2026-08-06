@@ -65,14 +65,59 @@
     </div>`;
   }
 
+  /* ブロックが処方をどこまで上書きするかを1箇所で決める。
+   * split の items は「筋力ブロック（主ブロック）」の値を持っている。
+   * 再適応ブロックのように、より軽く・より多い回数を指示するブロックでは
+   * ブロック側を優先しないと、「再適応中です」と言いながら主ブロックの
+   * 重量を出すことになる（表示と処方が食い違う）。
+   * RIR は「余力をより多く残す方（大きい方）」を採る＝常に安全側に倒す。 */
+  /* 重量で強度を決める種目だけが対象。自重・プライオ・時間指定の体幹種目は
+   * ブロックの%1RM処方と無関係なので、絶対に上書きしない。
+   * （ノルディックカールを「8〜10回」に書き換えるようなことが起きる。
+   *   あれは2セット×3〜5回から入る種目で、回数を増やすのは有害） */
+  const LOADABLE = { barbell: 1, dumbbell: 1, machine: 1, cable: 1 };
+
+  function prescriptionFor(item, block) {
+    const ex = HOS.data.exerciseById(item.ex);
+    const itemRir = item.rir != null ? item.rir : 2;
+    const plain = { reps: item.reps, rir: itemRir, overridden: false };
+
+    if (!block || block.rirTarget == null) return plain;
+    if (!ex || !LOADABLE[ex.equipment]) return plain;
+
+    const rir = Math.max(itemRir, block.rirTarget);
+    if (rir === itemRir) return plain;
+
+    /* 「30〜45秒/側」「8〜10/脚」のような指定は回数の意味が違うので数値だけ差し替えない */
+    const repsIsPlainRange = /^\s*\d+\s*[〜~-]?\s*\d*\s*$/.test(String(item.reps));
+
+    /* ★回数の差し替えは「より軽くなる方向」にしか行わない。
+     * 再適応ブロックの 8〜10 を、元が 12〜15 のフェイスプルに当てると
+     * 回数が減って重量が上がる＝減量ブロックの意図と逆になる。 */
+    const mid = (s) => {
+      const n = String(s).match(/\d+/g);
+      return n ? (n.length > 1 ? (+n[0] + +n[1]) / 2 : +n[0]) : null;
+    };
+    const bm = mid(block.reps), im = mid(item.reps);
+    const useBlockReps = repsIsPlainRange && block.reps && bm != null && im != null && bm > im;
+
+    return {
+      reps: useBlockReps ? block.reps : item.reps,
+      rir,
+      overridden: true,
+      blockName: block.name,
+    };
+  }
+
   /* ------------------------------------------------ 1種目のカード */
   function exerciseCard(item, session, block) {
     const D = HOS.data, C = HOS.compute;
     const ex = D.exerciseById(item.ex);
     if (!ex) return "";
 
-    const targetRir = item.rir != null ? item.rir : (block ? block.rirTarget : 2);
-    const sug = C.suggestLoad(ex.id, item.reps, targetRir);
+    const p = prescriptionFor(item, block);
+    const targetRir = p.rir;
+    const sug = C.suggestLoad(ex.id, p.reps, targetRir, block);
     const logged = (session.entries || []).filter((e) => e.ex === ex.id);
     const { best } = C.bestFor(ex.id);
 
@@ -96,12 +141,20 @@
             ${ex.injuryPrevention ? '<span class="tag tag--prev">傷害予防</span>' : ""}
             ${item.role === "main" ? '<span class="tag tag--main">主種目</span>' : ""}
           </h4>
-          <p class="ex__pre">${esc(item.sets)}セット × ${esc(item.reps)} ／ 目標 RIR ${esc(targetRir)}
+          <p class="ex__pre">${esc(item.sets)}セット × ${esc(p.reps)} ／ 目標 RIR ${esc(targetRir)}
             <span class="muted">（あと${esc(targetRir)}回上げられる重さで止める）</span></p>
+          ${p.overridden ? `<p class="ex__override">${esc(p.blockName)}ブロック中のため、
+            主ブロックの処方（${esc(item.reps)} / RIR${esc(item.rir != null ? item.rir : 2)}）より軽い側で出しています</p>` : ""}
         </div>
         <div class="ex__sug">
-          ${sug.kg ? `<div class="ex__sug-kg">${sug.kg}<span>kg</span></div>` : '<div class="ex__sug-kg ex__sug-kg--none">初回</div>'}
-          <div class="ex__sug-lbl">推奨</div>
+          ${sug.kg
+            ? `<div class="ex__sug-kg ${sug.estimated ? "is-est" : ""}">${sug.kg}<span>kg</span></div>`
+            : '<div class="ex__sug-kg ex__sug-kg--none">要測定</div>'}
+          <div class="ex__sug-lbl">${
+            sug.source === "measured" ? "推奨（実測）"
+            : sug.source === "reported" ? "推奨（申告値）"
+            : sug.source === "derived" ? "推奨（比から推定）"
+            : "推奨"}</div>
         </div>
       </header>
 
@@ -286,9 +339,62 @@
       if (!box || !HOS.store) return;
       const s = C.strengthSummary();
 
+      /* ---------------------------------------------------- 基準値パネル */
+      const B = D.strengthProgram.baseline;
+      let baseHTML = "";
+      if (B) {
+        const rows = (B.lifts || []).map((l) => {
+          const ex = D.exerciseById(l.ex);
+          const b = C.baselineE1rm(l.ex);
+          const { latest } = C.bestFor(l.ex);
+          return { name: ex ? ex.short || ex.name : l.ex, l, b, measured: latest };
+        });
+        const ratios = C.baselineRatios();
+        const low = ratios.filter((r) => r.alert);
+
+        baseHTML = `
+        <div class="baseline">
+          <div class="baseline__head">
+            <span class="eyebrow">基準値（BIG3）</span>
+            <span class="muted small">${esc(B.reportedAt)} 本人申告 ・ 体重 ${B.bodyWeightKg}kg</span>
+          </div>
+          <table class="base-tbl">
+            <thead><tr><th>種目</th><th>申告</th><th>推定1RM</th><th>体重比</th><th>状態</th></tr></thead>
+            <tbody>
+              ${rows.map((r) => `<tr>
+                <td>${esc(r.name)}</td>
+                <td class="num">${r.l.weightKg}kg × ${r.l.reps}</td>
+                <td class="num"><b>${r.b ? r.b.value.toFixed(0) : "—"}</b> kg</td>
+                <td class="num muted">${r.b ? (r.b.value / B.bodyWeightKg).toFixed(2) : "—"} ×</td>
+                <td class="${r.measured ? "is-ok" : "is-est"}">${r.measured ? "実測で更新済み" : "申告値"}</td>
+              </tr>`).join("")}
+            </tbody>
+          </table>
+          <p class="muted small">RIRを伺っていないため <b>RIR${B.rirAssumed}</b> と仮定して換算しています。
+            「あれは限界だった（RIR0）」なら約3%下振れ、「まだ2回いけた」なら約3%上振れします。
+            初回セッションで1セット入力すれば、そこから実測に置き換わります。</p>
+
+          ${ratios.length ? `
+          <div class="ratios">
+            ${ratios.map((r) => `
+              <div class="ratio ratio--${r.state}${r.alert ? " is-alert" : ""}">
+                <div class="ratio__v">${r.value}</div>
+                <div class="ratio__l">${esc(r.label)}</div>
+                <div class="ratio__t">一般に ${esc(r.typical)}</div>
+              </div>`).join("")}
+          </div>` : ""}
+
+          ${low.length ? low.map((r) => `
+            <div class="notice notice--warn">
+              <b>${esc(r.label)}が ${r.value}（一般に${esc(r.typical)}）と低い</b>
+              <span>${esc(r.why)}</span>
+            </div>`).join("") : ""}
+        </div>`;
+      }
+
       if (!s.totalSessions) {
         const O = D.strengthProgram.onboarding;
-        box.innerHTML = `
+        box.innerHTML = baseHTML + `
           <div class="onboard">
             <span class="eyebrow">はじめに</span>
             <h3>${esc(O.headline)}</h3>
@@ -314,7 +420,7 @@
       const prev = s.injuryPrevention;
       const missing = prev.filter((p) => !p.ok);
 
-      box.innerHTML = `
+      box.innerHTML = baseHTML + `
         <div class="kpis">
           <div class="kpi"><div class="kpi__n">${s.week.sessions}</div><div class="kpi__l">今週のセッション</div></div>
           <div class="kpi"><div class="kpi__n">${s.week.sets}</div><div class="kpi__l">今週のセット</div></div>

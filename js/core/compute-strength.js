@@ -116,17 +116,72 @@
       }));
   }
 
+  /* --------------------------------------------- 申告値からのベースライン */
+  /* 実入力の履歴が無い種目でも、BIG3の申告値から出発点を出す。
+   * ただし「実測」と「申告からの推定」と「比からの派生」を必ず区別して返す。
+   * 表示側はこの source で見せ方を変える。 */
+  function baselineE1rm(exerciseId) {
+    const B = HOS.data.strengthProgram && HOS.data.strengthProgram.baseline;
+    if (!B) return null;
+
+    const direct = (B.lifts || []).find((l) => l.ex === exerciseId);
+    if (direct) {
+      const e = e1rm(direct.weightKg, direct.reps, B.rirAssumed);
+      if (!e) return null;
+      return {
+        value: e.value, source: "reported",
+        from: `本人申告 ${direct.weightKg}kg×${direct.reps}回（RIR${B.rirAssumed}と仮定）`,
+        rirAssumed: B.rirAssumed,
+      };
+    }
+
+    const d = (B.derive || []).find((x) => x.ex === exerciseId);
+    if (d) {
+      const base = baselineE1rm(d.from);
+      if (!base) return null;
+      const ex = HOS.data.exerciseById && HOS.data.exerciseById(d.from);
+      return {
+        value: base.value * d.ratio, source: "derived",
+        from: `${ex ? ex.short || ex.name : d.from} からの推定（${d.note}）`,
+        ratio: d.ratio,
+      };
+    }
+    return null;
+  }
+
+  /* 比の所見。ランナーにとって意味のある力関係を見る */
+  function baselineRatios() {
+    const B = HOS.data.strengthProgram && HOS.data.strengthProgram.baseline;
+    if (!B) return [];
+    const sq = baselineE1rm("back-squat");
+    const dl = baselineE1rm("deadlift");
+    const bp = baselineE1rm("bench-press");
+    const out = [];
+    const push = (key, num, den) => {
+      const meta = (B.ratios || []).find((r) => r.key === key);
+      if (!num || !den || !meta) return;
+      const v = num.value / den.value;
+      const lo = parseFloat(meta.typical.split(/[〜~]/)[0]);
+      const hi = parseFloat(meta.typical.split(/[〜~]/)[1]);
+      const state = v < lo ? "low" : v > hi ? "high" : "ok";
+      out.push({
+        key, label: meta.label, value: Math.round(v * 100) / 100,
+        typical: meta.typical, why: meta.why,
+        state,
+        /* 警告として出すのは「外れていて、かつ打ち手が変わる」ものだけ */
+        alert: state !== "ok" && !!meta.actionable,
+      });
+    };
+    push("dl/sq", dl, sq);
+    push("bp/sq", bp, sq);
+    return out;
+  }
+
   /* ------------------------------------------------- 次回の推奨重量 */
   /* 前回の実績と、今のブロックの目標RIRから次のセットの重量を出す。
    * 「前回 RIR が目標より余っていたら上げる／足りなければ下げる」だけの
    * 素直な自動調整。複雑なアルゴリズムより、本人が納得できる規則性を優先する。 */
-  function suggestLoad(exerciseId, targetReps, targetRir) {
-    const { latest } = bestFor(exerciseId);
-    if (!latest) return { kg: null, reason: "初回。10回できる重さで様子を見る（RIR 3〜4）", first: true };
-
-    const e = e1rm(latest.weightKg, latest.reps, latest.rir);
-    if (!e) return { kg: null, reason: "前回の記録が不完全", first: true };
-
+  function suggestLoad(exerciseId, targetReps, targetRir, block) {
     /* 「4〜6回」のような範囲は中央値で処方する。
      * 下限（4回）を採ると最も重い側になり、範囲の上限まで続けられない重量が出る。
      * 上限を採ると軽すぎる。中央を採ると、前回がRIR目標どおりだったときに
@@ -135,6 +190,30 @@
     const reps = nums && nums.length
       ? (nums.length > 1 ? (Number(nums[0]) + Number(nums[1])) / 2 : Number(nums[0]))
       : 5;
+
+    const { latest } = bestFor(exerciseId);
+
+    /* --- 実入力がまだ無い場合: 申告値・派生値から出発点を出す --- */
+    if (!latest) {
+      const b = baselineE1rm(exerciseId);
+      if (!b) {
+        return { kg: null, first: true,
+          reason: "この種目は基準値がありません。10回できる重さで様子を見てください（RIR 3〜4）" };
+      }
+      const disc = (block && block.startDiscount) || 1;
+      const kg = loadFor(b.value * disc, reps, targetRir);
+      return {
+        kg, first: true, estimated: true, source: b.source,
+        e1rm: b.value, reliable: true,
+        reason: `${b.from}。推定1RM ${b.value.toFixed(0)}kg` +
+                (disc < 1 ? ` から${Math.round((1 - disc) * 100)}%引いた導入重量` : " から算出") +
+                "。1セット入れれば実測に置き換わります",
+      };
+    }
+
+    const e = e1rm(latest.weightKg, latest.reps, latest.rir);
+    if (!e) return { kg: null, reason: "前回の記録が不完全", first: true };
+
     const kg = loadFor(e.value, reps, targetRir);
 
     let reason;
@@ -147,7 +226,7 @@
     } else {
       reason = `前回 RIR${latest.rir} は目標どおり。推定1RM ${e.value.toFixed(0)}kg から算出`;
     }
-    return { kg, reason, e1rm: e.value, reliable: e.reliable, last: latest };
+    return { kg, reason, e1rm: e.value, reliable: e.reliable, last: latest, source: "measured" };
   }
 
   /* --------------------------------------------------------- サマリー */
@@ -179,6 +258,7 @@
   Object.assign(HOS.compute, {
     e1rm, loadFor, bestFor, e1rmSeries,
     sessionVolume, weeklySetsByMuscle, injuryPreventionStatus,
+    baselineE1rm, baselineRatios,
     suggestLoad, strengthSummary: summary,
   });
 

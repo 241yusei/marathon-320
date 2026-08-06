@@ -19,17 +19,65 @@
 
   const D = window.HEALTH_OS.data;
 
+  /* ==================================================== 基準値（BIG3） */
+  /* 2026-08-06 に本人から申告。RIR は聞いていないため 1 と仮定している。
+   * ★この仮定は明示して持つ。黙って埋めると、後から見たときに
+   *   実測なのか推定なのか分からなくなる（このプロジェクトで最も高くついた失敗）。
+   *   本人が「あれは限界だった（RIR0）」と言えば約3%下振れ、
+   *   「まだ2回いけた」なら約3%上振れする。初回セッションの実入力で自動的に上書きされる。 */
+  const BASELINE = {
+    reportedAt: "2026-08-06",
+    rirAssumed: 1,
+    rirAssumedNote: "本人申告時にRIRを聞いていないため1と仮定。初回の実入力で上書きされる",
+    bodyWeightKg: 74.2,
+    lifts: [
+      { ex: "back-squat", weightKg: 90,  reps: 6, source: "self-report" },
+      { ex: "bench-press", weightKg: 60, reps: 3, source: "self-report" },
+      { ex: "deadlift",   weightKg: 100, reps: 3, source: "self-report" },
+    ],
+
+    /* 測っていない種目の初期重量を、BIG3から比で置く。
+     * ★あくまで出発点。1〜2セッションで実入力に置き換わる。
+     *   比が経験的に安定しているものだけを derive し、マシン種目・自重種目は
+     *   推測しない（レバー比が機種で違いすぎるため、数字を出す方が有害）。 */
+    derive: [
+      { ex: "front-squat",            from: "back-squat",  ratio: 0.85, note: "バックスクワットの約85%" },
+      { ex: "romanian-deadlift",      from: "deadlift",    ratio: 0.80, note: "デッドリフトの約80%（可動域が狭く軽くなる）" },
+      { ex: "hip-thrust",             from: "deadlift",    ratio: 1.00, note: "デッドリフトと同程度から" },
+      { ex: "overhead-press",         from: "bench-press", ratio: 0.65, note: "ベンチプレスの約65%" },
+      { ex: "barbell-row",            from: "bench-press", ratio: 0.80, note: "ベンチプレスの約80%" },
+      { ex: "bulgarian-split-squat",  from: "back-squat",  ratio: 0.15, note: "片手ダンベル。バックスクワット1RMの約15%を左右に持つ" },
+    ],
+
+    /* 比の所見。ランナーにとって意味のある比だけを見る */
+    /* actionable … 外れたときに「打ち手を変えるべきか」。
+     * false のものはカードで数値だけ見せ、警告は出さない。
+     * 走りに影響しない比まで赤くすると、本当に効く警告まで無視されるようになる。 */
+    ratios: [
+      { key: "dl/sq", label: "デッドリフト ÷ スクワット", typical: "1.2〜1.3", actionable: true,
+        why: "後鎖（殿筋・ハムストリングス・脊柱起立筋）と大腿四頭筋の力関係。ランニングの推進は後鎖が担うため、ランナーではここが低いと直接ロスになる。Cの日（ヒンジ主）を優先し、ヒップスラストとRDLを確実に入れる" },
+      { key: "bp/sq", label: "ベンチプレス ÷ スクワット", typical: "0.65〜0.75", actionable: false,
+        why: "上下のバランスの目安。ランナーでは低めでも走りへの実害は小さいため、これを理由に上半身を増やす必要はない" },
+    ],
+  };
+
   /* ------------------------------------------------------- 導入ブロック */
   /* 経験者だが直近のトレーニング歴が不明なため、最初の4週は結合組織と
    * フォームの再適応に充てる。ここを飛ばすと腱の障害が出やすい。 */
   const BLOCKS = [
     {
       id: "reacclimation", name: "再適応", weeks: "Week 1〜4",
-      intensity: "65〜75% 1RM 相当（RIR 3〜4）", reps: "8〜10回",
+      intensity: "65〜75% 1RM 相当（RIR 3〜4）", reps: "8〜10",
       goal: "フォームの再確認と結合組織の適応。重量は意図的に抑える",
       why: "経験者でもブランク後は腱・靭帯の耐性が筋力より遅れて戻る。ここで飛ばすと " +
            "アキレス腱・膝蓋腱の障害が出る。4週かけて「軽い」と感じる重量で終える",
       rirTarget: 3.5,
+      /* ★申告値から算出した重量をさらに10%引いて始める。
+       * 申告のRIRが不明で上振れの可能性があること、直近のトレーニング頻度が
+       * 分からないことの2点に対する保険。物足りなければ本人が上げればよく、
+       * 逆方向（重すぎて腱を痛める）は取り返しがつかない。 */
+      startDiscount: 0.90,
+      startDiscountWhy: "申告値のRIRが不明なため初週は10%引いて入る。軽すぎる分は取り返せるが、腱の障害は取り返せない",
     },
     {
       id: "strength", name: "筋力（主ブロック）", weeks: "Week 5〜14",
@@ -174,6 +222,7 @@
 
   Object.assign(D, {
     strengthProgram: {
+      baseline: BASELINE,
       blocks: BLOCKS,
       split: SPLIT,
       home: HOME,
