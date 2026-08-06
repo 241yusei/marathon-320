@@ -624,3 +624,7 @@ code { font-family: var(--mono); font-size: .92em; }
 
 /* 入力の検証メッセージ。ボタンが無反応に見える状態を作らない */
 .setform__msg { flex: 1 0 100%; margin-top: 6px; font-size: 12.5px; color: var(--bad); }
+
+/* 出典が1名になったので、カードは横幅いっぱいの1枚で見せる */
+.coaches:has(.coach--solo) { grid-template-columns: 1fr; }
+.coach--solo { display: grid; gap: 3px; }

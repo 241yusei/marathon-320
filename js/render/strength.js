@@ -7,7 +7,7 @@
  *  設計方針:
  *   ・入力は「重量 / 回数 / RIR」の3つだけ。それ以外は全部こちらで導出する
  *   ・推奨重量には必ず「なぜその重量か」を併記する（本人が納得できないと続かない）
- *   ・解説リンクはチャンネル内検索URL。動画が入れ替わっても壊れない
+ *   ・解説の出典は今古賀翔【トレーニング科学】1名。種目ごとに彼のチャンネル内検索へ飛ぶ
  *
  *  根拠: docs/strength-research.md §2 用量 / §4-3 週4回の配分 / §8-4 RIR
  * ========================================================================= */
@@ -54,32 +54,21 @@
   }
 
   /* ---------------------------------------------- 種目ごとのYouTube */
-  /* 主線。チャンネルを経由せず、その種目のYouTubeへ1タップで飛ぶ。 */
+  /* 出典は今古賀翔【トレーニング科学】1名（ユーザー指定・2026-08-06）。
+   * 種目ごとに彼のチャンネル内をその種目で検索したURLへ1タップで飛ぶ。 */
   function ytButton(ex, compact) {
     const D = HOS.data;
     const url = D.videoUrl(ex);
-    const pinned = D.hasPinnedVideo(ex);
+    const src = D.coaches[0];
     return `<a class="ytb ${compact ? "ytb--sm" : ""}" href="${esc(url)}"
       target="_blank" rel="noopener noreferrer"
-      title="${esc(pinned ? ex.name + " の解説動画" : D.videoQuery(ex) + " をYouTubeで検索")}">
+      title="${esc(src.full + " の「" + D.videoQuery(ex) + "」を開く")}">
       <svg class="ytb__i" viewBox="0 0 24 24" aria-hidden="true">
         <path fill="currentColor" d="M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4A2.5 2.5 0 0 0 2.4 7.2C2 8.8 2 12 2 12s0 3.2.4 4.8a2.5 2.5 0 0 0 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8c.4-1.6.4-4.8.4-4.8s0-3.2-.4-4.8Z"/>
         <path fill="#fff" d="M10 15V9l5.2 3L10 15Z"/>
       </svg>
-      <span>${compact ? "YouTube" : "やり方をYouTubeで見る"}</span>
+      <span>${compact ? "やり方を見る" : "やり方を見る（今古賀翔）"}</span>
     </a>`;
-  }
-
-  /* ------------------------------------------------ 発信者を指定して探す */
-  function linksHTML(ex) {
-    return `<div class="ex__links">
-      <span class="ex__links-lbl">発信者を指定して探す</span>
-      ${ex.links.map((l) => `
-        <a class="cref cref--${l.medium}" href="${esc(l.url)}" target="_blank" rel="noopener noreferrer">
-          <span class="cref__name">${esc(l.name)}</span>
-          <span class="cref__hint">${esc(l.hint)}</span>
-        </a>`).join("")}
-    </div>`;
   }
 
   /* ブロックが処方をどこまで上書きするかを1箇所で決める。
@@ -186,7 +175,6 @@
         <summary>フォームの要点と根拠 ${ex.muscles.primary.length ? `・対象: ${esc(ex.muscles.primary.join("・"))}` : ""}</summary>
         <p class="ex__runner">${esc(ex.runner)}</p>
         <ul>${ex.cues.map((c) => `<li>${esc(c)}</li>`).join("")}</ul>
-        ${linksHTML(ex)}
       </details>
 
       ${logged.length ? `
@@ -506,8 +494,8 @@
 
       if (coaches) {
         coaches.innerHTML = (D.coaches || []).map((c) => `
-          <a class="coach" href="${esc(c.home)}" target="_blank" rel="noopener noreferrer">
-            <span class="coach__medium">${c.medium === "youtube" ? "YouTube" : "ブログ"}</span>
+          <a class="coach coach--solo" href="${esc(c.home)}" target="_blank" rel="noopener noreferrer">
+            <span class="coach__medium">${c.medium === "youtube" ? "YouTube" : "ブログ"}・解説の出典</span>
             <span class="coach__name">${esc(c.full)}</span>
             <span class="coach__note">${esc(c.note)}</span>
           </a>`).join("");
@@ -545,7 +533,6 @@
                 ${e.scheme.restSec ? ` ／ 休息 ${e.scheme.restSec}秒` : ""}
                 ${e.scheme.tempo ? ` ／ ${esc(e.scheme.tempo)}` : ""}</p>
               <ul class="lib__cues">${e.cues.map((c) => `<li>${esc(c)}</li>`).join("")}</ul>
-              ${linksHTML(e)}
             </details>`).join("")}
         </section>`;
       }).join("");
