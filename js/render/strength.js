@@ -160,10 +160,13 @@
 
       <p class="ex__why">${esc(sug.reason)}${best ? ` ・ 自己ベスト推定1RM ${best.e1rm.toFixed(0)}kg` : ""}</p>
       ${item.caution ? `<p class="ex__caution">⚠ ${esc(item.caution)}</p>` : ""}
-      <p class="ex__runner">${esc(ex.runner)}</p>
 
+      <!-- ★「なぜこの種目か」はここ（折りたたみ）に置く。
+           ジムでこの画面を開く目的はセットの記録であり、入力欄が
+           解説文の下に押し下げられてはいけない。読みたい人は開ける。 -->
       <details class="ex__cues">
-        <summary>フォームの要点 ${ex.muscles.primary.length ? `・対象: ${esc(ex.muscles.primary.join("・"))}` : ""}</summary>
+        <summary>やり方と根拠 ${ex.muscles.primary.length ? `・対象: ${esc(ex.muscles.primary.join("・"))}` : ""}</summary>
+        <p class="ex__runner">${esc(ex.runner)}</p>
         <ul>${ex.cues.map((c) => `<li>${esc(c)}</li>`).join("")}</ul>
         ${linksHTML(ex)}
       </details>
@@ -174,11 +177,17 @@
         <tbody>${rows}</tbody>
       </table>` : ""}
 
-      <form class="setform" data-form="${esc(ex.id)}">
+      <!-- novalidate: ブラウザ標準の検証は、値が不正なとき submit を
+           「何も言わずに」中止する。記録用の道具でボタンが無反応になるのは
+           最悪の失敗なので、検証は下のハンドラで明示的に行う。 -->
+      <form class="setform" data-form="${esc(ex.id)}" novalidate>
         <label>重量<input type="number" step="0.5" inputmode="decimal" name="weightKg"
           value="${sug.kg != null ? sug.kg : ""}" placeholder="kg"></label>
         <label>回数<input type="number" step="1" inputmode="numeric" name="reps" placeholder="回"></label>
-        <label>RIR<input type="number" step="1" inputmode="numeric" name="rir" min="0" max="5"
+        <!-- ★step は 0.5。ブロックの目標RIRは3.5のような中間値を取りうるので、
+             step="1" だと初期値が「無効な値」と判定され、ブラウザが送信を
+             黙って中止する（記録ボタンが何も起こさない状態になっていた）。 -->
+        <label>RIR<input type="number" step="0.5" inputmode="decimal" name="rir" min="0" max="6"
           value="${targetRir}" placeholder="余力"></label>
         <button type="submit">セットを記録</button>
       </form>
@@ -257,7 +266,7 @@
         ${warn ? `<div class="notice notice--warn">${esc(warn)}</div>` : ""}
         ${day.items.map((it) => exerciseCard(it, session, block)).join("")}
 
-        <form class="finish" id="finishForm">
+        <form class="finish" id="finishForm" novalidate>
           <h4>セッションを締める</h4>
           <p class="muted small">★これがランと筋トレを同じ単位で足す唯一の入力です。
             終了30分後に、その日全体のきつさを0〜10で（Foster 2001 / strength-research §8-1）</p>
@@ -287,7 +296,17 @@
           ev.preventDefault();
           const fd = new FormData(f);
           const reps = fd.get("reps");
-          if (!reps) { f.querySelector('[name="reps"]').focus(); return; }
+          const msg = f.querySelector(".setform__msg");
+          if (msg) msg.remove();
+          if (!reps || !(Number(reps) > 0)) {
+            const el = document.createElement("p");
+            el.className = "setform__msg";
+            el.textContent = "回数を入れてください（重量とRIRは任意）";
+            f.appendChild(el);
+            const r = f.querySelector('[name="reps"]');
+            if (r) r.focus();
+            return;
+          }
           HOS.store.addSet(body.dataset.session, {
             ex: f.dataset.form,
             weightKg: fd.get("weightKg") || null,

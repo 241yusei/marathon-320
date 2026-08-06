@@ -9,9 +9,168 @@
  *    ・タップ標的は44px以上（スマホでジムで入力するため）
  * ========================================================================= */
 
-/* ナビのアンカーで飛んだとき、見出しが固定ナビ（52px）の下に潜らないようにする。
- * リンクが13本になり、実際に飛ぶ機会が増えたので効いてくる。 */
-section[id], header[id] { scroll-margin-top: 62px; }
+/* ナビのアンカーで飛んだとき、見出しが固定ナビ（52px）の下に潜らないようにする。 */
+section[id], header[id] { scroll-margin-top: 106px; }
+
+/* =========================================================================
+ *  ビュータブ（views.js）
+ *  -------------------------------------------------------------------------
+ *  計測で「筋トレの入力欄まで12.6画面スクロール」だったのを、
+ *  タブ1回＋1画面以内に収めるための骨格。
+ *  スマホは下部固定（親指が届く）、デスクトップは上部でナビに続ける。
+ * ========================================================================= */
+/* ★[hidden] は display:none を「低い詳細度で」当てるだけなので、
+ * .hero { display:flex } のような既存ルールに負ける。
+ * ビュー切り替えは hidden 属性で行うため、ここで確実に効かせる。 */
+[hidden] { display: none !important; }
+
+.vbar {
+  position: sticky; top: 52px; z-index: 90;
+  display: grid; grid-template-columns: repeat(5, 1fr);
+  background: rgba(251, 250, 248, 0.94);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid var(--line);
+}
+.vtab {
+  position: relative; display: flex; align-items: center; justify-content: center;
+  gap: 7px; min-height: 46px; padding: 0 6px; cursor: pointer;
+  background: none; border: none; border-bottom: 2px solid transparent;
+  font: inherit; font-size: 13px; color: var(--ink-2);
+  transition: color .15s, border-color .15s;
+}
+.vtab:hover { color: var(--ink); }
+.vtab.is-on { color: var(--ink); border-bottom-color: var(--ink); font-weight: 600; }
+.vtab__i { width: 17px; height: 17px; flex-shrink: 0; }
+.vtab__dot {
+  position: absolute; top: 9px; right: max(6px, 22%);
+  width: 6px; height: 6px; border-radius: 50%; background: var(--accent);
+}
+/* 状態バー: 「今どこに何をしに行けばよいか」と「何が欠測しているか」。
+ * 2本の帯に分けるとナビだけで画面の1/4を食うので、1つの帯に見えるよう繋げる。 */
+.view-hint {
+  display: flex; flex-wrap: wrap; gap: 4px 18px; justify-content: center;
+  padding: 7px 16px 5px; font-size: 12px; color: var(--ink-2);
+  background: var(--bg-soft); border-bottom: none;
+}
+.view-hint span::before { content: "● "; color: var(--accent); font-size: 8px; vertical-align: middle; }
+.view-hint:not([hidden]) + #dataHealthBanner .dh-banner { padding-top: 2px; }
+
+@media (max-width: 780px) {
+  /* 下部固定に切り替える。スクロールしながら片手で移動できる位置 */
+  .vbar {
+    position: fixed; top: auto; bottom: 0; left: 0; right: 0;
+    border-bottom: none; border-top: 1px solid var(--line);
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+  .vtab { flex-direction: column; gap: 3px; min-height: 54px; font-size: 10.5px; }
+  .vtab.is-on { border-bottom-color: transparent; }
+  .vtab.is-on .vtab__i { color: var(--accent); }
+  .vtab__i { width: 20px; height: 20px; }
+  .vtab__dot { top: 6px; right: 50%; margin-right: -16px; }
+  body { padding-bottom: calc(58px + env(safe-area-inset-bottom, 0)); }
+  section[id], header[id] { scroll-margin-top: 60px; }
+  /* ★下端固定バーに要素が潜り込むのを防ぐ。
+   * body の padding-bottom は文書末尾しか守らない。ブラウザが要素を
+   * 画面下端に寄せてスクロールしたとき（入力欄のフォーカス時・アンカー移動時）は
+   * バーの真下に隠れてタップがバーに吸われる。 */
+  html { scroll-padding-bottom: calc(76px + env(safe-area-inset-bottom, 0)); }
+}
+
+/* =========================================================================
+ *  情報密度
+ *  -------------------------------------------------------------------------
+ *  元は1回読むランディングページの寸法だった（.pad が上下150px、
+ *  見出しが最大56px）。毎日開く道具には大きすぎる。
+ *  「読み物」のビュー（計画・知識）は元の伸びやかさを残し、
+ *  日常的に開くビューだけ詰める。
+ * ========================================================================= */
+/* 読み物ビューも上限を下げる。元は上下150pxで、見出しに届く前に
+ * 900pxの画面の4割が空白だった。編集的な余白は残しつつ90pxまで。 */
+.pad { padding-top: clamp(56px, 7vw, 90px); padding-bottom: clamp(56px, 7vw, 90px); }
+.pad-sm { padding-top: clamp(44px, 5vw, 70px); padding-bottom: clamp(44px, 5vw, 70px); }
+
+body[data-view="today"] .pad,
+body[data-view="train"] .pad,
+body[data-view="log"] .pad {
+  padding-top: clamp(28px, 4vw, 48px);
+  padding-bottom: clamp(28px, 4vw, 48px);
+}
+body[data-view="today"] .pad-sm,
+body[data-view="train"] .pad-sm,
+body[data-view="log"] .pad-sm {
+  padding-top: clamp(24px, 3vw, 38px);
+  padding-bottom: clamp(24px, 3vw, 38px);
+}
+body[data-view="today"] .sec-title,
+body[data-view="train"] .sec-title,
+body[data-view="log"] .sec-title {
+  font-size: clamp(21px, 3vw, 30px); line-height: 1.2; letter-spacing: -.01em;
+}
+/* 見出しの改行は「大きな見出し」のための演出。詰めた寸法では邪魔になる */
+body[data-view="today"] .sec-title br,
+body[data-view="train"] .sec-title br,
+body[data-view="log"] .sec-title br { display: none; }
+body[data-view="today"] .sec-title br + *,
+body[data-view="train"] .sec-title br + * { }
+body[data-view="today"] .sec-sub,
+body[data-view="train"] .sec-sub,
+body[data-view="log"] .sec-sub {
+  font-size: 13.5px; line-height: 1.7; margin-top: 8px; max-width: 62ch;
+}
+body[data-view="today"] .sec-head,
+body[data-view="train"] .sec-head,
+body[data-view="log"] .sec-head { margin-bottom: 20px; }
+
+/* 日常ビューではヒーローを縮める。レースまでの残り日数だけ残す。
+ * 目標値4枚（hero__stats）は毎日見る数字ではなく、計画ビューの現在地と重複する。
+ * 実測で350pxを占めていたので、日常ビューからは外す。 */
+body[data-view="today"] .hero { min-height: 0; padding: 16px 0 14px; }
+body[data-view="today"] .hero__title,
+body[data-view="today"] .hero__sub,
+body[data-view="today"] .hero__stats,
+body[data-view="today"] .scroll-hint { display: none; }
+body[data-view="today"] .hero__glow { opacity: .3; }
+/* 残すのはレースまでの残り日数だけ。毎日見て意味があるのはこれ1つ */
+body[data-view="today"] #heroCountdown { margin-top: 4px; }
+
+/* 今朝のチェックイン: 見出し下の説明は下の注記と内容が重複していた */
+body[data-view="today"] #checkin .sec-sub { display: none; }
+
+/* 筋トレ: ブロック説明とスプリット選択が入力欄を押し下げていた（実測405px） */
+body[data-view="train"] .train__phase { grid-template-columns: 1fr; gap: 16px; padding-bottom: 18px; }
+body[data-view="train"] .train__phase h3 { font-size: 17px; margin: 4px 0 3px; }
+body[data-view="train"] .train__phase p { font-size: 12.5px; }
+body[data-view="train"] .sdot { min-height: 46px; padding: 7px 9px; }
+body[data-view="train"] .sdot__k { font-size: 14px; }
+body[data-view="train"] .sdot__n { display: none; }
+body[data-view="train"] .train__daybar { padding: 18px 0 14px; }
+body[data-view="train"] .train__dayname { font-size: 19px; }
+/* この画面は「記録する」ための道具。趣旨説明は知識ビューと docs に置いてある */
+body[data-view="train"] > #viewRoot .sec-sub,
+body[data-view="train"] #train .sec-sub { display: none; }
+body[data-view="train"] .ex { padding: 18px 0; }
+body[data-view="train"] .ex__runner { margin: 6px 0 10px; }
+
+/* 長文の折りたたみ（views.js が clamp クラスを付ける） */
+.clampable { position: relative; }
+.clampable.is-clamped .clampable__body {
+  display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.clampable__more {
+  display: inline-block; margin-top: 8px; cursor: pointer; font: inherit;
+  font-size: 12.5px; background: none; border: none; padding: 4px 0;
+  color: var(--accent); border-bottom: 1px solid currentColor;
+}
+.dark .clampable__more { color: var(--accent-soft); }
+
+/* セクション間の境界。詰めたぶん、どこで切れているかが分かりにくくなる */
+body[data-view="today"] section[id] + section[id],
+body[data-view="train"] section[id] + section[id],
+body[data-view="log"] section[id] + section[id] { border-top: 1px solid var(--line); }
+body[data-view="log"] .dark + section[id],
+body[data-view="train"] .dark + section[id] { border-top: none; }
 
 /* -------------------------------------------------------------- nav 調整 */
 /* 柱が増えてリンクが13本になった。半透明のままだと背後の見出しが透けて
@@ -394,7 +553,60 @@ section[id], header[id] { scroll-margin-top: 62px; }
 .vault__msg.is-bad { color: var(--bad); }
 code { font-family: var(--mono); font-size: .92em; }
 
+/* ------------------------------------------------------- 判定の表示 */
+/* .judge-pill は「EASY ｜ 短い一言」の丸ピル用に作られていた。
+ * 判定理由が1,500字を超えた今、丸ピルのまま伸ばすとラベルが縦に潰れて
+ * 巨大な角丸の塊になる。長文を前提としたブロックに組み替える。 */
+.judge-pill {
+  display: grid; grid-template-columns: minmax(0, 1fr);
+  align-items: start; gap: 8px;
+  border-radius: var(--radius); padding: 14px 16px;
+  margin-bottom: 22px; max-width: 78ch;
+}
+.judge-pill .code {
+  white-space: nowrap; font-weight: 700; letter-spacing: .04em;
+  padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,.14);
+}
+.judge-pill .reason {
+  border-left: none; padding-left: 0; line-height: 1.85;
+}
+
+/* -------------------------------------------------------- 常設バナー */
+/* 静かに、しかし常にそこにある。赤い全幅帯は警報疲れを生むのでやめた。 */
+/* style.css の旧ルール（赤い全幅の sticky 帯）を上書きする。
+ * sticky も外す。ビュータブが同じ位置に来るため二重に貼り付いてしまう。 */
+.dh-banner {
+  display: flex; align-items: center; gap: 10px;
+  position: static; text-align: left;
+  max-width: var(--maxw); margin: 0 auto; padding: 9px 22px;
+  background: transparent; color: var(--ink-2);
+  font-size: 12.5px; line-height: 1.5;
+}
+.dh-banner a { text-decoration: none; margin-left: 0; }
+.dh-banner__n {
+  flex-shrink: 0; min-width: 20px; height: 20px; padding: 0 5px;
+  display: grid; place-items: center; border-radius: 10px;
+  background: var(--warn); color: #fff; font-size: 11px; font-weight: 700;
+}
+.dh-banner__t { flex: 1; line-height: 1.5; }
+.dh-banner__c { flex-shrink: 0; color: var(--accent); border-bottom: 1px solid currentColor; }
+#dataHealthBanner { background: var(--bg-soft); border-bottom: 1px solid var(--line); }
+#dataHealthBanner:empty { display: none; }
+
+/* ---------------------------------------------------- データ状態の圧縮 */
+.dh-ok > summary {
+  cursor: pointer; list-style: none; padding: 12px 0;
+  font-size: 12.5px; color: var(--ink-2); border-top: 1px solid var(--line);
+}
+.dh-ok > summary::-webkit-details-marker { display: none; }
+.dh-ok > summary::before { content: "＋ "; color: var(--ink-3); }
+.dh-ok[open] > summary::before { content: "− "; }
+.dh-none { font-size: 14px; color: var(--good); padding: 14px 0; }
+
 /* ------------------------------------------------------ 動きの抑制 */
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
 }
+
+/* 入力の検証メッセージ。ボタンが無反応に見える状態を作らない */
+.setform__msg { flex: 1 0 100%; margin-top: 6px; font-size: 12.5px; color: var(--bad); }

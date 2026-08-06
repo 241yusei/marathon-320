@@ -26,25 +26,13 @@
 <!-- ===================================================== NAV -->
 <nav class="nav">
   <div class="nav__inner">
-    <a class="nav__brand" href="#top"><span class="dot">●</span>Health&nbsp;OS</a>
-    <div class="nav__links">
-      <a href="#data">データ状態</a>
-      <a href="#checkin">今朝</a>
-      <a href="#today">今日</a>
-      <a href="#train">筋トレ</a>
-      <a href="#load">疲労</a>
-      <a href="#week">今週</a>
-      <a href="#runs">ラン</a>
-      <a href="#trend">トレンド</a>
-      <a href="#library">種目</a>
-      <a href="#gates">ゲート</a>
-      <a href="#odds">達成可能性</a>
-      <a href="#fuel">栄養</a>
-      <a href="#vault">データ</a>
-    </div>
+    <a class="nav__brand" href="#/today"><span class="dot">●</span>Health&nbsp;OS</a>
+    <div class="nav__links" id="navSub"></div>
     <div class="nav__updated">最終更新 <b id="navUpdated">—</b></div>
   </div>
 </nav>
+
+<p class="view-hint" id="viewHint" hidden></p>
 
 <!-- ===================================================== HERO -->
 <header class="hero" id="top">
@@ -446,6 +434,7 @@
 <script src="js/render/datahealth.js"></script>
 <script src="js/render/strength.js"></script>
 <script src="js/render/load.js"></script>
+<script src="js/render/views.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>
