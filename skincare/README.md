@@ -15,8 +15,11 @@ Health OS の6つ目の柱として、ラン・筋トレ・体調と同じ枠組
 2. **施術後7日は Torriden ＋ セラミドクリームだけ。** goodalパッドとRoCレチノールには触らない
 3. **新しいものは2週間に1つだけ足す。** ナイアシンアミド5% → ビタミンC → レチナール週2回の順
 
-現在のフェーズと今日やることは **[01-protocol/schedule.md](01-protocol/schedule.md)** の
-フェーズ表と **[01-protocol/daily.md](01-protocol/daily.md)** を見る。
+**いま開くべきは [01-protocol/month-01_2026-08-14.md](01-protocol/month-01_2026-08-14.md)**
+（2026-08-14〜09-13 の1か月方針）。週ごとの計画・朝夜の手順・今月固有の注意点が入っている。
+
+長期の位置づけは [01-protocol/schedule.md](01-protocol/schedule.md)、
+時期を問わない完成形の手順は [01-protocol/daily.md](01-protocol/daily.md)。
 
 ---
 
@@ -27,7 +30,8 @@ skincare/
 ├── 00-baseline/          不変の記録。あとから書き換えない
 │   └── 2026-08-12_markvu.md
 ├── 01-protocol/          いま実行するもの。変わり続ける
-│   ├── daily.md              毎日の手順
+│   ├── month-01_2026-08-14.md  ★いま見るもの。1か月の方針（8/14〜9/13）
+│   ├── daily.md              毎日の手順（時期を問わない完成形）
 │   ├── schedule.md           長期計画と判定日
 │   ├── rules.md              やらないこと・他の柱との両立
 │   ├── dark-circle-test.md   くまの型判定（5分・1回やれば済む）
