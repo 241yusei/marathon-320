@@ -30,6 +30,7 @@ skincare/
 │   ├── daily.md              毎日の手順
 │   ├── schedule.md           長期計画と判定日
 │   ├── rules.md              やらないこと・他の柱との両立
+│   ├── dark-circle-test.md   くまの型判定（5分・1回やれば済む）
 │   ├── CHANGELOG.md          いつ・何を・なぜ変えたか（追記のみ）
 │   └── archive/              差し替えた旧版
 ├── 02-products/          製品台帳
