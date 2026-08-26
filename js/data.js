@@ -49,10 +49,10 @@ window.MARATHON_DATA = {
   /* Apple の Highlights カルーセル相当。最重要指標を 6 枚で見せる。       */
   highlights: [
     { icon: "weight",   value: "74.2", unit: "kg",  label: "体重",          state: "warn", note: "7/29実測。6月から実質フラット（測定条件がバラバラ）",   anchor: "status" },
-    { icon: "hrv",      value: "38.8", unit: "ms",  label: "HRV 直近",      state: "warn", note: "7/31・夕夜窓n=2。同窓ベースライン57.5±19.9msの−1SD付近", anchor: "trend"  },
-    { icon: "heart",    value: "157",  unit: "bpm", label: "直近ランの平均HR", state: "bad",  note: "7/27・Z3域。実測心拍でZ1-2は33%と判明", anchor: "runs"   },
-    { icon: "sleep",    value: "0",    unit: "夜",   label: "睡眠の実測記録",  state: "bad",  note: "7月はウォッチの夜間睡眠記録がゼロ。7.5hは全て自己申告", anchor: "week"   },
-    { icon: "run",      value: "38",   unit: "%",   label: "Z1-2比率(直近週)", state: "bad",  note: "目標80%。実測心拍で全期間未達と判明", anchor: "runs"   },
+    { icon: "hrv",      value: "56.7", unit: "ms",  label: "HRV 8月の日平均", state: "warn", note: "8/14〜24の7日平均±28.3ms。時刻列が無く測定窓を層別できない",  anchor: "trend"  },
+    { icon: "heart",    value: "—",    unit: "",    label: "8月の心拍データ",  state: "bad",  note: "16ラップ中0件。唯一の拘束条件「平均HR140以下」を4週間検証できていない", anchor: "runs" },
+    { icon: "sleep",    value: "0",    unit: "夜",   label: "睡眠の実測記録",  state: "bad",  note: "8月も0夜。6月3夜・7月0夜・8月0夜と3か月連続。全て自己申告", anchor: "week" },
+    { icon: "run",      value: "16.0", unit: "km",  label: "8月の走行距離",   state: "bad",  note: "4日・5本。週換算4.3km。6月60.8km・7月59.5kmから激減", anchor: "runs" },
     { icon: "trophy",   value: "46.5", unit: "",    label: "VO2max（実測）",  state: "warn", note: "7/28。6/4の44.0から+2.5だが直近2週は横ばい。3:20相当は52〜55", anchor: "cta" },
   ],
 
@@ -60,13 +60,13 @@ window.MARATHON_DATA = {
   metrics: [
     { name: "体重",            value: "74.2 kg",   date: "7/29（Hevy実測）", target: "65.0 kg（10/25は71〜72kgが現実的）", state: "warn", delta: "→ 6月から実質フラット", deltaState: "none" },
     { name: "VO2max（Watch実測）", value: "46.5",   date: "7/28",     target: "52〜55（3:20相当）",       state: "warn", delta: "▲ +2.5（6/4の44.0比）／直近2週は横ばい", deltaState: "good" },
-    { name: "HRV（直近・夕夜窓）", value: "38.8 ms", date: "7/31（n=2）", target: "同窓ベースライン57.5ms", state: "warn", delta: "▼ −1SD付近（単発）", deltaState: "none" },
+    { name: "HRV（8月の日平均）", value: "56.7 ms", date: "8/14〜24（7日・20件）", target: "起床時に窓を固定して7日平均で見る", state: "warn", delta: "SD28.3ms・同日内レンジ中央値45.1ms", deltaState: "bad" },
     { name: "HRV 夕夜窓ベースライン", value: "57.5 ± 19.9 ms", date: "6/1〜7/23・28日分", target: "測定窓を朝の起床時に固定する", state: "none", delta: "同日内レンジ中央値46.7ms", deltaState: "none" },
-    { name: "安静時HR（直近）",  value: "59 bpm",    date: "7/31",     target: "55 bpm 以下", state: "good", delta: "▼ 7/22の71から58→59へ回復", deltaState: "good" },
-    { name: "Z1-2比率（直近週）", value: "38 %",     date: "7/27〜（実測心拍）", target: "80 %（80/20）",        state: "bad",  delta: "▼ −34pt", deltaState: "bad" },
-    { name: "直近ランの平均HR",  value: "157 bpm",  date: "7/27",     target: "140 bpm 以下（イージー）", state: "bad",  delta: "▲ +17bpm", deltaState: "bad" },
-    { name: "睡眠（ウォッチ実測）", value: "0 夜",   date: "7月（6月は3夜のみ）", target: "毎晩の実測（減量ゲートの前提）",  state: "bad", delta: "7.5hは全て自己申告", deltaState: "bad" },
-    { name: "月間走行距離",     value: "59.5 km",   date: "7月・15本（7/28まで）",  target: "6月は60.8km・12本（横ばい）",        state: "none" },
+    { name: "安静時HR（直近）",  value: "53 bpm",    date: "8/24",     target: "55 bpm 以下", state: "good", delta: "8/22は73bpmで記録上最高→2日で−20bpm", deltaState: "none" },
+    { name: "Z1-2比率（直近週）", value: "測定なし",  date: "8月は心拍0件",      target: "80 %（80/20）",        state: "bad",  delta: "4週間、強度を検証できていない", deltaState: "bad" },
+    { name: "直近ランの平均HR",  value: "測定なし",  date: "8月・16ラップ中0件", target: "140 bpm 以下（イージー）", state: "bad",  delta: "拘束条件が検証不能のまま4週間", deltaState: "bad" },
+    { name: "睡眠（ウォッチ実測）", value: "0 夜",   date: "8月（6月3夜・7月0夜）", target: "毎晩の実測（減量ゲートの前提）",  state: "bad", delta: "3か月連続でほぼゼロ。全て自己申告", deltaState: "bad" },
+    { name: "月間走行距離",     value: "16.0 km",   date: "8月・5本・4日（8/26まで）", target: "6月60.8km → 7月59.5km → 8月16.0km", state: "bad", delta: "▼ −73%（週換算4.3km）", deltaState: "bad" },
     { name: "マラソン PB",      value: "3:26〜3:30",date: "2025-10",  target: "3:19:59",                  state: "none" },
   ],
 
@@ -189,7 +189,16 @@ window.MARATHON_DATA = {
     { date: "7/29", hrv: "51.6", rhr: "58", sleep: "7.5", weight: "74.2", run: "—", judge: "GO", note: "【7/31にDriveの月別データで補完】HRVは夕夜窓4回の平均51.6ms（同窓ベースライン57.5±19.9msの範囲内）。RHR58bpmは7/22の71から13bpm回復し正常域。体重74.2kgはHevyの実測。睡眠7.5hは自己申告（ウォッチの夜間記録は無し）" },
     { date: "7/30", hrv: "—", rhr: "—", sleep: "—", weight: "—", run: "（今週の目標: 長い1本8〜9km＋イージー2本）", judge: "GO", note: "【診断を再訂正】カレンダー8個を6〜8月で照会し2026年7月に「休み」の終日イベントがゼロであることを確認、本人からも『7月に走れない日はない。遂行できなかっただけ』との回答を得た。前週の「走れない曜日がある＝コーチの設計ミス」も誤りだったため撤回する。私は2回続けて、データのパターンから推測し本人に確認しないまま断定していた。残る事実として、8km級2本(7/8・7/27)はいずれも計画外の日に自主的に走ったもので、曜日指定した週最長ラン(7/18・7/26)は流れている。今週は曜日固定をやめ週単位の目標に変えて検証する。心拍欠測の原因も特定（ウォッチではなく抽出スクリプトがGPXのみを読んでいた）" },
     { date: "7/31", hrv: "38.8", rhr: "59", sleep: "—", weight: "—", run: "—", judge: "GO", note: "【6〜7月の全データを月別に受領。測定条件の問題が3つ判明】①HRV168件を測定時刻で層別すると睡眠中70.4ms／午前57.8／午後49.5／夕夜56.4と窓で20ms以上違い、同日内レンジは中央値46.7ms。単発値に固定閾値を当てる運用は最初から成立していなかった。②7月のHRVは84件すべて日中測定で起床時の値がゼロ。③夜間睡眠のウォッチ記録は7月ゼロ夜・6月3夜のみ。減量ゲートを開けた「7h×14日連続」は全て自己申告で、客観的裏付けは存在しなかった。/ 本日のHRVは夕夜窓n=2で38.8ms（同窓ベースライン57.5±19.9msの−1SD付近）だが、7/29が51.6msで連続逸脱ではなく、RHRも59bpmと正常。介入シグナルとは判定しない（training-protocol §4）。/ 好材料: VO2max 6/4:44.02→7/16:46.93→7/28:46.48で+2.5。RHRは71→58→59へ回復" },
-    { date: "8/14", hrv: "—", rhr: "—", sleep: "—", weight: "—", run: "—", judge: "REST", note: "医療的な理由（発汗・熱・直射日光の一時的な回避）でランを中断。8/16の日没後から超イージーで再開する方針とした。Phase 0 の走行量は週6〜10kmで、数日の中断による有酸素能力の低下は測定できないレベル。再開後も制約は変わらず、平均HR140以下・Z1-2で80%以上。/ 8/16以降の実測は未受領。" },
+    { date: "8/13", hrv: "—", rhr: "—", sleep: "—", weight: "—", run: "6.01km @7'12\"/km", judge: "⚠計画外", note: "20:18スタート・6周回。ラップは 7'55\"→7'02\"→5'43\"→7'07\"→7'37\"→7'48\" で幅2'12\"。3周目の5'43\"は目標レースペース4'44\"に近く、イージーの範囲を明確に外れている。心拍データが無いため強度は確定できない。/ この日は「ランを中断していた期間」として記録していた日で、中断の前提そのものを再確認する必要がある。" },
+    { date: "8/14", hrv: "53.5", rhr: "65", sleep: "—", weight: "—", run: "—", judge: "—", note: "HRV n=3・日平均53.5ms（37.8〜82.9、同日内レンジ45.1ms）。RHR65bpm。★このHRV書き出しには時刻列が無く、7/31に判明した「測定窓で20ms以上ずれる」問題を切り分けられない。日平均でしか扱えない。" },
+    { date: "8/15", hrv: "60.5", rhr: "56", sleep: "—", weight: "—", run: "—", judge: "—", note: "HRV n=7・日平均60.5ms（29.1〜88.2、同日内レンジ59.1ms＝1日の中で3倍動いている）。RHR56bpmは良好。" },
+    { date: "8/17", hrv: "58.1", rhr: "57", sleep: "—", weight: "—", run: "—", judge: "—", note: "HRV n=3・日平均58.1ms（40.8〜79.5）。RHR57bpm。いずれも平常域。" },
+    { date: "8/18", hrv: "34.1", rhr: "60", sleep: "—", weight: "—", run: "—", judge: "—", note: "HRV n=1・34.1ms。RHR60bpm。単発1点のみで、7/31に確認したとおり単発値には判断材料としての意味が無い。" },
+    { date: "8/19", hrv: "14.6", rhr: "—", sleep: "—", weight: "—", run: "—", judge: "—", note: "HRV n=1・14.6ms。7/7の14msと同型の極端な外れ値で、RHRの同時記録も無い。翌日以降の再測定も無いため、連続逸脱かどうかを判定できない。介入シグナルとしては扱わない。" },
+    { date: "8/21", hrv: "—", rhr: "—", sleep: "—", weight: "—", run: "1.00km @7'47\"/km", judge: "—", note: "15:59スタート・1kmで終了（7.8分）。8月の日中で、処方していた「日没後」とは逆の時間帯。" },
+    { date: "8/22", hrv: "62.2", rhr: "73", sleep: "—", weight: "—", run: "4.0km（2本・歩行主体）", judge: "⚠", note: "10:12から2.0km（45分・2周目は35'56\"で停止か歩行）、11:05から2.0km（21分・9'48\"〜11'20\"）。いずれも歩行域のペース。/ ★RHR73bpmは記録上の最高値（従来最高は7/22の71bpm）。同日のHRVは日平均62.2msで平常域のため、7/22と同じ「複合サインではない」形。ただし7/22は同日に高強度セッションがあったのに対し、この日は歩行のみで、上昇の説明がつかない。暑熱・脱水・睡眠不足・体調のいずれかを疑うが、睡眠が0夜のため切り分けられない。" },
+    { date: "8/24", hrv: "114.0", rhr: "53", sleep: "—", weight: "—", run: "—", judge: "—", note: "HRV n=2・60.7msと167.2ms。★167.2msは30歳男性の安静時SDNNとして極端で、測定アーティファクトの可能性が高い。日平均114.0msはそのまま使えない。RHR53bpmは記録上の最低値で、2日前の73bpmから20bpm下がっている。この振れ幅も測定条件を疑わせる。" },
+    { date: "8/26", hrv: "—", rhr: "—", sleep: "—", weight: "—", run: "5.01km @8'15\"/km", judge: "⚠計画外", note: "10:43スタート・5周回。ラップは 7'20\"→6'51\"→8'44\"→7'51\"→10'28\" で幅3'36\"。8月の日中・直射日光下で、処方の「日没後」とは逆。心拍データが無く強度は確定できない。/ ★8月の集計: 走行4日・5本・16.02km（週換算4.3km）。6月60.8km・7月59.5kmからさらに激減した。処方していた8/16・8/19には1本も走っておらず、実際に走った8/13・8/21・8/22・8/26は全て処方外の日。" },
   ],
 
   /* --------------------------------------------- 直近の走り（フォーム評価）*/
@@ -217,6 +226,10 @@ window.MARATHON_DATA = {
     { date: "7/21", dist: "2.0km", pace: "7'42\"/km", durationMin: 15.7, note: "【訂正】休養日と記録していたが実際は18:27に走行。イージー域で問題なし", hrAvg: 156, hrMax: 179, z12: 15, good: true },
     { date: "7/23", dist: "3.0km", pace: "8'55\"/km", durationMin: 36.9, note: "夕方ラン。Lap2が11'40\"で歩き/停止を含むが全体は抑えめ", hrAvg: 133, hrMax: 165, z12: 90, good: true },
     { date: "7/27", dist: "8.01km", pace: "7'00\"/km", durationMin: 55.2, note: "★直近3週で最長・最良。Lap1を最も遅く入り中盤で5'51\"まで上げ最後に流す教科書的プログレッション。Z3は12.5%で80/20の枠内", hrAvg: 157, hrMax: 182, z12: 33, good: true },
+    { date: "8/13", dist: "6.01km", pace: "7'12\"/km", durationMin: 43.3, note: "20:18・6周回。3周目5'43\"はレースペース域でイージーを外れる。ラップ幅2'12\"。心拍未取得", good: false },
+    { date: "8/21", dist: "1.00km", pace: "7'47\"/km", durationMin: 7.8, note: "15:59・1kmで終了。ペースはイージー域。心拍未取得", good: true },
+    { date: "8/22", dist: "4.00km", pace: "歩行域（9'02\"〜35'56\"）", durationMin: 66.2, note: "10:12と11:05の2本。停止/歩行を多く含む。ランとしては成立していない。心拍未取得", good: true },
+    { date: "8/26", dist: "5.01km", pace: "8'15\"/km", durationMin: 41.3, note: "10:43・5周回。ラップ幅3'36\"（6'51\"〜10'28\"）と大きい。日中・直射日光下。心拍未取得", good: true },
   ],
 
   /* ------------------------------------------------ 7日間トレンド（チャート）*/
