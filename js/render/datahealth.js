@@ -52,7 +52,7 @@
             : "必要なデータは揃っています。"
         }</p>`;
 
-      const row = (it) => `
+      list.innerHTML = r.items.map((it) => `
         <div class="dh-row dh-row--${it.level}${it.blocking ? " is-blocking" : ""}">
           <div class="dh-row__icon">${it.icon}</div>
           <div class="dh-row__body">
@@ -72,23 +72,7 @@
             ${it.level !== "ok" ? `<div class="dh-row__ask">お願い: ${esc(it.ask)}</div>` : ""}
             ${it.note && it.level !== "ok" ? `<div class="dh-row__note">${esc(it.note)}</div>` : ""}
           </div>
-        </div>`;
-
-      /* ★揃っているものは畳む。
-       * 11系統ぶんを常時展開すると、毎日開く画面で3画面ぶんを占める。
-       * この画面で本当に読ませたいのは「足りていない側」だけ。 */
-      const need = r.items.filter((it) => it.level !== "ok");
-      const ok = r.items.filter((it) => it.level === "ok");
-
-      list.innerHTML =
-        (need.length
-          ? need.map(row).join("")
-          : `<p class="dh-none">必要なデータは揃っています。</p>`) +
-        (ok.length ? `
-          <details class="dh-ok">
-            <summary>揃っているデータ ${ok.length}件</summary>
-            ${ok.map(row).join("")}
-          </details>` : "");
+        </div>`).join("");
 
       if (foot) {
         foot.textContent =
@@ -97,22 +81,18 @@
       }
 
       /* L3/never があればページ最上部にバナーを出す */
-      /* ページ上部の常設バナー。
-       * ★かつては欠測している系統名を全部並べた全幅の赤帯だった。
-       *   だが欠測は慢性的（睡眠は1ヶ月以上未計測）で、毎日同じ赤を出し続けると
-       *   警報疲れを起こし、本当に変化があった日にも気づけなくなる。
-       *   常設の表示は「静かで、数が分かって、押せる」に留め、
-       *   詳細は #data セクション本体に置く。 */
       const banner = document.getElementById("dataHealthBanner");
       if (banner) {
         const blk = r.items.filter((it) => it.blocking);
-        banner.innerHTML = blk.length
-          ? `<a class="dh-banner" href="#data">
-               <span class="dh-banner__n">${blk.length}</span>
-               <span class="dh-banner__t">系統のデータが不足しているため、依存する判断を保留しています</span>
-               <span class="dh-banner__c">詳細</span>
-             </a>`
-          : "";
+        if (blk.length) {
+          banner.innerHTML = `<div class="dh-banner">
+            <b>${blk.map((b) => esc(b.label)).join(" / ")}</b> が欠測しています。
+            これらに依存する判断（強度・ゾーン遵守率・負荷）は保留中です。
+            <a href="#data">詳細</a>
+          </div>`;
+        } else {
+          banner.innerHTML = "";
+        }
       }
     },
   });

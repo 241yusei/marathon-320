@@ -333,15 +333,6 @@
       s.zones = { method: "hr-measured", z12pct: r.z12 };
       s.quality.zones = "measured";
     }
-    /* ★実測の所要時間（2026-08-06にDriveの workouts.csv から取り込み）。
-     * これが無いと session-RPE 方式の負荷（RPE×分）がランについて常に0になり、
-     * 「ランと筋トレを1つの物差しで足す」という compute-load.js の前提が成立しない。
-     * dailyLog のテキストから拾った推定値より、実測を優先する。 */
-    if (typeof r.durationMin === "number") {
-      s.durationMin = r.durationMin;
-      s.durationApprox = false;
-      s.durationSource = "apple-health:Workout";
-    }
   });
 
   var runningSessions = order

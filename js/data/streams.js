@@ -37,14 +37,6 @@
     return { last, count };
   };
 
-  /* アプリ内で入力されたデータ（localStorage）も在庫として数える。
-   * store が未初期化でも壊れないよう、毎回 window から引き直す。 */
-  const store = () => (window.HEALTH_OS && window.HEALTH_OS.store) || null;
-  const merge = (a, b) => ({
-    last: (!a.last || (b.last && b.last > a.last)) ? (b.last || a.last) : a.last,
-    count: (a.count || 0) + (b.count || 0),
-  });
-
   Object.assign(window.HEALTH_OS.data, {
 
     streams: [
@@ -77,23 +69,17 @@
         id: "recovery.subjective", label: "主観コンディション", pillar: "recovery",
         cadence: "daily", graceDays: 1, required: true,
         blocks: ["judgment.code", "judgment.intensity"],
-        ask: "サイトの「今朝のコンディション」で 緑／黄／赤 を選んでください（30秒で終わります）",
+        ask: "今日の体感を 緑／黄／赤 の一言で教えてください（30秒で終わります）",
         note: "docs/training-protocol.md §7 が支持する Magness の3色システム。客観データと同等以上に重視する",
-        resolve: (D) => merge(
-          lastDateOf(D.recovery && D.recovery.daily, (r) => r.subjective && r.subjective.overall),
-          lastDateOf(store() ? store().checkins() : [], (c) => c.overall)
-        ),
+        resolve: (D) => lastDateOf(D.recovery && D.recovery.daily, (r) => r.subjective && r.subjective.overall),
       },
       {
         id: "body.weight", label: "体重", pillar: "body",
         cadence: "daily", graceDays: 2, required: true,
         blocks: ["body.trend", "goals.projection.factors.body"],
-        ask: "毎朝・排尿後・食前・同じ体重計と服装で測った体重を、サイトの「今朝のコンディション」に入れてください",
+        ask: "毎朝・排尿後・食前・同じ体重計と服装で測った体重を教えてください",
         note: "測定条件が揃っていないと、狙う変化（週0.3〜0.4kg）より測定ノイズの方が大きくなります",
-        resolve: (D) => merge(
-          lastDateOf(D.body && D.body.entries, (e) => e.weightKg),
-          lastDateOf(store() ? store().bodyLogs() : [], (b) => b.weightKg)
-        ),
+        resolve: (D) => lastDateOf(D.body && D.body.entries, (e) => e.weightKg),
       },
 
       /* ------------------------------------------------------ 練習ごと */
@@ -109,12 +95,9 @@
         id: "session.sRPE", label: "セッションRPE", pillar: "cross",
         cadence: "per-session", graceSessions: 0, required: true,
         blocks: ["load.weekly", "load.acwr", "load.monotony"],
-        ask: "練習終了の30分後に「どれくらいきつかったか」を0〜10で入れてください（筋トレはセッション画面の下部、ランはこちらに連絡を）",
-        note: "ランと筋トレを同じ物差しで足し合わせる唯一の入力（Foster 2001）。心拍が欠測していても機能する。docs/strength-research.md §8-1",
-        resolve: (D) => merge(
-          lastDateOf(D.running && D.running.sessions, (s) => s.sRPE),
-          lastDateOf(store() ? store().sessions() : [], (s) => s.sRPE)
-        ),
+        ask: "練習終了の30分後に「どれくらいきつかったか」を0〜10で教えてください",
+        note: "ランと筋トレを同じ物差しで足し合わせる唯一の入力。心拍が欠測していても機能する",
+        resolve: (D) => lastDateOf(D.running && D.running.sessions, (s) => s.sRPE),
       },
 
       /* ---------------------------------------------------------- 週次 */
@@ -122,12 +105,8 @@
         id: "strength.session", label: "筋トレの記録", pillar: "strength",
         cadence: "weekly", graceDays: 4, required: true,
         blocks: ["strength.e1rm", "strength.weeklySets", "goals.projection.factors.durability"],
-        ask: "サイトの「筋トレ」画面で、その場で 重量・回数・RIR を入れてください。入力はこの端末に保存されます",
-        note: "端末内保存なので、週に一度は「データ」画面からJSONを書き出してDriveの「320」に置いてください。書き出さないと端末を変えたときに失われます",
-        resolve: (D) => merge(
-          lastDateOf(D.strength && D.strength.sessions, (s) => s.date),
-          lastDateOf(store() ? store().sessions().filter((s) => (s.entries || []).length) : [], (s) => s.date)
-        ),
+        ask: "今週の筋トレ（種目・重量・レップ・所要時間）を教えてください。アプリのCSVでも口頭でも構いません",
+        resolve: (D) => lastDateOf(D.strength && D.strength.sessions, (s) => s.date),
       },
 
       /* ---------------------------------------------------------- 月次 */
