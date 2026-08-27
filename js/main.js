@@ -73,7 +73,17 @@
         }
       } else if (s.dynamic === "sleepStreak") {
         const gate = D.gates.find((g) => g.unit === "日" && g.total != null);
-        if (gate) {
+        /* ★ヒーロー最上部が「14/14日」を出す一方で、同じページの
+         * ハイライトが「睡眠の実測記録 0夜」を出していた（2026-08-27 是正）。
+         * 根拠データが封鎖されている間は、達成数を掲げない。 */
+        const CH2 = window.HEALTH_OS && window.HEALTH_OS.compute;
+        const gb = gate && gate.blockKey && CH2 &&
+          typeof CH2.isBlocked === "function" && CH2.isBlocked(gate.blockKey);
+        if (gate && gb) {
+          value = "—";
+          unit = "";
+          note = "実測が無いため保留（申告値では数えない）";
+        } else if (gate) {
           value = String(gate.progress);
           unit = `/${gate.total}日`;
           note = "7h以上の連続日数（減量ゲート）";
@@ -477,8 +487,18 @@
 
   /* ====================================================== GATES */
   function renderGates() {
+    /* ★ゲートの開放判定を、データ健全性の封鎖に従わせる（2026-08-27 追加）。
+     * compute-datahealth は封鎖すべき結論キーを14個算出していたのに、
+     * isBlocked() を呼ぶ箇所がコード全体で1つ（runReview）しか無く、
+     * 減量ゲートは睡眠実測0夜のまま「開放・14/14」を描画し続けていた。
+     * 同じページで highlights が「睡眠の実測記録 0夜」を出しているのに、である。 */
+    const CH = window.HEALTH_OS && window.HEALTH_OS.compute;
+    const gBlocked = (k) =>
+      !!(k && CH && typeof CH.isBlocked === "function" && CH.isBlocked(k));
+
     $("gatesGrid").innerHTML = D.gates.map((g) => {
-      const achieved = g.progress != null && g.total != null && g.progress >= g.total;
+      const blocked = gBlocked(g.blockKey);
+      const achieved = !blocked && g.progress != null && g.total != null && g.progress >= g.total;
       let prog = "";
       if (g.progress != null && g.total != null) {
         if (g.unit === "日" && g.total <= 21) {
@@ -501,11 +521,12 @@
         }
       }
       return `
-        <div class="gate ${achieved ? "gate--unlocked" : ""}">
+        <div class="gate ${achieved ? "gate--unlocked" : ""}${blocked ? " gate--blocked" : ""}">
           <div class="gate__head">
             <span class="gate__lock">${achieved ? ICONS.check : ICONS.lock}</span>
             <span class="gate__name">${esc(g.name)}</span>
             ${achieved ? '<span class="gate__unlocked-tag">開放！</span>' : ""}
+            ${blocked ? '<span class="gate__blocked-tag">判断保留 ・ 根拠データが欠測</span>' : ""}
           </div>
           ${g.conditions.map((c) => `<div class="gate__cond">${esc(c)}</div>`).join("")}
           ${prog}

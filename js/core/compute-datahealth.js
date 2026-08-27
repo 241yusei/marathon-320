@@ -63,7 +63,22 @@
       const n = sessionsSince(D, last);
       const grace = stream.graceSessions != null ? stream.graceSessions : 1;
       const over = n - grace;
-      const level = over <= 0 ? "ok" : over <= 2 ? "l1" : over <= 4 ? "l2" : "l3";
+      const bySession = over <= 0 ? "ok" : over <= 2 ? "l1" : over <= 4 ? "l2" : "l3";
+
+      /* ★経過日数による下支え（2026-08-27 追加）。
+       * セッション数だけで数えると、走る頻度が落ちたときに督促が止まる。
+       * 実際 8月は心拍が16ラップ全て欠測しているのに、走行が週2回まで
+       * 落ちたためカウンタが進まず、L3（判断保留）に到達しなかった。
+       * その結果 7/27 の単発1本から出したゾーン遵守率 33% が、
+       * 心拍0件の8月末まで現役の数値としてサイトに出続けていた。
+       * 「走らなくなるほど監視が鈍る」という逆向きの特性を、日数で塞ぐ。 */
+      const ld0 = parseDate(last);
+      let byDay = "ok";
+      if (ld0) {
+        const gapWeeks = (Math.floor((today - ld0) / DAY) - 14) / 7;
+        byDay = gapWeeks <= 0 ? "ok" : gapWeeks <= 1 ? "l1" : gapWeeks <= 2 ? "l2" : "l3";
+      }
+      const level = LEVEL_META[byDay].rank > LEVEL_META[bySession].rank ? byDay : bySession;
       return { level, last, count, overdue: n, unit: "回" };
     }
 
