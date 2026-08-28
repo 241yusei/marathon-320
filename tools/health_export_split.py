@@ -93,6 +93,8 @@ def main():
         cutoff = dt.date.min
 
     out, n_rec, n_wk, skipped = Out(a.out), 0, 0, 0
+    summary = {}          # 種目 → [回数, 合計分]
+    days = set()          # 何か記録のあった日
 
     with open_xml(a.export) as fh:
         for _, el in ET.iterparse(fh, events=("end",)):
@@ -111,6 +113,7 @@ def main():
                             out.row(month_of(start), name, ["datetime", unit, "source"],
                                     [start, round(v, 4), el.get("sourceName", "")])
                             n_rec += 1
+                            days.add(d.date())
                 elif el.get("type") == "HKCategoryTypeIdentifierSleepAnalysis":
                     s, e = el.get("startDate"), el.get("endDate")
                     ds, de = parse_dt(s), parse_dt(e)
@@ -127,6 +130,14 @@ def main():
                 s, e = el.get("startDate"), el.get("endDate")
                 ds = parse_dt(s)
                 if ds and ds.date() >= cutoff:
+                    kind = (el.get("workoutActivityType") or "").replace("HKWorkoutActivityType", "")
+                    try:
+                        wk_mins = float(el.get("duration") or 0)
+                    except ValueError:
+                        wk_mins = 0.0
+                    summary.setdefault(kind, [0, 0.0])
+                    summary[kind][0] += 1
+                    summary[kind][1] += wk_mins
                     # 新しい書き出しは totalDistance を持たず WorkoutStatistics に入れる
                     dist, kcal = el.get("totalDistance"), el.get("totalEnergyBurned")
                     for st in el.findall("WorkoutStatistics"):
@@ -156,6 +167,32 @@ def main():
         d = os.path.join(a.out, m)
         for f in sorted(os.listdir(d)):
             print(f"  {m}/{f}  {os.path.getsize(os.path.join(d, f)):,} bytes")
+
+    # ---- 要約。ここを見れば「何が取れていて何が欠けているか」がすぐ分かる ----
+    if summary:
+        print("\nワークアウトの内訳（★ジムの筋トレもここに出る）")
+        for kind, (cnt, mins) in sorted(summary.items(), key=lambda x: -x[1][0]):
+            print(f"  {kind:<32} {cnt:>3} 回  合計 {mins:>7.1f} 分")
+    else:
+        print("\nワークアウト: 0件")
+
+    if days:
+        span = (max(days) - min(days)).days + 1
+        print(f"\n記録のあった日: {len(days)} / {span} 日（{min(days)} 〜 {max(days)}）")
+
+    # 欠けている系統を名指しする
+    have = set()
+    for m in months:
+        have |= set(os.listdir(os.path.join(a.out, m)))
+    want = {"hr.csv": "心拍（ゾーン計算の元）", "hrv.csv": "HRV（時刻つき）",
+            "rhr.csv": "安静時心拍", "sleep.csv": "睡眠", "weight.csv": "体重",
+            "workouts.csv": "ワークアウト"}
+    missing = [lbl for f, lbl in want.items() if f not in have]
+    if missing:
+        print("\n★取れなかった系統: " + " / ".join(missing))
+        print("  → ウォッチが記録していないか、その期間に該当データが無い")
+    else:
+        print("\n必要な系統はすべて取れている")
 
 
 if __name__ == "__main__":
