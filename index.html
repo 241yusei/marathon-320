@@ -27,15 +27,15 @@
   <div class="nav__inner">
     <a class="nav__brand" href="#top"><span class="dot">●</span>Marathon&nbsp;Project</a>
     <div class="nav__links">
-      <a href="#data">データ</a>
-      <a href="#today">今日</a>
+      <a href="#now">今日</a><a href="#roadmap">背骨</a><a href="#why">なぜ</a><a href="#data">データ</a>
+      <a href="#today">指針</a>
       <a href="#week">今週</a>
       <a href="#runs">ランログ</a>
       <a href="#trend">トレンド</a>
       <a href="#gates">ゲート</a>
       <a href="#status">現在地</a>
       <a href="#odds">達成可能性</a>
-      <a href="#plan">計画</a>
+      <a href="#plan">フェーズ</a>
       <a href="#fuel">栄養</a>
       <a href="#spec">仕様</a>
     </div>
@@ -55,6 +55,60 @@
   </div>
   <div class="scroll-hint">SCROLL</div>
 </header>
+
+<!-- ============================================== NOW (今日 / 今週 / 信号) 2026-08-30 -->
+<section class="pad-sm" id="now">
+  <div class="wrap">
+    <div class="sec-head reveal" style="margin-bottom:20px">
+      <p class="eyebrow">今日 / Today</p>
+      <h2 class="sec-title">今日やることは、<br>ひとつだけ。</h2>
+    </div>
+    <div class="reveal d1" id="todayOne"></div>
+
+    <div class="sec-head reveal" style="margin:44px 0 18px">
+      <p class="eyebrow">今週 / This week</p>
+    </div>
+    <div class="reveal d1" id="weekGoal"></div>
+
+    <div class="sec-head reveal" style="margin:44px 0 18px">
+      <p class="eyebrow">毎朝20秒 / Signals</p>
+      <p class="sec-sub" style="margin-top:6px">数字を出して終わりにしない。「で、どうするか」まで書く。</p>
+    </div>
+    <div class="sig-grid reveal d1" id="signals"></div>
+  </div>
+</section>
+
+<!-- ============================================== ROADMAP (ロング走11本 / 8週) -->
+<section class="soft pad-sm" id="roadmap">
+  <div class="wrap">
+    <div class="sec-head reveal" style="margin-bottom:20px">
+      <p class="eyebrow">計画の背骨 / Long runs</p>
+      <h2 class="sec-title">刻み幅ではなく、<br>刻む回数を増やす。</h2>
+      <p class="sec-sub">「1回のランは直近30日最長の +10% まで」を一度も破らずに 8.10km → 21.5km へ届かせる。</p>
+    </div>
+    <div class="reveal d1" id="longRuns"></div>
+    <div class="sec-head reveal" style="margin:40px 0 16px"><p class="eyebrow">8週の週割り</p></div>
+    <div class="blk-list reveal d1" id="blocks"></div>
+  </div>
+</section>
+
+<!-- ============================================== WHY (現状と理由 / エビデンス) -->
+<section class="pad-sm" id="why">
+  <div class="wrap">
+    <div class="sec-head reveal" style="margin-bottom:20px">
+      <p class="eyebrow">なぜ / Rationale</p>
+      <h2 class="sec-title">なぜ、この形なのか。</h2>
+      <p class="sec-sub">結論だけでなく、それを支えた研究と、外挿している部分を分けて書く。</p>
+    </div>
+    <div class="reveal d1" id="rationale"></div>
+
+    <div class="sec-head reveal" style="margin:44px 0 16px">
+      <p class="eyebrow">やらないこと / Do not</p>
+      <p class="sec-sub" style="margin-top:6px">効果がない・害があると判定できたもの。無駄な出費と手間を止めるためにある。</p>
+    </div>
+    <div class="dn reveal d1" id="doNot"></div>
+  </div>
+</section>
 
 <!-- ===================================================== DATA HEALTH (欠測の検知) -->
 <div id="dataHealthBanner"></div>
@@ -374,6 +428,7 @@
 <script src="js/render/_registry.js"></script>
 <script src="js/main.js"></script>
 <script src="js/render/datahealth.js"></script>
+<script src="js/render/plan.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>
