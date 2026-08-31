@@ -79,7 +79,7 @@
       </div>`).join("");
   }
 
-  /* ------------------------------------- ④ ロング走11本 ＋ 8週の週割り */
+  /* ------------------------------------- ④ 現在の走行計画 ＋ 週割り */
   function renderLongRuns() {
     const el = $("longRuns");
     if (!el || !D.longRuns) return;
@@ -92,14 +92,11 @@
             <span class="lr__d">${esc(r.date)}</span>
             <div class="lr__bar"><i style="width:${(r.km / max * 100).toFixed(1)}%"></i></div>
             <span class="lr__km">${r.km.toFixed(1)}<span>km</span></span>
-            <span class="lr__gut">補給 ${r.gut}<span>g/h</span></span>
+            <span class="lr__gut">${r.gut > 0 ? `補給 ${r.gut}<span>g/h</span>` : "補給なし"}</span>
             <span class="lr__tag">${esc(r.tag || "")}</span>
           </div>`).join("")}
       </div>
-      <p class="lr__foot">
-        全11本。刻み幅は毎回 +10% で、上限を一度も破らずに 8.10km → 21.5km へ届く。
-        刻み幅を上げるのではなく、刻む間隔を7日から4〜6日に縮めることで到達する。
-      </p>`;
+      <p class="lr__foot">${esc(D.longRunsNote || "走行計画は最新データ受領時に更新する。")}</p>`;
 
     const bl = $("blocks");
     if (bl && D.blocks) {
