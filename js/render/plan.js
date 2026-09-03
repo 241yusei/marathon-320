@@ -79,7 +79,7 @@
       </div>`).join("");
   }
 
-  /* ------------------------------------- ④ ロング走11本 ＋ 8週の週割り */
+  /* ------------------------------------- ④ 現在の走行計画 ＋ 週割り */
   /* ★予定日を過ぎたのに done でない本は「未報告」として赤で出す。
    * 旧版は done:false を未来と同じ淡色で描いていたので、9/1 の 8.9km を
    * 走ったのか走っていないのか画面から読み取れなかった。
@@ -118,7 +118,7 @@
             <span class="lr__d">${esc(r.date)}</span>
             <div class="lr__bar"><i style="width:${(r.km / max * 100).toFixed(1)}%"></i></div>
             <span class="lr__km">${r.km.toFixed(1)}<span>km</span></span>
-            <span class="lr__gut">補給 ${r.gut}<span>g/h</span></span>
+            <span class="lr__gut">${r.gut > 0 ? `補給 ${r.gut}<span>g/h</span>` : "補給なし"}</span>
             <span class="lr__tag">${
               LABEL[st] ? `<span class="lr__state lr__state--${st}">${LABEL[st]}</span> ` : ""
             }${esc(r.tag || "")}</span>
@@ -126,9 +126,8 @@
         }).join("")}
       </div>
       <p class="lr__foot">
-        全11本。刻み幅は毎回 +10% で、上限を一度も破らずに 8.10km → 21.5km へ届く。
-        刻み幅を上げるのではなく、刻む間隔を7日から4〜6日に縮めることで到達する。<br>
-        <b>実施 ${done} 本</b>${miss ? ` ／ <span style="color:#e7000b">未報告 ${miss} 本</span>` : ""} ／ 残り ${11 - done - miss} 本。
+        ${esc(D.longRunsNote || "走行計画は最新データ受領時に更新する。")}<br>
+        <b>実施 ${done} 本</b>${miss ? ` ／ <span style="color:#e7000b">未報告 ${miss} 本</span>` : ""} ／ 残り ${D.longRuns.length - done - miss} 本。
         ${miss ? "未報告の本は、走ったかどうかが分からないという意味で、走らなかったのと同じ扱いになる。実施していれば日曜のデータ送付で拾える。" : ""}
       </p>`;
 

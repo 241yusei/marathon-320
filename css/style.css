@@ -518,11 +518,12 @@ h3 { font-size: var(--t-body-lg); font-weight: 600; letter-spacing: -0.01em; }
   border: 1px solid var(--hairline); border-radius: var(--r-card); overflow: hidden;
 }
 .blk {
-  display: grid; grid-template-columns: 44px 108px 60px 96px minmax(0, 1fr);
+  display: grid; grid-template-columns: 76px 112px 80px 84px minmax(0, 1fr);
   align-items: center; gap: 10px;
   background: var(--paper); padding: 11px var(--s16);
   font-size: 13px;
 }
+.blk__w, .blk__s, .blk__v, .blk__l { white-space: nowrap; }
 .blk.is-now { background: var(--surface-alt); }
 .blk__w { font-weight: 600; letter-spacing: -0.01em; }
 .blk.is-now .blk__w::after {
