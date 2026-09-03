@@ -80,25 +80,56 @@
   }
 
   /* ------------------------------------- ④ ロング走11本 ＋ 8週の週割り */
+  /* ★予定日を過ぎたのに done でない本は「未報告」として赤で出す。
+   * 旧版は done:false を未来と同じ淡色で描いていたので、9/1 の 8.9km を
+   * 走ったのか走っていないのか画面から読み取れなかった。
+   * 計画の背骨で最も知りたいのは「どこまで来たか」であって予定表ではない。 */
+  function runState(r, todayMD) {
+    if (r.done) return "done";
+    return md(r.date) < todayMD ? "miss" : "todo";
+  }
+  /* "9/1" → 901。年をまたがない8週のブロック内なので月日の比較で足りる */
+  function md(s) {
+    const m = String(s).match(/(\d{1,2})\/(\d{1,2})/);
+    return m ? Number(m[1]) * 100 + Number(m[2]) : 0;
+  }
+
   function renderLongRuns() {
     const el = $("longRuns");
     if (!el || !D.longRuns) return;
     const max = Math.max.apply(null, D.longRuns.map((r) => r.km));
+    const now = new Date();
+    const todayMD = (now.getMonth() + 1) * 100 + now.getDate();
+
+    const states = D.longRuns.map((r) => runState(r, todayMD));
+    const nextIdx = states.indexOf("todo");
+    const miss = states.filter((x) => x === "miss").length;
+    const done = states.filter((x) => x === "done").length;
+
+    const LABEL = { done: "実施", miss: "未報告", next: "次" };
     el.innerHTML = `
       <div class="lr">
-        ${D.longRuns.map((r) => `
-          <div class="lr__row ${r.done ? "is-done" : ""}">
+        ${D.longRuns.map((r, i) => {
+          const st = i === nextIdx ? "next" : states[i];
+          const cls = st === "done" ? "is-done" : st === "miss" ? "is-miss" : st === "next" ? "is-next" : "";
+          return `
+          <div class="lr__row ${cls}">
             <span class="lr__n">${r.n}</span>
             <span class="lr__d">${esc(r.date)}</span>
             <div class="lr__bar"><i style="width:${(r.km / max * 100).toFixed(1)}%"></i></div>
             <span class="lr__km">${r.km.toFixed(1)}<span>km</span></span>
             <span class="lr__gut">補給 ${r.gut}<span>g/h</span></span>
-            <span class="lr__tag">${esc(r.tag || "")}</span>
-          </div>`).join("")}
+            <span class="lr__tag">${
+              LABEL[st] ? `<span class="lr__state lr__state--${st}">${LABEL[st]}</span> ` : ""
+            }${esc(r.tag || "")}</span>
+          </div>`;
+        }).join("")}
       </div>
       <p class="lr__foot">
         全11本。刻み幅は毎回 +10% で、上限を一度も破らずに 8.10km → 21.5km へ届く。
-        刻み幅を上げるのではなく、刻む間隔を7日から4〜6日に縮めることで到達する。
+        刻み幅を上げるのではなく、刻む間隔を7日から4〜6日に縮めることで到達する。<br>
+        <b>実施 ${done} 本</b>${miss ? ` ／ <span style="color:#e7000b">未報告 ${miss} 本</span>` : ""} ／ 残り ${11 - done - miss} 本。
+        ${miss ? "未報告の本は、走ったかどうかが分からないという意味で、走らなかったのと同じ扱いになる。実施していれば日曜のデータ送付で拾える。" : ""}
       </p>`;
 
     const bl = $("blocks");

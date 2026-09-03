@@ -15,7 +15,11 @@
   };
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
   const dotClass = (s) => ({ good: "dot-good", warn: "dot-warn", bad: "dot-bad", none: "dot-none" }[s] || "dot-none");
-  const stateColor = (s) => ({ good: "var(--good)", warn: "var(--warn)", bad: "var(--bad)", none: "var(--ink-2)" }[s] || "var(--ink-2)");
+  /* 状態は色相ではなく濃度で表す。★悪いほど濃い（良い状態は目に入らない）。
+   * DESIGN_1 は無彩色のため 🟢🟡🔴 を置き換える先が無い。濃度＋形＋文字の
+   * 三重符号化に移した。詳しくは css/style.css の冒頭。 */
+  const TONE = { good: "#d4d4d4", warn: "#737373", bad: "#0a0a0a", none: "#e5e5e5" };
+  const stateColor = (s) => TONE[s] || TONE.none;
 
   /* ---------- inline SVG icons for highlights ---------- */
   const ICONS = {
@@ -56,9 +60,7 @@
   function renderHero() {
     $("navUpdated").textContent = D.meta.lastUpdated;
     $("heroEyebrow").textContent = D.hero.eyebrow;
-    $("heroTitle").innerHTML = D.hero.titleLines
-      .map((l, i) => i === D.hero.titleLines.length - 1 ? `<span class="grad-text">${esc(l)}</span>` : esc(l))
-      .join("<br>");
+    $("heroTitle").textContent = D.hero.titleLines.join("");
     $("heroSub").textContent = D.hero.sub;
 
     $("heroStats").innerHTML = D.hero.bigStats.map((s) => {
@@ -171,7 +173,7 @@
     // ブロッカー（次へ進むための関門）
     const gatePills = D.gates.filter((g) => g.locked).map((g) => {
       const prog = (g.progress != null && g.total != null) ? ` ${g.progress}/${g.total}${g.unit}` : "";
-      return `<span class="alert alert--lock">⛔ ${esc(g.name)}${esc(prog)}</span>`;
+      return `<span class="alert alert--lock"><span class="alert__ico">${ICONS.lock}</span>${esc(g.name)}${esc(prog)}</span>`;
     }).join("");
     $("todayAlerts").innerHTML = `
       <div class="blockers">
@@ -213,8 +215,9 @@
 
   /* ====================================================== STATUS */
   function renderStatus() {
-    $("statusSub").textContent =
-      `${D.meta.phase}（${D.meta.phaseWeek}） — ${D.meta.phaseGoal}`;
+    /* phaseGoal は600字超あり、見出し直下に流すと読み飛ばされる。
+     * ここは所在地だけにして、全文は #spec の「運用」に置く。 */
+    $("statusSub").textContent = `${D.meta.phase} ・ ${D.meta.phaseWeek}`;
     const countEl = $("statCount");
     if (countEl) countEl.textContent = D.metrics.length;
     $("statGrid").innerHTML = D.metrics.map((m) => `
@@ -249,12 +252,17 @@
 
     const scheduleHeading = $("scheduleHeading");
     if (scheduleHeading) scheduleHeading.textContent = `週間スケジュール（${D.meta.phase.split(":")[0].trim()}）`;
-    const todayWD = WEEKDAY_JA[new Date().getDay()];
+    /* 旧: s.day === "木" の完全一致。実際の値は "木 9/3" や "★金 9/4" で
+     * 一度も当たらず、今日の行が強調されていなかった。月日で照合する。 */
+    const nowD = new Date();
+    const todayMD = (nowD.getMonth() + 1) + "/" + nowD.getDate();
+    const isToday = (s) => String(s.day).indexOf(todayMD) >= 0
+      || String(s.day).replace(/[^月火水木金土日]/g, "") === WEEKDAY_JA[nowD.getDay()];
     const hasVal = (v) => v && v !== "—";
     $("scheduleTbl").innerHTML = `
       <div class="sched-list">${D.schedule.map((s) => `
-        <div class="sched-row ${s.rest ? "is-rest" : ""} ${s.day === todayWD ? "is-today" : ""}">
-          <div class="sched-day">${esc(s.day)}${s.day === todayWD ? '<span class="sched-today-tag">今日</span>' : ""}</div>
+        <div class="sched-row ${s.rest ? "is-rest" : ""} ${isToday(s) ? "is-today" : ""}">
+          <div class="sched-day">${esc(s.day)}${isToday(s) ? '<span class="sched-today-tag">今日</span>' : ""}</div>
           <div class="sched-body">
             <div class="sched-menu">${esc(s.menu)}</div>
             <div class="sched-meta">${hasVal(s.dist) ? `${esc(s.dist)} ・ ` : ""}${esc(s.zone)}</div>
@@ -271,13 +279,13 @@
     const n = D.nextWorkout;
     el.innerHTML = `
       <p class="sec-sub" style="margin-bottom:22px">
-        <strong style="color:var(--accent-soft)">${esc(n.day)}</strong> — ${esc(n.menu)}
+        <strong>${esc(n.day)}</strong> — ${esc(n.menu)}
       </p>
       <div class="nw-points">${n.points.map((p) => `
         <div class="todo">
           <div class="todo__check">${ICONS.check}</div>
           <div class="todo__body">
-            <div class="todo__text" style="font-size:16px">${esc(p.title)}</div>
+            <div class="todo__text" style="font-weight:600">${esc(p.title)}</div>
             <div class="todo__detail">${esc(p.detail)}</div>
           </div>
         </div>`).join("")}</div>
@@ -352,7 +360,7 @@
     el.innerHTML = `
       <div class="rr-head">
         <p class="sec-sub" style="margin:0">
-          <strong style="color:var(--ink)">${esc(r.date)}</strong> — ${esc(r.summary)}
+          <strong>${esc(r.date)}</strong> — ${esc(r.summary)}
         </p>
         ${!z ? "" : zBlocked ? `
         <div class="zring-wrap zring-wrap--blocked">
@@ -392,19 +400,14 @@
       })
     );
   }
-  // SVG presentation attributes don't resolve CSS var(); convert to a literal color.
-  function resolveColor(c) {
-    if (typeof c === "string" && c.indexOf("var(") === 0) {
-      const name = c.slice(c.indexOf("(") + 1, c.indexOf(")")).trim();
-      const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-      return v || "#ff6a2b";
-    }
-    return c;
-  }
+  /* ★系列ごとの色（旧: 赤・緑・橙・青）は捨てた。DESIGN_1 は無彩色で、
+   * かつ1度に1系列しか描かないので色で区別する必要が無い。
+   * data.js の series.color は互換のため残っているが参照しない。 */
+  const INK = "#0a0a0a", MID = "#737373", RULE = "#e5e5e5";
   function drawChart() {
     const s = D.trends.series[chartKey];
-    const color = resolveColor(s.color);
-    const axis = resolveColor("var(--on-dark-2)");
+    const color = INK;
+    const axis = MID;
     const days = D.trends.days;
     const W = 920, H = 380, pad = { t: 30, r: 24, b: 44, l: 48 };
     const iw = W - pad.l - pad.r, ih = H - pad.t - pad.b;
@@ -421,7 +424,7 @@
     for (let g = 0; g <= 4; g++) {
       const gv = min + ((max - min) * g) / 4;
       const gy = y(gv);
-      grid += `<line x1="${pad.l}" y1="${gy.toFixed(1)}" x2="${W - pad.r}" y2="${gy.toFixed(1)}" stroke="rgba(255,255,255,0.08)"/>`;
+      grid += `<line x1="${pad.l}" y1="${gy.toFixed(1)}" x2="${W - pad.r}" y2="${gy.toFixed(1)}" stroke="${RULE}"/>`;
       grid += `<text x="${pad.l - 10}" y="${(gy + 4).toFixed(1)}" fill="${axis}" font-size="12" text-anchor="end">${gv.toFixed(0)}</text>`;
     }
     // x labels
@@ -433,8 +436,8 @@
     let tgt = "";
     if (s.target != null) {
       const ty = y(s.target);
-      tgt = `<line x1="${pad.l}" y1="${ty.toFixed(1)}" x2="${W - pad.r}" y2="${ty.toFixed(1)}" stroke="${color}" stroke-width="1.4" stroke-dasharray="5 5" opacity="0.55"/>
-             <text x="${W - pad.r}" y="${(ty - 8).toFixed(1)}" fill="${color}" font-size="12" font-weight="600" text-anchor="end">${esc(s.targetLabel || "目標")}</text>`;
+      tgt = `<line x1="${pad.l}" y1="${ty.toFixed(1)}" x2="${W - pad.r}" y2="${ty.toFixed(1)}" stroke="${MID}" stroke-width="1.2" stroke-dasharray="4 4"/>
+             <text x="${W - pad.r}" y="${(ty - 8).toFixed(1)}" fill="${MID}" font-size="12" font-weight="500" text-anchor="end">${esc(s.targetLabel || "目標")}</text>`;
     }
     // line + area path
     const pts = data.map((v, i) => [x(i), y(v)]);
@@ -449,23 +452,16 @@
       <g class="pt ${keyIdx.has(i) ? "is-key" : ""}">
         <title>${esc(days[i])} ・ ${data[i]}${unitSuffix}</title>
         <circle class="pt-hit" cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="14" fill="transparent"/>
-        <circle class="pt-dot" cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="4.5" fill="#000" stroke="${color}" stroke-width="2.5"/>
-        <text class="pt-label" x="${p[0].toFixed(1)}" y="${(p[1] - 14).toFixed(1)}" fill="#fff" font-size="12.5" font-weight="700" text-anchor="middle">${data[i]}</text>
+        <circle class="pt-dot" cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="4" fill="#fff" stroke="${color}" stroke-width="2"/>
+        <text class="pt-label" x="${p[0].toFixed(1)}" y="${(p[1] - 13).toFixed(1)}" fill="${INK}" font-size="12" font-weight="600" text-anchor="middle">${data[i]}</text>
       </g>`
     ).join("");
 
-    const gid = "g_" + chartKey;
     $("chartBox").innerHTML = `
       <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(s.label)} 7日間推移">
-        <defs>
-          <linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="${color}" stop-opacity="0.32"/>
-            <stop offset="100%" stop-color="${color}" stop-opacity="0"/>
-          </linearGradient>
-        </defs>
         ${grid}${tgt}
-        <path d="${areaPath}" fill="url(#${gid})"/>
-        <path d="${linePath}" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="chart-line"/>
+        <path d="${areaPath}" fill="rgba(10,10,10,0.05)"/>
+        <path d="${linePath}" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chart-line"/>
         ${points}${xlab}
       </svg>`;
     $("chartBox").querySelectorAll(".pt").forEach((g) => {
@@ -509,7 +505,7 @@
           prog = `
             <div class="gate__progress">
               <div class="dot-grid">${dots}</div>
-              <div class="progress-label">${g.progress} / ${g.total} ${esc(g.unit)}</div>
+              <div class="progress-label">${g.progress} / ${g.total} ${esc(g.unit)}${blocked ? "（実測ではないため数に入れない）" : ""}</div>
             </div>`;
         } else {
           const pct = Math.min(100, (g.progress / g.total) * 100);
@@ -535,6 +531,20 @@
     }).join("");
   }
 
+  /* ゲートの理由文は最長1000字ある。既定で6行に畳み、押したら開く。
+   * 2枚のカードの高さが3倍違うと、短い方が「中身が薄い」ように見えてしまう。 */
+  function initGateWhy() {
+    document.querySelectorAll(".gate__why").forEach((w) => {
+      w.setAttribute("role", "button");
+      w.setAttribute("tabindex", "0");
+      const t = () => w.classList.toggle("is-open");
+      w.addEventListener("click", t);
+      w.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); t(); }
+      });
+    });
+  }
+
   /* ====================================================== ODDS / 目標達成可能性 */
   // prob(0-100) → 状態色。50+=射程内(good), 30-49=五分(warn), <30=挑戦的(bad)
   const probState = (p) => (p >= 50 ? "good" : p >= 30 ? "warn" : "bad");
@@ -552,11 +562,11 @@
     // 準備度リングゲージ
     const R = 52, C = 2 * Math.PI * R;
     const off = C * (1 - readiness / 100);
-    const rColor = readiness >= 50 ? "var(--good)" : readiness >= 30 ? "var(--warn)" : "var(--bad)";
+    const rColor = "#0a0a0a";   /* 値は角度が持つ。濃淡は状態に使わない */
     $("oddsGauge").innerHTML = `
       <div class="gauge-ring">
         <svg viewBox="0 0 130 130" aria-label="総合準備度 ${readiness}%">
-          <circle cx="65" cy="65" r="${R}" fill="none" stroke="var(--line)" stroke-width="11"/>
+          <circle cx="65" cy="65" r="${R}" fill="none" stroke="#e5e5e5" stroke-width="11"/>
           <circle cx="65" cy="65" r="${R}" fill="none" stroke="${rColor}" stroke-width="11" stroke-linecap="round"
             stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${C.toFixed(1)}" data-off="${off.toFixed(1)}"
             transform="rotate(-90 65 65)" class="gauge-arc"/>
@@ -575,7 +585,7 @@
             <div class="scn__band scn__band--${st}">${esc(probBand(s.prob))}</div>
           </div>
           <div class="scn__when">${esc(s.when)}</div>
-          <div class="scn__bar"><div class="scn__fill" data-w="${s.prob}" style="width:0;background:${stateColor(st)}"></div>
+          <div class="scn__bar"><div class="scn__fill" data-w="${s.prob}" style="width:0"></div>
             <span class="scn__pct">${s.prob}%</span></div>
           <div class="scn__note">${esc(s.note)}</div>
         </div>`;
@@ -591,7 +601,7 @@
             <span class="fac__weight">重み ${f.weight}%</span>
             <span class="fac__score fac__score--${st}">${f.score}%</span>
           </div>
-          <div class="fac__bar"><div class="fac__fill" data-w="${f.score}" style="width:0;background:${stateColor(st)}"></div></div>
+          <div class="fac__bar"><div class="fac__fill" data-w="${f.score}" style="width:0"></div></div>
           <div class="fac__meta"><span class="fac__now">現在 ${esc(f.now)}</span><span class="fac__need">必要 ${esc(f.need)}</span></div>
           <div class="fac__note">${esc(f.note)}</div>
         </div>`;
@@ -634,9 +644,9 @@
         <tbody>${D.requirements.map((r) => `
           <tr>
             <td style="font-weight:600">${esc(r.metric)}</td>
-            <td class="num" style="color:var(--ink-2)">${esc(r.now)}</td>
-            <td class="num" style="color:var(--accent);font-weight:700">${esc(r.need)}</td>
-            <td style="white-space:normal;color:var(--ink-2);font-size:12.5px">${esc(r.basis)}</td>
+            <td class="num" style="color:var(--mid)">${esc(r.now)}</td>
+            <td class="num" style="font-weight:600">${esc(r.need)}</td>
+            <td style="white-space:normal;color:var(--mid);font-size:11px">${esc(r.basis)}</td>
           </tr>`).join("")}</tbody>
       </table>`;
     $("savingBox").innerHTML = D.timeSavings.map((s) => `
@@ -653,9 +663,9 @@
     const cls = { "タンパク質": "p", "糖質": "c", "脂質": "f" };
     $("macroBar").innerHTML = n.macros.map((m) => `<div class="macro-seg ${cls[m.name] || "p"}" style="width:${m.pct}%"></div>`).join("");
     $("macroList").innerHTML = n.macros.map((m) => `
-      <div style="display:flex;justify-content:space-between;align-items:baseline;padding:11px 0;border-top:1px solid var(--line)">
-        <div><b style="font-size:15px">${esc(m.name)}</b> <span style="font-size:12px;color:var(--ink-2)">${esc(m.per)}</span><div style="font-size:12.5px;color:var(--ink-2)">${esc(m.note)}</div></div>
-        <div style="font-weight:700;font-size:16px;white-space:nowrap">${esc(m.amount)}</div>
+      <div class="saving-row">
+        <div class="saving-item"><b>${esc(m.name)}</b> <span style="font-size:11px;color:var(--mid)">${esc(m.per)}</span><div class="saving-cond">${esc(m.note)}</div></div>
+        <div class="saving-effect">${esc(m.amount)}</div>
       </div>`).join("");
     $("suppChips").innerHTML = n.supplements.map((s) => `
       <span class="chip">${esc(s.name)} <span class="ev ${s.evidence === "強" ? "strong" : ""}">${esc(s.dose)} · 根拠${esc(s.evidence)}</span></span>`).join("");
@@ -664,7 +674,7 @@
       <div class="zone-row ${z.core ? "core" : ""}">
         <div class="zone-tag">${esc(z.z)}</div>
         <div>
-          <div class="zone-name">${esc(z.name)}${z.core ? ' <span style="font-size:11px;color:var(--accent);font-weight:700">← 練習の中心</span>' : ""}</div>
+          <div class="zone-name">${esc(z.name)}${z.core ? ' <span class="badge badge--soft">練習の中心</span>' : ""}</div>
           <div class="zone-meta">${esc(z.hr)} bpm · ${esc(z.pace)} · ${esc(z.purpose)}</div>
         </div>
       </div>`).join("");
@@ -748,19 +758,25 @@
     }, { threshold: 0.12, rootMargin: "0px 0px -8% 0px" });
     items.forEach((i) => io.observe(i));
   }
-  function initParallax() {
-    const glow = $("heroGlow");
-    if (!glow) return;
-    let ticking = false;
-    window.addEventListener("scroll", () => {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(() => {
-        const y = window.scrollY;
-        glow.style.transform = `translateY(${y * 0.35}px) scale(${1 + y * 0.0004})`;
-        ticking = false;
+  /* サイドバーの現在地。旧版のパララックス（ヒーローの光彩を動かす）は
+   * DESIGN_1 の静けさに合わないので捨て、代わりに「今どのセクションか」を出す。 */
+  function initScrollSpy() {
+    const links = Array.from(document.querySelectorAll(".side__nav a"));
+    if (!links.length || !("IntersectionObserver" in window)) return;
+    const map = new Map();
+    links.forEach((a) => {
+      const t = document.querySelector(a.getAttribute("href"));
+      if (t) map.set(t, a);
+    });
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (!e.isIntersecting) return;
+        links.forEach((a) => a.classList.remove("is-active"));
+        const a = map.get(e.target);
+        if (a) a.classList.add("is-active");
       });
-    }, { passive: true });
+    }, { rootMargin: "-10% 0px -70% 0px", threshold: 0 });
+    map.forEach((_, t) => io.observe(t));
   }
 
   /* ====================================================== BOOT */
@@ -771,7 +787,7 @@
    *
    *  ・order は旧 boot() の呼び出し順をそのまま再現している（描画順は不変）
    *  ・pillar は公開フラグ compute.visible() の単位
-   *  ・mount は失敗時にエラー表示を差し込む先。演出系（reveal/parallax）は null
+   *  ・mount は失敗時にエラー表示を差し込む先。演出系（reveal/scrollspy）は null
    *  ・関数本体は1行も変更していない
    *
    *  docs/architecture.md A-4 を参照。
@@ -794,6 +810,7 @@
   reg("chart-tabs",  70, "recovery",  "#trend",      renderChartTabs);
   reg("chart",       80, "recovery",  "#trend",      drawChart);
   reg("gates",       90, "goals",     "#gates",      renderGates);
+  reg("gate-why",    95, "goals",     "#gates",      initGateWhy);
   reg("projection", 100, "goals",     "#odds",       renderProjection);
   reg("phases",     110, "goals",     "#plan",       renderPhases);
   reg("requirements",120,"goals",     "#req",        renderReq);
@@ -803,5 +820,5 @@
   reg("cta",        160, null,        "#cta",        renderCTA);
   reg("spec",       170, null,        "#spec",       renderSpec);
   reg("reveal",     900, null,        null,          initReveal);
-  reg("parallax",   910, null,        null,          initParallax);
+  reg("scrollspy",  910, null,        null,          initScrollSpy);
 })();

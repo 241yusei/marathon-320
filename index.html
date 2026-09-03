@@ -3,419 +3,327 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#000000">
+<meta name="theme-color" content="#f5f5f5">
 <title>マラソン3:20切りプロジェクト｜藤井勇成</title>
-<meta name="description" content="藤井勇成のマラソン3:20切り・体重65kgプロジェクト。今週の目標、ランニング結果、データトレンド、計画を一元管理するダッシュボード。">
+<meta name="description" content="藤井勇成のマラソン3:20切りプロジェクト。今日やること、今週の目標、ロング走の刻み、データの欠測状況を一枚で管理する計器盤。">
 
 <!-- PWA -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="3:20 Project">
 <meta name="application-name" content="3:20 Project">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <link rel="icon" type="image/png" sizes="64x64" href="icons/favicon-64.png">
 
+<!-- Geist（ラテン・数字）。日本語は端末のフォントに落とす。読み込めなくても
+     :root の --font スタックが system-ui へ退避するので表示は壊れない -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-<!-- ===================================================== NAV -->
-<nav class="nav">
-  <div class="nav__inner">
-    <a class="nav__brand" href="#top"><span class="dot">●</span>Marathon&nbsp;Project</a>
-    <div class="nav__links">
-      <a href="#now">今日</a><a href="#roadmap">背骨</a><a href="#why">なぜ</a><a href="#data">データ</a>
-      <a href="#today">指針</a>
-      <a href="#week">今週</a>
-      <a href="#runs">ランログ</a>
-      <a href="#trend">トレンド</a>
-      <a href="#gates">ゲート</a>
-      <a href="#status">現在地</a>
-      <a href="#odds">達成可能性</a>
-      <a href="#plan">フェーズ</a>
-      <a href="#fuel">栄養</a>
-      <a href="#spec">仕様</a>
+<div class="shell">
+
+<!-- ===================================================== SIDEBAR -->
+<aside class="side">
+  <a class="side__brand" href="#top"><span class="mark">320</span><span>Marathon&nbsp;Project</span></a>
+  <nav class="side__nav" id="sideNav">
+    <a href="#r-today"><span>今日</span><span class="k">01</span></a>
+    <a href="#r-week"><span>今週</span><span class="k">02</span></a>
+    <a href="#r-plan"><span>計画の背骨</span><span class="k">03</span></a>
+    <a href="#r-log"><span>記録</span><span class="k">04</span></a>
+    <a href="#r-state"><span>体の状態</span><span class="k">05</span></a>
+    <a href="#r-odds"><span>見通し</span><span class="k">06</span></a>
+    <a href="#r-why"><span>根拠</span><span class="k">07</span></a>
+    <a href="#r-spec"><span>仕様</span><span class="k">08</span></a>
+  </nav>
+  <div class="side__foot">
+    最終更新<br><b id="navUpdated">—</b><br><br>
+    データは日曜19:00に受け取り、<br>月曜から実行する。
+  </div>
+</aside>
+
+<!-- ===================================================== MAIN -->
+<main class="main" id="top">
+
+  <!-- ------------------------------------------------- masthead -->
+  <header class="hero">
+    <div class="mast">
+      <div>
+        <p class="eyebrow" id="heroEyebrow"></p>
+        <h1 class="hero__title" id="heroTitle"></h1>
+        <p class="hero__sub" id="heroSub"></p>
+      </div>
+      <div id="heroCountdown"></div>
     </div>
-    <div class="nav__updated">最終更新 <b id="navUpdated">—</b></div>
-  </div>
-</nav>
-
-<!-- ===================================================== HERO -->
-<header class="hero" id="top">
-  <div class="hero__glow" id="heroGlow"></div>
-  <div class="wrap">
-    <p class="eyebrow" id="heroEyebrow"></p>
-    <h1 class="display hero__title" id="heroTitle"></h1>
-    <p class="hero__sub" id="heroSub"></p>
     <div class="hero__stats" id="heroStats"></div>
-    <div id="heroCountdown"></div>
-  </div>
-  <div class="scroll-hint">SCROLL</div>
-</header>
+  </header>
 
-<!-- ============================================== NOW (今日 / 今週 / 信号) 2026-08-30 -->
-<section class="pad-sm" id="now">
-  <div class="wrap">
-    <div class="sec-head reveal" style="margin-bottom:20px">
-      <p class="eyebrow">今日 / Today</p>
-      <h2 class="sec-title">今日やることは、<br>ひとつだけ。</h2>
+  <!-- 欠測バナー（最上部・常設） -->
+  <div id="dataHealthBanner"></div>
+
+  <!-- ================================================== 01 今日 -->
+  <section class="rail" id="r-today">
+    <div class="sec-head reveal">
+      <p class="eyebrow">01 ／ Today</p>
+      <h2 class="sec-title">今日やることは、ひとつだけ。</h2>
+      <p class="sec-sub">複数を並べると全部が等しく後回しになる。ここには常に1件しか置かない。</p>
     </div>
     <div class="reveal d1" id="todayOne"></div>
 
-    <div class="sec-head reveal" style="margin:44px 0 18px">
-      <p class="eyebrow">今週 / This week</p>
+    <div class="sub-head reveal">
+      <h3>毎朝20秒の3つ</h3>
+      <p>数字を出して終わりにせず、「で、どうするか」まで書く</p>
+    </div>
+    <div class="legend reveal">
+      <i><span class="dot-good"></span>順調（淡い＝見なくてよい）</i>
+      <i><span class="dot-warn"></span>注意（輪郭）</i>
+      <i><span class="dot-bad"></span>要対応（最も濃い）</i>
+      <i><span class="dot-none"></span>未記録</i>
+      <i><span style="color:#e7000b">●</span> 赤はひとつの意味だけ ── データが無い</i>
+    </div>
+    <div class="sig-grid reveal d1" id="signals"></div>
+
+    <div class="sub-head reveal">
+      <h3>今日の指針</h3>
+      <p>判定・主要バイタル・関門</p>
+    </div>
+    <div id="today">
+      <div class="reveal d1" id="todayVerdict"></div>
+      <div class="reveal d1" id="todayVitals"></div>
+      <div class="reveal d2" id="todayAlerts"></div>
+      <div class="reveal d2" id="todayDo"></div>
+    </div>
+  </section>
+
+  <!-- ================================================== 02 今週 -->
+  <section class="rail" id="r-week">
+    <div class="sec-head reveal">
+      <p class="eyebrow">02 ／ This week</p>
+      <h2 class="sec-title" id="weekHeading">今週の目標</h2>
+      <p class="sec-sub">週の合計は目標ではなく結果。決めるのはロング走の刻みとイージーの本数だけ。</p>
     </div>
     <div class="reveal d1" id="weekGoal"></div>
 
-    <div class="sec-head reveal" style="margin:44px 0 18px">
-      <p class="eyebrow">毎朝20秒 / Signals</p>
-      <p class="sec-sub" style="margin-top:6px">数字を出して終わりにしない。「で、どうするか」まで書く。</p>
-    </div>
-    <div class="sig-grid reveal d1" id="signals"></div>
-  </div>
-</section>
+    <div id="week">
+      <div class="sub-head reveal"><h3 id="scheduleHeading">週間スケジュール</h3><p id="weekTitle"></p></div>
+      <div class="tbl-wrap reveal d1" id="scheduleTbl"></div>
 
-<!-- ============================================== ROADMAP (ロング走11本 / 8週) -->
-<section class="soft pad-sm" id="roadmap">
-  <div class="wrap">
-    <div class="sec-head reveal" style="margin-bottom:20px">
-      <p class="eyebrow">計画の背骨 / Long runs</p>
-      <h2 class="sec-title">刻み幅ではなく、<br>刻む回数を増やす。</h2>
-      <p class="sec-sub">「1回のランは直近30日最長の +10% まで」を一度も破らずに 8.10km → 21.5km へ届かせる。</p>
+      <div class="sub-head reveal"><h3>次回メニューの根拠</h3></div>
+      <div class="reveal d2" id="nextWorkout"></div>
+
+      <details class="disclosure reveal d2" style="margin-top:24px">
+        <summary class="disclosure__summary"><span>今週の優先事項と、判定の全文を読む</span><span class="disclosure__chev"></span></summary>
+        <div class="disclosure__body">
+          <div id="weekJudge"></div>
+          <div id="weekTodos"></div>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- ================================================== 03 計画の背骨 -->
+  <section class="rail" id="r-plan">
+    <div class="sec-head reveal">
+      <p class="eyebrow">03 ／ Long runs</p>
+      <h2 class="sec-title">刻み幅ではなく、刻む回数を増やす。</h2>
+      <p class="sec-sub">「1回のランは直近30日最長の +10% まで」を一度も破らずに 8.10km → 21.5km へ届かせる。全11本。</p>
     </div>
     <div class="reveal d1" id="longRuns"></div>
-    <div class="sec-head reveal" style="margin:40px 0 16px"><p class="eyebrow">8週の週割り</p></div>
-    <div class="blk-list reveal d1" id="blocks"></div>
-  </div>
-</section>
 
-<!-- ============================================== WHY (現状と理由 / エビデンス) -->
-<section class="pad-sm" id="why">
-  <div class="wrap">
-    <div class="sec-head reveal" style="margin-bottom:20px">
-      <p class="eyebrow">なぜ / Rationale</p>
+    <div class="sub-head reveal"><h3>8週の週割り</h3><p>10/25 横浜マラソンまで</p></div>
+    <div class="blk-list reveal d1" id="blocks"></div>
+
+    <div id="plan">
+      <div class="sub-head reveal"><h3>長期フェーズ</h3><p>3:19:59 は2027年秋のまま動かさない</p></div>
+      <div class="phase-rail reveal d1" id="phaseRail"></div>
+    </div>
+  </section>
+
+  <!-- ================================================== 04 記録 -->
+  <section class="rail" id="r-log">
+    <div class="sec-head reveal">
+      <p class="eyebrow">04 ／ Log</p>
+      <h2 class="sec-title">走った分だけ、記録に残る。</h2>
+      <p class="sec-sub">判定（GO / EASY / REST）は睡眠・HRV・安静時心拍の状態に基づく。所見はその日のうちに書き足す。</p>
+    </div>
+
+    <div id="runs">
+      <div class="sub-head reveal"><h3>日次ログ</h3></div>
+      <div class="tbl-wrap reveal d1" id="dailyTbl"></div>
+
+      <div class="sub-head reveal"><h3>直近の走り</h3><p>フォーム評価</p></div>
+      <div class="tbl-wrap card reveal d2" id="runsTbl"></div>
+
+      <div class="sub-head reveal"><h3>直近ランの振り返り</h3></div>
+      <div class="card reveal d2" id="runReview"></div>
+    </div>
+
+    <div id="trend">
+      <div class="sub-head reveal"><h3>7日間トレンド</h3><p>回復系の問題は線で見ると分かる</p></div>
+      <div class="card reveal d1">
+        <div class="chart-tabs" id="chartTabs"></div>
+        <div class="chart-box" id="chartBox"></div>
+        <p class="chart-note" id="chartNote"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================== 05 体の状態 -->
+  <section class="rail" id="r-state">
+    <div class="sec-head reveal">
+      <p class="eyebrow">05 ／ State</p>
+      <h2 class="sec-title">いま、体が示している数字。</h2>
+      <p class="sec-sub" id="statusSub"></p>
+    </div>
+    <div id="highlights"><div class="hl-rail reveal d1" id="hlRail"></div></div>
+
+    <div class="sub-head reveal"><h3>全指標</h3></div>
+    <div id="status">
+      <details class="disclosure reveal d1">
+        <summary class="disclosure__summary"><span>全<span id="statCount"></span>指標の詳細を見る</span><span class="disclosure__chev"></span></summary>
+        <div class="disclosure__body"><div class="stat-grid" id="statGrid"></div></div>
+      </details>
+    </div>
+
+    <div class="sub-head reveal"><h3>データ状態</h3><p>無いデータで、語らない</p></div>
+    <div id="data">
+      <div class="dh-head reveal d1" id="dataHealthHead"></div>
+      <div class="dh-list reveal d1" id="dataHealthList"></div>
+      <p class="dh-foot" id="dataHealthFoot"></p>
+    </div>
+
+    <div class="sub-head reveal"><h3>ゲート</h3><p>条件を満たすまで次へ進めない。意志力ではなく仕組みで止める</p></div>
+    <div id="gates"><div class="grid-2 reveal d1" id="gatesGrid"></div></div>
+  </section>
+
+  <!-- ================================================== 06 見通し -->
+  <section class="rail" id="r-odds">
+    <div class="sec-head reveal">
+      <p class="eyebrow">06 ／ Projection</p>
+      <h2 class="sec-title">いま、どれだけ届いているか。</h2>
+      <p class="sec-sub" id="oddsHeadline"></p>
+    </div>
+    <div id="odds">
+      <div class="odds-top reveal d1">
+        <div class="odds-gauge" id="oddsGauge"></div>
+        <div class="odds-scenarios" id="oddsScenarios"></div>
+      </div>
+
+      <div class="sub-head reveal"><h3>達成度を決める5ファクター</h3><p id="oddsMethod"></p></div>
+      <div class="reveal d2" id="oddsFactors"></div>
+
+      <div class="sub-head reveal"><h3>数字を最も動かす要因</h3></div>
+      <div class="odds-swing reveal d2" id="oddsSwing"></div>
+      <p class="odds-foot" id="oddsFoot"></p>
+    </div>
+
+    <div id="req">
+      <!-- 2列に並べると根拠の列が縦1文字幅に潰れて読めなくなる。縦に積む -->
+      <div class="sub-head reveal"><h3>3:20 切りに必要なもの</h3><p>射程は生理学が裏づける</p></div>
+      <div class="card tbl-wrap reveal d1" id="reqTbl"></div>
+      <div class="sub-head reveal"><h3>タイム短縮の積み上げ</h3></div>
+      <div class="card reveal d1" id="savingBox"></div>
+    </div>
+  </section>
+
+  <!-- ================================================== 07 根拠 -->
+  <section class="rail" id="r-why">
+    <div class="sec-head reveal">
+      <p class="eyebrow">07 ／ Rationale</p>
       <h2 class="sec-title">なぜ、この形なのか。</h2>
       <p class="sec-sub">結論だけでなく、それを支えた研究と、外挿している部分を分けて書く。</p>
     </div>
     <div class="reveal d1" id="rationale"></div>
 
-    <div class="sec-head reveal" style="margin:44px 0 16px">
-      <p class="eyebrow">やらないこと / Do not</p>
-      <p class="sec-sub" style="margin-top:6px">効果がない・害があると判定できたもの。無駄な出費と手間を止めるためにある。</p>
-    </div>
+    <div class="sub-head reveal"><h3>やらないこと</h3><p>効果がない・害があると判定できたもの。無駄な出費と手間を止めるためにある</p></div>
     <div class="dn reveal d1" id="doNot"></div>
-  </div>
-</section>
 
-<!-- ===================================================== DATA HEALTH (欠測の検知) -->
-<div id="dataHealthBanner"></div>
-
-<section class="soft pad-sm" id="data">
-  <div class="wrap">
-    <div class="sec-head reveal" style="margin-bottom:22px">
-      <p class="eyebrow">データ状態 / Data health</p>
-      <h2 class="sec-title">無いデータで、<br>語らない。</h2>
-      <p class="sec-sub">欠測しているデータに依存する結論は、コーチが気をつけるのではなく仕組みで保留する。何が足りていて、そのせいで何が言えないかをここに常時表示する。</p>
-    </div>
-    <div class="dh-head reveal d1" id="dataHealthHead"></div>
-    <div class="dh-list reveal d1" id="dataHealthList"></div>
-    <p class="dh-foot" id="dataHealthFoot"></p>
-  </div>
-</section>
-
-<!-- ===================================================== STORY (なぜこの計画か) -->
-<section class="pad-sm" id="story">
-  <div class="wrap">
-    <div class="sec-head reveal" style="margin-bottom:0">
-      <p class="eyebrow">なぜ、この計画なのか</p>
-      <h2 class="sec-title">2度、燃え尽きた。<br>3度目は、仕組みで防ぐ。</h2>
-      <p class="sec-sub">「急増 → 燃え尽き → 停止」を2回繰り返した。同じ轍を踏まないために、条件を満たすまで先へ進めない仕組みを敷いた。ここまでの歩み：</p>
-    </div>
-    <div class="reveal d1" style="margin-top:40px">
-      <div class="tl" id="historyTl"></div>
-    </div>
-  </div>
-</section>
-
-<!-- ===================================================== TODAY (command center) -->
-<section class="pad-sm" id="today">
-  <div class="wrap">
-    <div class="sec-head reveal" style="margin-bottom:26px">
-      <p class="eyebrow">今日の指針 / Today</p>
-      <h2 class="sec-title">今日は、<br>どう動くか。</h2>
-    </div>
-    <div class="reveal d1" id="todayVerdict"></div>
-    <div class="reveal d1" id="todayVitals"></div>
-    <div class="reveal d2" id="todayAlerts"></div>
-    <div class="reveal d2" id="todayDo"></div>
-  </div>
-</section>
-
-<!-- ===================================================== WEEK -->
-<section class="dark pad" id="week">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <p class="eyebrow">今週の目標・計画</p>
-      <h2 class="sec-title" id="weekTitle"></h2>
-    </div>
-    <div class="reveal d1">
-      <div id="weekJudge"></div>
-      <div id="weekTodos"></div>
-    </div>
-    <div class="reveal d2" style="margin-top:54px">
-      <h3 id="scheduleHeading" style="font-size:clamp(20px,3vw,26px);font-weight:700;margin-bottom:20px;letter-spacing:-0.01em">週間スケジュール</h3>
-      <div class="tbl-wrap" id="scheduleTbl"></div>
-    </div>
-    <div class="reveal d3" style="margin-top:54px">
-      <h3 style="font-size:clamp(20px,3vw,26px);font-weight:700;margin-bottom:14px;letter-spacing:-0.01em">次回メニューの根拠</h3>
-      <div id="nextWorkout"></div>
-    </div>
-  </div>
-</section>
-
-<!-- ===================================================== RUNS -->
-<section class="pad" id="runs">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <p class="eyebrow">ランニング結果・フィードバック</p>
-      <h2 class="sec-title">走った分だけ、<br>記録に残る。</h2>
-      <p class="sec-sub">朝の数値と練習を報告するたび、コーチの所見とともにここに刻まれる。判定（GO / EASY / REST）は睡眠・HRVの状態に基づく。</p>
-    </div>
-    <div class="reveal d1">
-      <h3 style="font-size:18px;font-weight:700;margin-bottom:16px">日次ログ</h3>
-      <div class="tbl-wrap" id="dailyTbl"></div>
-    </div>
-    <div class="reveal d2" style="margin-top:48px">
-      <h3 style="font-size:18px;font-weight:700;margin-bottom:16px">直近の走り（フォーム評価）</h3>
-      <div class="tbl-wrap" id="runsTbl"></div>
-    </div>
-    <div class="reveal d3" style="margin-top:48px">
-      <h3 style="font-size:18px;font-weight:700;margin-bottom:16px">直近ランの振り返り</h3>
-      <div class="card" id="runReview"></div>
-    </div>
-  </div>
-</section>
-
-<!-- ===================================================== TREND -->
-<section class="dark pad" id="trend">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <p class="eyebrow">7日間トレンド</p>
-      <h2 class="sec-title">回復系の問題は、<br>線で見ると分かる。</h2>
-    </div>
-    <div class="card reveal d1">
-      <div class="chart-tabs" id="chartTabs"></div>
-      <div class="chart-box" id="chartBox"></div>
-      <p class="chart-note" id="chartNote"></p>
-    </div>
-  </div>
-</section>
-
-<!-- ===================================================== GATES -->
-<section class="soft pad" id="gates">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <p class="eyebrow">ゲート / 開放条件</p>
-      <h2 class="sec-title">焦りを、<br>仕組みで止める。</h2>
-      <p class="sec-sub">条件を満たすまで、次のフェーズには進めない。意志力に頼らず、仕組みで焦りを止める。</p>
-    </div>
-    <div class="grid-2 reveal d1" id="gatesGrid"></div>
-  </div>
-</section>
-
-<!-- ===================================================== HIGHLIGHTS -->
-<section class="soft pad-sm" id="highlights">
-  <div class="wrap wrap--wide reveal">
-    <p class="eyebrow">ハイライト</p>
-    <h2 class="sec-title">いま、体が示している数字。</h2>
-  </div>
-  <div class="hl-rail reveal d1" id="hlRail" style="margin-top:34px"></div>
-</section>
-
-<!-- ===================================================== STATUS -->
-<section class="pad" id="status">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <p class="eyebrow">現在地 / Status</p>
-      <h2 class="sec-title">いま、<br>どこにいるか。</h2>
-      <p class="sec-sub" id="statusSub"></p>
-    </div>
-    <details class="disclosure">
-      <summary class="disclosure__summary"><span>全<span id="statCount"></span>指標の詳細を見る</span><span class="disclosure__chev"></span></summary>
-      <div class="disclosure__body">
-        <div class="stat-grid" id="statGrid"></div>
+    <div id="review">
+      <div class="sub-head reveal"><h3>率直な総括</h3></div>
+      <div class="grid-2 reveal d1">
+        <div class="sr-col str"><h3><span class="dot-good"></span>強み</h3><ul id="strList"></ul></div>
+        <div class="sr-col rsk"><h3><span class="dot-bad"></span>弱み・リスク</h3><ul id="rskList"></ul></div>
       </div>
-    </details>
-  </div>
-</section>
+      <div class="sub-head reveal"><h3>ここまでの歩み</h3><p>2度、燃え尽きた。3度目は仕組みで防ぐ</p></div>
+      <div class="tl reveal d1" id="historyTl"></div>
+    </div>
 
-<!-- ===================================================== ODDS / 目標達成可能性 -->
-<section class="pad" id="odds">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <p class="eyebrow">目標達成可能性 / Projection</p>
-      <h2 class="sec-title">いま、<br>どれだけ届いているか。</h2>
-      <p class="sec-sub" id="oddsHeadline"></p>
+    <div id="science">
+      <div class="sub-head reveal"><h3>最新研究の反映</h3><p>毎月1日に調査し、計画との矛盾をチェックする</p></div>
+      <details class="disclosure reveal d1">
+        <summary class="disclosure__summary"><span>反映済みの研究一覧を見る</span><span class="disclosure__chev"></span></summary>
+        <div class="disclosure__body"><div class="r-grid" id="researchGrid"></div></div>
+      </details>
     </div>
-    <div class="odds-top reveal d1">
-      <div class="odds-gauge" id="oddsGauge"></div>
-      <div class="odds-scenarios" id="oddsScenarios"></div>
-    </div>
-    <div class="reveal d2" style="margin-top:48px">
-      <h3 style="font-size:18px;font-weight:700;margin-bottom:6px">達成度を決める5ファクター（加重モデル）</h3>
-      <p style="font-size:12.5px;color:var(--ink-2);margin-bottom:18px" id="oddsMethod"></p>
-      <div id="oddsFactors"></div>
-    </div>
-    <div class="reveal d3" style="margin-top:40px">
-      <h3 style="font-size:18px;font-weight:700;margin-bottom:14px">数字を最も動かす要因</h3>
-      <div class="odds-swing" id="oddsSwing"></div>
-    </div>
-    <p class="odds-foot" id="oddsFoot"></p>
-  </div>
-</section>
+  </section>
 
-<!-- ===================================================== PLAN / PHASES -->
-<section class="dark pad" id="plan">
-  <div class="wrap">
+  <!-- ================================================== 08 仕様 -->
+  <section class="rail" id="r-spec">
     <div class="sec-head reveal">
-      <p class="eyebrow">計画 / ロードマップ</p>
-      <h2 class="sec-title">Phase 0 から、<br>飛ばさずに積む。</h2>
-      <p class="sec-sub">24 週・5 フェーズ。各週の距離増加は前週比 10% 以内。量と頻度は同時に上げない。</p>
+      <p class="eyebrow">08 ／ Specs</p>
+      <h2 class="sec-title">すべての数字を、一枚に。</h2>
     </div>
-    <div class="phase-rail reveal d1" id="phaseRail"></div>
-  </div>
-</section>
 
-<!-- ===================================================== REQUIREMENTS -->
-<section class="pad" id="req">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <p class="eyebrow">3:20 切りに必要なもの</p>
-      <h2 class="sec-title">射程は、<br>生理学が裏づける。</h2>
-    </div>
-    <div class="grid-2" style="gap:40px;align-items:start">
-      <div class="reveal d1">
-        <h3 style="font-size:18px;font-weight:700;margin-bottom:16px">必要な生理指標</h3>
-        <div class="tbl-wrap" id="reqTbl"></div>
-      </div>
-      <div class="reveal d2">
-        <h3 style="font-size:18px;font-weight:700;margin-bottom:16px">タイム短縮の積み上げ</h3>
-        <div class="card" id="savingBox"></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===================================================== ZONES + FUEL -->
-<section class="soft pad" id="fuel">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <p class="eyebrow">栄養・心拍ゾーン</p>
-      <h2 class="sec-title">速く走るための、<br>燃料と強度設計。</h2>
-    </div>
-    <details class="disclosure">
-      <summary class="disclosure__summary"><span>栄養プランと心拍ゾーンの詳細を見る</span><span class="disclosure__chev"></span></summary>
-      <div class="disclosure__body">
-        <div class="grid-2" style="gap:40px;align-items:start">
-          <div>
-            <h3 style="font-size:18px;font-weight:700;margin-bottom:6px">マクロ栄養素（74kg時 / 1日）</h3>
-            <p style="font-size:13px;color:var(--ink-2);margin-bottom:4px" id="calNote"></p>
-            <div class="macro-bar" id="macroBar"></div>
-            <div id="macroList"></div>
-            <h3 style="font-size:18px;font-weight:700;margin:30px 0 14px">サプリメント</h3>
-            <div class="chips" id="suppChips"></div>
-          </div>
-          <div>
-            <h3 style="font-size:18px;font-weight:700;margin-bottom:14px">心拍ゾーン（最大HR 187bpm / Tanaka式）</h3>
-            <div id="zoneList"></div>
-            <p style="font-size:12.5px;color:var(--ink-2);margin-top:16px;line-height:1.5">80/20 ルール：Z1+Z2（150bpm 以下）を週の 80% 以上に保つ（Seiler, 2010）。</p>
+    <div id="fuel">
+      <details class="disclosure reveal d1">
+        <summary class="disclosure__summary"><span>栄養プランと心拍ゾーン</span><span class="disclosure__chev"></span></summary>
+        <div class="disclosure__body">
+          <div class="grid-2">
+            <div>
+              <h3>マクロ栄養素（74kg時 / 1日）</h3>
+              <p style="font-size:12px;color:var(--mid);margin-top:4px" id="calNote"></p>
+              <div class="macro-bar" id="macroBar"></div>
+              <div id="macroList"></div>
+              <h3 style="margin:24px 0 10px">サプリメント</h3>
+              <div class="chips" id="suppChips"></div>
+            </div>
+            <div>
+              <h3>心拍ゾーン（最大HR 187bpm / Tanaka式）</h3>
+              <div id="zoneList" style="margin-top:10px"></div>
+              <p style="font-size:11px;color:var(--mid);margin-top:12px;line-height:1.6">
+                80/20 ルール：Z1+Z2（150bpm 以下）を週の 80% 以上に保つ（Seiler, 2010）。
+                ただし週20kmを下回る間は、強度分布を制約変数として扱わない。
+              </p>
+            </div>
           </div>
         </div>
-      </div>
-    </details>
-  </div>
-</section>
-
-<!-- ===================================================== SCIENCE -->
-<section class="dark pad" id="science">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <p class="eyebrow">最新研究の反映</p>
-      <h2 class="sec-title">計画は、<br>エビデンスで更新する。</h2>
-      <p class="sec-sub">毎月 1 日に最新研究を調査し、計画との矛盾をチェックする。</p>
+      </details>
     </div>
-    <details class="disclosure">
-      <summary class="disclosure__summary"><span>反映済みの研究一覧を見る</span><span class="disclosure__chev"></span></summary>
-      <div class="disclosure__body">
-        <div class="r-grid" id="researchGrid"></div>
-      </div>
-    </details>
-  </div>
-</section>
 
-<!-- ===================================================== REVIEW -->
-<section class="pad" id="review">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <p class="eyebrow">率直な総括</p>
-      <h2 class="sec-title">強みと、<br>リスク。</h2>
+    <div id="spec">
+      <details class="disclosure reveal d1" style="margin-top:12px">
+        <summary class="disclosure__summary"><span>全仕様データを見る</span><span class="disclosure__chev"></span></summary>
+        <div class="disclosure__body"><div class="spec-grid" id="specGrid"></div></div>
+      </details>
     </div>
-    <div class="grid-2 reveal d1" style="gap:40px">
-      <div class="sr-col str">
-        <h3><span class="dot-good" style="width:12px;height:12px;border-radius:50%;display:inline-block"></span>強み</h3>
-        <ul id="strList"></ul>
-      </div>
-      <div class="sr-col rsk">
-        <h3><span class="dot-bad" style="width:12px;height:12px;border-radius:50%;display:inline-block"></span>弱み・リスク</h3>
-        <ul id="rskList"></ul>
-      </div>
+
+    <div id="cta">
+      <div class="sub-head reveal"><h3>次の目標レース</h3></div>
+      <div class="cta__race reveal d1" id="ctaRace"></div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- ===================================================== CTA -->
-<section class="dark cta pad" id="cta">
-  <div class="wrap reveal">
-    <p class="eyebrow">次の具体的目標</p>
-    <h2 class="display"><span class="grad-text">3:19:59</span><br>へ。</h2>
-    <p class="hero__sub">次のレースにエントリーすることが、メンタル回復の最重要施策。<br>目標が決まった今、あとは壊さず積むだけ。</p>
-    <div class="cta__race" id="ctaRace"></div>
-  </div>
-</section>
-
-<!-- ===================================================== SPEC -->
-<section class="pad" id="spec">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <p class="eyebrow">技術仕様 / Tech Specs</p>
-      <h2 class="sec-title">すべての数字を、<br>一枚に。</h2>
-    </div>
-    <details class="disclosure">
-      <summary class="disclosure__summary"><span>全仕様データを見る</span><span class="disclosure__chev"></span></summary>
-      <div class="disclosure__body">
-        <div class="spec-grid" id="specGrid"></div>
-      </div>
-    </details>
-  </div>
-</section>
-
-<!-- ===================================================== FOOTER -->
-<footer class="footer">
-  <div class="wrap wrap--wide">
+  <!-- ------------------------------------------------- footer -->
+  <footer class="footer">
     <div class="footer__src">
-      <b style="color:var(--ink)">マラソン3:19:59プロジェクト</b><br>
-      藤井勇成の挑戦記録。データは毎朝、報告するたびに更新される。<br>
+      <b>マラソン3:19:59プロジェクト</b><br>
+      藤井勇成の挑戦記録。データは日曜に受け取り、月曜から実行する。<br>
       分析: Claude（コーチング開始 2026-06-12）／Apple Health 18ヶ月分＋研究35本超
     </div>
-    <div style="text-align:right">
-      このページは1つのデータから自動で描画されている。<br>
+    <div>
+      このページは js/data.js 1本から描画されている。<br>
       新しい記録が届くたび、数分でここに反映される。
     </div>
-  </div>
-</footer>
+  </footer>
+
+</main>
+</div>
 
 <!-- health-os 土台（classic script。type="module" は file:// で動かなくなるため使わない） -->
 <script src="js/data/_boot.js"></script>
