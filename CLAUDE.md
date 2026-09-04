@@ -120,8 +120,16 @@ Bot のようにチャットを見張り続けることは原理的にできな�
 「本人の書き込みを Issue に置いておき、次の定時起動が読みに行く」形にしてある。
 **リアルタイムの応答は期待しない設計。**
 
-★ 定時起動のセッションでは Google ドライブ／カレンダーの MCP が
-接続されていないことがある。GitHub は必ず使える。
+★ Routine は **self-bind**（このコーチング会話に発火）で作ること。
+`create_new_session_on_fire: true` は**使えない**。新規セッションには
+リポジトリが1つも attach されず（`folders_state: FOLDERS_STATE_NONE`）、
+CLAUDE.md も読めず git も push できないまま $1 使って終わる。
+しかも実行結果は `SUCCEEDED` と記録されるので、成功したように見えて何も起きない。
+2026-09-04 に2回発火させて実測で確かめた。詳細は `docs/daily-loop.md` の末尾。
+
+★ self-bind の代償: スマホへのプッシュ通知は付けられない（通知は Issue → Slack が担う）。
+**このセッションが終了すると Routine は止まる。** 月1回 `list_triggers` の
+`last_run` を見て、動いているか確かめること。
 
 ---
 

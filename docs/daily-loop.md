@@ -102,9 +102,33 @@ Slack が落ちても、GitHub アプリからでもメール返信からでも�
 
 - 受け取るのは **export.xml 由来の `health_1m.zip`**。GPX は受け取らない（`CLAUDE.md` 参照）。
 - 抽出は `python3 tools/health_export_split.py <zip> -o health_monthly --months 1`。
-- Google ドライブ／カレンダーの MCP は、定時起動のセッションでは
-  **接続されていないことがある**。使えなければその旨を Issue に書いて、
-  ファイルの受け渡しは Issue への添付に切り替える。GitHub は必ず使える。
+- データが届いていなければ、翌週メニューは作らずに Issue を立てるところで止める。
+  判断に足るデータが無いまま処方を出さない。
+
+---
+
+## ★ Routine は「新規セッション」ではなく「このセッション」に紐づける
+
+2026-09-04 に実測で確かめた。**`create_new_session_on_fire: true` は使えない。**
+
+新規セッションで起動する Routine を3つ作って2回発火させたところ、
+どちらも 7〜9分走って **$1.07 / $0.95 を消費し、Issue も commit も1つも作らなかった**。
+原因は Routine の `folders_state: FOLDERS_STATE_NONE` ——
+**新規セッションにはリポジトリが1つも attach されない**。
+空のコンテナで起動するので、CLAUDE.md も読めず、git の認証情報も無く、
+リポジトリに紐づく GitHub のツールも持たない。しかも Routine の実行結果は
+`SUCCEEDED` と記録される。**成功したように見えて何も起きない**のが最悪な点。
+
+正しいのは **self-bind（`create_new_session_on_fire` を指定しない）**。
+この会話セッションに発火するので、リポジトリ・git の認証・GitHub・
+Google カレンダー・ドライブが全部そのまま使える。コーチングの文脈も引き継がれる。
+
+代償が2つある。
+1. `notifications`（スマホへのプッシュ）は self-bind では受け付けられない。
+   → 通知は Issue → Slack の経路が担う。二重にしなくてよい。
+2. **このセッションが終了すると Routine は動かなくなる。**
+   月に一度は `list_triggers` で `last_run` を見て、動いているか確かめる。
+   止まっていたら、新しいセッションで同じ3つを作り直す（このファイルを渡せば再現できる）。
 
 ---
 
