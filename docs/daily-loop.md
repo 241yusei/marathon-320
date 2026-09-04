@@ -44,6 +44,35 @@ Google カレンダー・ドライブが全部そのまま使え、文脈も引�
 
 ---
 
+## ★ 手順0 — Slack の疎通確認（毎回・最初にやる）
+
+2026-09-04 に Slack が2度この状態になった。**障害ではない。**
+
+```
+ListConnectors(["slack"]) →  connected: true / enabledInChat: false
+```
+
+アカウント側の認証は生きていて、**このチャットに対してだけオフ**になる。
+同時に同じ状態だったのは Gmail だけで、他の6コネクタは `enabledInChat: true` のままだった。
+Slack と Gmail は**この会話の途中で追加した2つ**である。
+→ **後から追加したコネクタは、走っているチャットでは既定オフに戻る**のが最も整合する説明。
+断続的に見えたのは、会話が再開されるたびに保存済み設定（＝オフ）へ戻っていたため。
+
+毎回いちばん最初にこれをやる。
+
+1. `ToolSearch("select:mcp__Slack__slack_read_channel,mcp__Slack__slack_send_message")`
+2. 取れなければ `ListConnectors(["slack"])` で切り分ける
+3. `enabledInChat: false` なら Slack を諦め、**代わりに必ず次をやってから終わる**
+   - `js/data.js` の `todayOne` だけは今日のぶんに更新して push する
+   - Google カレンダー「RUN！！！」に当日イベントを作り、説明欄にメニューと
+     「★Slackがこのチャットでオフのため #320 に投稿できなかった」と書く
+
+**★黙って終わらないこと。** 本人から見て「21時になっても所見が来ない」だけの状態が最悪で、
+Slackが切れているのか私が判断を保留したのかが区別できない。カレンダーは
+`enabledInChat: true` が続いているので、退避先として使える。
+
+---
+
 ## ① 朝 07:00 JST（cron `0 22 * * *` UTC）
 
 1. `slack_read_channel` で #320 の未読を読む。前夜以降に本人の書き込みがあれば、
