@@ -40,7 +40,7 @@ sw.js             ← PWA用サービスワーカー（オフライン対応・�
 | 最新研究 | `research` に1件追加 |
 | 何か更新したら | **必ず `meta.lastUpdated` を更新**（ナビ右上・本日の指針の鮮度表示に使われる） |
 
-> コーチング運用の詳細ルール（データ受領時にNotion・Googleカレンダーへどう連携するか等）は
+> コーチング運用の詳細ルール（データ受領時に Slack・Googleカレンダーへどう連携するか等）は
 > `CLAUDE.md` を参照。サブスリー攻略の科学的根拠は `docs/sub3-research.md`、
 > トレーニング負荷・HRV判断の根拠は `docs/training-protocol.md`、
 > 自転車クロストレーニングの根拠は `docs/bike-cross-training-research.md`、
