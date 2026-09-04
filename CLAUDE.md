@@ -106,8 +106,15 @@ weight / vo2max / walking_hr / workouts（★ジムの筋トレも含む）。
 手順の実体は **`docs/daily-loop.md`**。運用を変えるときはそこを直す。
 
 Slack は窓であって実体ではない。実体は **GitHub Issue（1日1件・タイトル `[日次] 9/4（金）`）**。
-GitHub 公式 Slack アプリが双方向なので、Slack のスレッドに書けば Issue にコメントが入る。
-Slack が落ちても GitHub アプリでもメール返信でも同じ Issue に届く。
+
+★★ **2026-09-04 実測で判明した訂正2件。ここを間違えると設計が崩れる。**
+
+1. **GitHub 公式 Slack アプリは「読み」専用。** スレッドに返信しても Issue には入らない。
+   実際に試して届かなかった。使える書き戻しは `/github open` `/github close` `/github reopen` だけ。
+   → **通知は Slack、報告の記入は GitHub アプリかこのチャット。**
+2. **メール返信の経路は使えない。** GitHub の MCP は本人のアカウント（241yusei）として動くので、
+   私が立てた Issue も私のコメントも作者が本人になる。**GitHub は自分の書き込みを本人に通知しない。**
+   Slack の購読だけが作者に関係なく全部流すので、通知チャンネルとしては Slack が正解。
 
 | いつ | cron (UTC) | 何を |
 |---|---|---|
