@@ -14,3 +14,7 @@ skincare/.private/*
 .DS_Store
 Thumbs.db
 *.swp
+
+# Python のビルド生成物（tools/*.py を import したときに出る）
+__pycache__/
+*.py[cod]
