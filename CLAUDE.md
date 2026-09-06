@@ -61,8 +61,20 @@ PMセッション前のカフェイン / 今の減量。
 心拍もジムのセッションも含まない。2026-08 にこれで「ラン5本・心拍0件・睡眠0夜」と
 誤診した（実際は11本・37.61km・心拍15,347件・睡眠2夜・筋トレ1回）。
 
-抽出は `tools/health_export_split.py`。出力は hr / hrv（時刻つき）/ rhr / sleep /
-weight / vo2max / walking_hr / workouts（★ジムの筋トレも含む）。
+抽出は **`tools/health_recent.py`**（2026-09-06 以降はこちらを使う）。
+
+```bash
+python3 tools/health_recent.py 書き出したデータ.zip --zip     # 直近8日・全データ型
+```
+
+★ **8日**なのは、週サイクルが7日なので1日ぶん糊しろを取るため。受け渡しの前後で
+半端に切れて取りこぼす事故を防ぐ。`--days N` / `--since YYYY-MM-DD` で変えられる。
+
+★ 旧 `tools/health_export_split.py` は月単位・7種類の決め打ちで、
+ランニングパワー・上下動・接地時間・歩幅などが**リストから漏れていた**。
+新しい方は export.xml に入っている型を**全部自動で見つける**。
+新しい書き出しでは距離や平均心拍が `<WorkoutStatistics>` の子要素に入るので、
+そこも `workout_stats.csv` に落とす。
 
 ### 日曜夜に私がやること（この順で）
 
