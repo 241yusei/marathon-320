@@ -534,9 +534,12 @@ window.MARATHON_DATA = {
   nutrition: {
     calories: { bmr: 1751, tdee: 2450, target: "維持摂取（減量ゲート開放まで制限しない）" },
     macros: [
-      { name: "タンパク質", amount: "133〜148g", per: "1.8〜2.0g/kg", note: "筋肉維持・回復に最重要", pct: 23 },
-      { name: "糖質",       amount: "296〜370g", per: "4〜5g/kg",     note: "練習強度に応じて調整",   pct: 52 },
-      { name: "脂質",       amount: "65〜75g",   per: "—",           note: "必須脂肪酸を確保",       pct: 25 },
+      { name: "タンパク質", amount: "134 g", per: "1.8 g/kg・固定", pct: 22,
+        note: "★範囲にしない。1回25g以上を4回（朝35/昼35/夕40/補食25）。1食あたりの量が独立に効く" },
+      { name: "糖質", amount: "370〜445 g", per: "通常日 5〜6 g/kg", pct: 62,
+        note: "★日別3層。休養日 260〜335g ／ 通常日 370〜445g ／ 二部練・ロング走日 520〜670g" },
+      { name: "脂質", amount: "62 g 以上", per: "総エネルギーの20%", pct: 16,
+        note: "下回らない。低脂肪食は男性のテストステロンを10〜15%下げる（Whittaker & Wu 2021）" },
     ],
     supplements: [
       { name: "クレアチン",   dose: "3〜5g/日",      evidence: "強" },
