@@ -267,7 +267,8 @@
             <div class="sched-menu">${esc(s.menu)}</div>
             <div class="sched-meta">${hasVal(s.dist) ? `${esc(s.dist)} ・ ` : ""}${esc(s.zone)}</div>
           </div>
-        </div>`).join("")}</div>`;
+        </div>`).join("")}</div>
+      ${D.scheduleNote ? `<p class="sched-note">${esc(D.scheduleNote)}</p>` : ""}`;
 
     renderNextWorkout();
   }
