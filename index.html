@@ -35,12 +35,13 @@
   <nav class="side__nav" id="sideNav">
     <a href="#r-today"><span>今日</span><span class="k">01</span></a>
     <a href="#r-week"><span>今週</span><span class="k">02</span></a>
-    <a href="#r-plan"><span>計画の背骨</span><span class="k">03</span></a>
-    <a href="#r-log"><span>記録</span><span class="k">04</span></a>
-    <a href="#r-state"><span>体の状態</span><span class="k">05</span></a>
-    <a href="#r-odds"><span>見通し</span><span class="k">06</span></a>
-    <a href="#r-why"><span>根拠</span><span class="k">07</span></a>
-    <a href="#r-spec"><span>仕様</span><span class="k">08</span></a>
+    <a href="#r-care"><span>練習以外</span><span class="k">03</span></a>
+    <a href="#r-plan"><span>計画の背骨</span><span class="k">04</span></a>
+    <a href="#r-log"><span>記録</span><span class="k">05</span></a>
+    <a href="#r-state"><span>体の状態</span><span class="k">06</span></a>
+    <a href="#r-odds"><span>見通し</span><span class="k">07</span></a>
+    <a href="#r-why"><span>根拠</span><span class="k">08</span></a>
+    <a href="#r-spec"><span>仕様</span><span class="k">09</span></a>
   </nav>
   <div class="side__foot">
     最終更新<br><b id="navUpdated">—</b><br><br>
@@ -128,9 +129,19 @@
   </section>
 
   <!-- ================================================== 03 計画の背骨 -->
+  <!-- ------------------------------------------------- 練習以外にやること -->
+  <section class="rail" id="r-care">
+    <div class="sec-head reveal">
+      <p class="eyebrow">03 ／ Care</p>
+      <h2 class="sec-title">走っていない時間が、<br>残りを決める。</h2>
+      <p class="sec-lead">食品管理・ストレッチ・睡眠・レース準備。<br>各項目に「必ずやる」と「これだけはやるな」を1組ずつ置いてある。</p>
+    </div>
+    <div id="care"><div class="care-list reveal d1" id="careList"></div></div>
+  </section>
+
   <section class="rail" id="r-plan">
     <div class="sec-head reveal">
-      <p class="eyebrow">03 ／ Plan</p>
+      <p class="eyebrow">04 ／ Plan</p>
       <h2 class="sec-title">刻み幅ではなく、刻む回数を増やす。</h2>
       <p class="sec-sub">9/1 の 8.91km を基準に、4日おきに毎回きっちり +10% を10本。「1回のランは直近30日最長の +10% まで」を一度も破らずに 10/11 の 21.50km へ届かせる。最終ロングは本番のちょうど14日前。</p>
     </div>
@@ -148,7 +159,7 @@
   <!-- ================================================== 04 記録 -->
   <section class="rail" id="r-log">
     <div class="sec-head reveal">
-      <p class="eyebrow">04 ／ Log</p>
+      <p class="eyebrow">05 ／ Log</p>
       <h2 class="sec-title">走った分だけ、記録に残る。</h2>
       <p class="sec-sub">判定（GO / EASY / REST）は睡眠・HRV・安静時心拍の状態に基づく。所見はその日のうちに書き足す。</p>
     </div>
@@ -177,7 +188,7 @@
   <!-- ================================================== 05 体の状態 -->
   <section class="rail" id="r-state">
     <div class="sec-head reveal">
-      <p class="eyebrow">05 ／ State</p>
+      <p class="eyebrow">06 ／ State</p>
       <h2 class="sec-title">いま、体が示している数字。</h2>
       <p class="sec-sub" id="statusSub"></p>
     </div>
@@ -205,7 +216,7 @@
   <!-- ================================================== 06 見通し -->
   <section class="rail" id="r-odds">
     <div class="sec-head reveal">
-      <p class="eyebrow">06 ／ Projection</p>
+      <p class="eyebrow">07 ／ Projection</p>
       <h2 class="sec-title">いま、どれだけ届いているか。</h2>
       <p class="sec-sub" id="oddsHeadline"></p>
     </div>
@@ -235,7 +246,7 @@
   <!-- ================================================== 07 根拠 -->
   <section class="rail" id="r-why">
     <div class="sec-head reveal">
-      <p class="eyebrow">07 ／ Rationale</p>
+      <p class="eyebrow">08 ／ Rationale</p>
       <h2 class="sec-title">なぜ、この形なのか。</h2>
       <p class="sec-sub">結論だけでなく、それを支えた研究と、外挿している部分を分けて書く。</p>
     </div>
@@ -266,7 +277,7 @@
   <!-- ================================================== 08 仕様 -->
   <section class="rail" id="r-spec">
     <div class="sec-head reveal">
-      <p class="eyebrow">08 ／ Specs</p>
+      <p class="eyebrow">09 ／ Specs</p>
       <h2 class="sec-title">すべての数字を、一枚に。</h2>
     </div>
 

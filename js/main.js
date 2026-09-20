@@ -656,6 +656,29 @@
       </div>`).join("");
   }
 
+  /* ====================================================== CARE（練習以外にやること）*/
+  function renderCare() {
+    $("careList").innerHTML = D.care.map((c) => `
+      <div class="care">
+        <div class="care__head">
+          <h3 class="care__title">${esc(c.title)}</h3>
+          <p class="care__lead">${esc(c.lead)}</p>
+        </div>
+        <div class="care__rows">
+          ${c.rows.map((r) => `
+            <div class="saving-row">
+              <div class="saving-item"><b>${esc(r.k)}</b><div class="saving-cond">${esc(r.n)}</div></div>
+              <div class="saving-effect">${esc(r.v)}</div>
+            </div>`).join("")}
+        </div>
+        ${c.convert ? `<p class="care__conv">${esc(c.convert)}</p>` : ""}
+        <div class="care__never">
+          <div class="care__never-t">これだけはやるな</div>
+          <ul>${c.never.map((n) => `<li>${esc(n)}</li>`).join("")}</ul>
+        </div>
+      </div>`).join("");
+  }
+
   /* ====================================================== FUEL + ZONES */
   function renderFuel() {
     const n = D.nutrition;
@@ -814,6 +837,7 @@
   reg("projection", 100, "goals",     "#odds",       renderProjection);
   reg("phases",     110, "goals",     "#plan",       renderPhases);
   reg("requirements",120,"goals",     "#req",        renderReq);
+  reg("care",        55, "body",      "#care",       renderCare);
   reg("fuel",       130, "body",      "#fuel",       renderFuel);
   reg("science",    140, null,        "#science",    renderScience);
   reg("review",     150, null,        "#review",     renderReview);      // #story のタイムラインも描く
