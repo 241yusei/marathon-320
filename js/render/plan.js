@@ -118,7 +118,7 @@
             <span class="lr__d">${esc(r.date)}</span>
             <div class="lr__bar"><i style="width:${(r.km / max * 100).toFixed(1)}%"></i></div>
             <span class="lr__km">${r.km.toFixed(1)}<span>km</span></span>
-            <span class="lr__gut">${r.gut > 0 ? `補給 ${r.gut}<span>g/h</span>` : "補給なし"}</span>
+            <span class="lr__gut">${r.gut == null ? "補給量は未確認" : r.gut > 0 ? `補給 ${r.gut}<span>g/h</span>` : "補給なし"}</span>
             <span class="lr__tag">${
               LABEL[st] ? `<span class="lr__state lr__state--${st}">${LABEL[st]}</span> ` : ""
             }${esc(r.tag || "")}</span>
