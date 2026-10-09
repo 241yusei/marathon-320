@@ -5,27 +5,18 @@
  *  ・CSS / JS / アイコンは stale-while-revalidate（高速＋裏で更新）
  *  デプロイで内容を変えたら CACHE のバージョンを上げる。
  * ========================================================================= */
-const CACHE = "m320-v19";
+const CACHE = "m320-v20-6db685eae751";
 const CORE = [
   "./",
   "./index.html",
   "./css/style.css",
-  "./js/data/_boot.js",
-  "./js/data/config.js",
-  "./js/core/util.js",
-  "./js/data.js",
-  "./js/data/_legacy-adapter.js",
-  "./js/data/streams.js",
-  "./js/core/compute-datahealth.js",
-  "./js/render/_registry.js",
-  "./js/main.js",
-  "./js/render/datahealth.js",
-  "./js/render/plan.js",
-  "./js/app.js",
+  "./css/public-dashboard.css",
+  "./js/public-snapshot.js",
+  "./js/public-dashboard.js",
   "./manifest.webmanifest",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
-  "./icons/apple-touch-icon.png",
+  "./icons/apple-touch-icon.png"
 ];
 
 self.addEventListener("install", (e) => {
@@ -37,7 +28,7 @@ self.addEventListener("install", (e) => {
 self.addEventListener("activate", (e) => {
   e.waitUntil(
     caches.keys()
-      .then((keys) => Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k))))
+      .then((keys) => Promise.all(keys.filter((k) => k.startsWith("m320-") && k !== CACHE).map((k) => caches.delete(k))))
       .then(() => self.clients.claim())
   );
 });
@@ -70,7 +61,7 @@ self.addEventListener("fetch", (e) => {
   if (url.origin !== self.location.origin) return; // 外部は素通し
 
   // ページ遷移と data.js は最新を優先
-  if (req.mode === "navigate" || url.pathname.endsWith("/js/data.js")) {
+  if (req.mode === "navigate" || ["/js/public-snapshot.js", "/js/public-dashboard.js"].some((p) => url.pathname.endsWith(p))) {
     e.respondWith(networkFirst(req));
     return;
   }
