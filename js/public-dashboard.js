@@ -24,7 +24,7 @@
     esc(date(D.meta.runningRecordThrough) + "以降のラン記録をまとめ、距離・実施日・補給の記録を確認。未報告の練習を実施済みにしない。") +
     "</p><p>" + esc(beforeReview ? date(R.reassessmentDate) + "に予定されている出走見直しに、実績を反映する。" : date(R.reassessmentDate) + "に予定されていた出走見直しの結果は未確認。実施の有無と最新の計画を確認する。") + "</p>";
   el("runningPeriod").textContent = date(R.weekStart) + "〜" + date(R.weekEnd) + "の完了週。";
-  el("runningCards").innerHTML = stat("週間実績", km(R.totalKm) + " km / " + R.runs + "本", R.consecutiveRunStart && R.consecutiveRunEnd ? date(R.consecutiveRunStart) + "〜" + date(R.consecutiveRunEnd) + "に連続ラン。新しい実績は未受領。" : "新しい実績は未受領。") +
+  el("runningCards").innerHTML = stat("週間実績", km(R.totalKm) + " km / " + R.runs + "本", R.consecutiveRunStart && R.consecutiveRunEnd ? date(R.consecutiveRunStart) + "〜" + date(R.consecutiveRunEnd) + "に連続ラン。最新の公開用観測は上のグラフを参照。現在の実行結果は未確認。" : "最新の公開用観測は上のグラフを参照。現在の実行結果は未確認。") +
     stat("最後のラン記録", km(R.lastRunKm) + " km", date(R.lastRunDate) + "。今日の状態や本番の完走見込みに置き換えない。");
   el("runningPlan").innerHTML = '<dl class="public-plan"><dt>既存の週計画</dt><dd>' +
     esc(date(R.planStart) + "〜" + date(R.planEnd) + "：回復優先・最終調整。最大" + R.planMaxKm + "kmの既存上限（必達ではない）。実施・達成は未確認。") +

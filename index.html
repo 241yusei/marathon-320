@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#f5f5f5">
-  <title>320｜ランニングとヘルスケア</title>
+  <title>320｜Health & Running</title>
   <meta name="description" content="320のランニング進捗、次の行動、測定日付きの健診・肌分析の要点。">
   <link rel="manifest" href="manifest.webmanifest">
   <meta name="mobile-web-app-capable" content="yes">
@@ -17,22 +17,22 @@
   <link rel="stylesheet" href="css/manager.css">
   <script defer src="js/public-snapshot.js"></script>
   <script defer src="js/public-dashboard.js"></script>
+  <script defer src="js/health-charts.js"></script>
   <script defer src="js/manager.js"></script>
 </head>
-<body>
+<body class="public-dashboard">
 <div class="shell">
   <aside class="side">
-    <a class="side__brand" href="#top"><span class="mark">320</span><span>Health &amp; Running</span></a>
-    <nav class="side__nav" aria-label="ページ内">
-      <a href="#manager"><span>状態・改善</span><span class="k">HOME</span></a>
-      <a href="#m-input"><span>記録する</span><span class="k">＋</span></a>
-      <a href="#m-history"><span>提案と結果</span><span class="k">↻</span></a>
-      <a href="#r-next"><span>次の行動</span><span class="k">01</span></a>
-      <a href="#r-running"><span>ランニング</span><span class="k">02</span></a>
-      <a href="#r-checkup"><span>健診</span><span class="k">03</span></a>
-      <a href="#r-skin"><span>肌分析</span><span class="k">04</span></a>
+    <a class="side__brand" href="#top"><span class="mark">320</span><span>Health & Running</span></a>
+    <nav class="side__nav" aria-label="ページ内の移動">
+      <a href="#manager"><span>最優先</span><span class="k">01</span></a>
+      <a href="#visualData"><span>実測の変化</span><span class="k">GRAPH</span></a>
+      <a href="#decisionEvidence"><span>理由と根拠</span><span class="k">02</span></a>
+      <a href="#decisionHistory"><span>変更の履歴</span><span class="k">03</span></a>
+      <a href="#decisionFeedback"><span>実行と結果</span><span class="k">04</span></a>
+      <a href="#r-checkup"><span>健診・肌の資料</span><span class="k">↗</span></a>
     </nav>
-    <div class="side__foot">ページ更新<br><b id="pageUpdated">—</b><br><br>記録の日時と、<br>ページの更新日を分けて表示。</div>
+    <div class="side__foot">参考資料の確認日<br><b id="pageUpdated">—</b><br><br>記録の日時と、<br>ページの更新日を分けて表示。</div>
   </aside>
   <main class="main" id="top">
     <header class="hero">
