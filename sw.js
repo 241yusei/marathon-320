@@ -5,7 +5,7 @@
  *  ・CSS / JS / アイコンは stale-while-revalidate（高速＋裏で更新）
  *  デプロイで内容を変えたら CACHE のバージョンを上げる。
  * ========================================================================= */
-const CACHE = "m320-v20-6db685eae751";
+const CACHE = "m320-v20-cf28ddf6f31e";
 const CORE = [
   "./",
   "./index.html",
@@ -16,7 +16,9 @@ const CORE = [
   "./manifest.webmanifest",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
-  "./icons/apple-touch-icon.png"
+  "./icons/apple-touch-icon.png",
+  "./js/manager.js",
+  "./css/manager.css"
 ];
 
 self.addEventListener("install", (e) => {
@@ -61,7 +63,7 @@ self.addEventListener("fetch", (e) => {
   if (url.origin !== self.location.origin) return; // 外部は素通し
 
   // ページ遷移と data.js は最新を優先
-  if (req.mode === "navigate" || ["/js/public-snapshot.js", "/js/public-dashboard.js"].some((p) => url.pathname.endsWith(p))) {
+  if (req.mode === "navigate" || ["/js/public-snapshot.js", "/js/public-dashboard.js", "/js/manager.js"].some((p) => url.pathname.endsWith(p))) {
     e.respondWith(networkFirst(req));
     return;
   }

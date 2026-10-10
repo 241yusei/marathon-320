@@ -14,14 +14,19 @@
   <link rel="icon" type="image/png" href="icons/favicon-64.png">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/public-dashboard.css">
+  <link rel="stylesheet" href="css/manager.css">
   <script defer src="js/public-snapshot.js"></script>
   <script defer src="js/public-dashboard.js"></script>
+  <script defer src="js/manager.js"></script>
 </head>
 <body>
 <div class="shell">
   <aside class="side">
     <a class="side__brand" href="#top"><span class="mark">320</span><span>Health &amp; Running</span></a>
     <nav class="side__nav" aria-label="ページ内">
+      <a href="#manager"><span>状態・改善</span><span class="k">HOME</span></a>
+      <a href="#m-input"><span>記録する</span><span class="k">＋</span></a>
+      <a href="#m-history"><span>提案と結果</span><span class="k">↻</span></a>
       <a href="#r-next"><span>次の行動</span><span class="k">01</span></a>
       <a href="#r-running"><span>ランニング</span><span class="k">02</span></a>
       <a href="#r-checkup"><span>健診</span><span class="k">03</span></a>
@@ -32,10 +37,11 @@
   <main class="main" id="top">
     <header class="hero">
       <p class="eyebrow">320 ／ Health &amp; Running</p>
-      <h1 class="hero__title">進捗と、次の行動。</h1>
+      <h1 class="hero__title">状態、記録、改善。</h1>
       <p class="hero__sub">ランニングの記録と、測定日付きの健診・肌分析をまとめて確認。</p>
       <div class="hero__stats" id="runningStats"></div>
     </header>
+    <section class="rail" id="manager"></section>
     <p class="public-status" id="freshness" role="status">データを読み込んでいます。</p>
     <noscript><p class="card">表示にはJavaScriptが必要です。</p></noscript>
 

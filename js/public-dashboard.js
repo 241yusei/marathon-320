@@ -54,7 +54,7 @@
     "</p><p>" + esc("水分（p2） " + moisture + "。0や乾燥の判定に置き換えません。") +
     "</p><p>" + esc("敏感性（p2）：赤みは5段階で左から" + S.sensitivity.rednessPosition + "番目（橙）、ニキビ関連は" + S.sensitivity.acnePosition + "番目（緑）。p9の赤みGoodは別欄です。") +
     "</p><p>" + esc("くま（p13）は4段階の最も赤い位置。肌トーンは黒くなりやすい側。病気や医学的な良否として扱いません。") + "</p>";
-  if ("serviceWorker" in navigator && location.protocol !== "file:") {
+  if ("serviceWorker" in navigator && location.protocol !== "file:" && location.hostname !== "127.0.0.1") {
     navigator.serviceWorker.register("sw.js").catch(() => { /* page remains usable online */ });
   }
 })();
